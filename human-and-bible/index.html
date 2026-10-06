@@ -140,6 +140,42 @@ th { background: var(--bg); color: var(--navy); font-weight: 600; }
 .reveal { font: inherit; font-weight: 600; padding: 8px 14px; border-radius: 8px; border: 1px solid var(--navy); background: transparent; color: var(--navy); cursor: pointer; }
 button.ghost { font: inherit; font-size: .88rem; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: transparent; color: var(--muted); cursor: pointer; }
 footer { margin-top: 48px; font-size: .82rem; color: var(--muted); }
+/* memorize */
+.cover-bar { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 50px); z-index: 5; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; background: var(--bg); padding-block: 8px; }
+.toggle { font: inherit; font-size: .9rem; font-weight: 600; padding: 7px 14px; border-radius: 999px; border: 1px solid var(--navy); background: transparent; color: var(--navy); cursor: pointer; }
+.toggle[aria-pressed="true"] { background: var(--navy); color: var(--paper); }
+#exam.covered mark, #exam.covered .point.prof li b { color: transparent; background: var(--line); border-radius: 4px; cursor: pointer; user-select: none; }
+#exam.covered mark.shown, #exam.covered .point.prof li b.shown { color: inherit; background: linear-gradient(transparent 52%, var(--hl) 52%); }
+#exam.covered .quizbox .a { color: transparent; background: var(--line); border-radius: 4px; cursor: pointer; display: inline-block; padding: 0 6px; }
+#exam.covered .quizbox .a.shown { color: var(--ok); background: transparent; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.seg button { font: inherit; font-size: .9rem; padding: 7px 14px; border: 0; background: var(--paper); color: var(--muted); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--navy); color: var(--paper); }
+.cloze { line-height: 2.2; }
+.blank { font: inherit; display: inline-block; min-width: 3.5em; padding: 0 8px; margin: 0 2px; border-radius: 6px; border: 0; border-bottom: 2px solid var(--rust); background: var(--hl-soft); color: transparent; cursor: pointer; line-height: 1.6; }
+.blank.shown { color: var(--ink); background: linear-gradient(transparent 52%, var(--hl) 52%); border-bottom-color: transparent; }
+.cloze input { font: inherit; font-size: 16px; padding: 2px 6px; margin: 0 2px; border: 0; border-bottom: 2px solid var(--rust); background: var(--hl-soft); color: var(--ink); border-radius: 6px 6px 0 0; }
+.cloze input.ok { border-bottom-color: var(--ok); background: var(--ok-bg); color: var(--ok); font-weight: 600; }
+.cloze input.no { border-bottom-color: var(--bad); background: var(--bad-bg); color: var(--bad); }
+.fix { font-size: .82rem; color: var(--bad); margin: 0 4px; }
+.row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.fc-wrap { display: grid; gap: 12px; }
+.fc {
+  width: 100%; min-height: 210px; display: grid; place-items: center; text-align: center; padding: 24px 20px;
+  border-radius: 14px; border: 1px solid var(--line); background: var(--paper); cursor: pointer;
+  font-family: var(--font-display); font-size: 1.2rem; line-height: 1.6; color: var(--ink);
+}
+.fc.back { background: var(--hl-soft); border-color: var(--rust); font-family: var(--font-body); font-size: 1.02rem; white-space: pre-line; }
+.fc small { display: block; font-family: var(--font-body); font-size: .78rem; color: var(--muted); margin-top: 12px; }
+.fc-meta { display: flex; justify-content: space-between; font-size: .85rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.bar { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--ok); width: 0; transition: width .2s; }
+.fc-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.fc-btns button { font: inherit; font-weight: 700; padding: 14px; border-radius: 10px; cursor: pointer; border: 1px solid; }
+.fc-btns .no { background: var(--bad-bg); color: var(--bad); border-color: var(--bad); }
+.fc-btns .yes { background: var(--ok-bg); color: var(--ok); border-color: var(--ok); }
+.done { text-align: center; padding: 28px 16px; background: var(--paper); border: 1px solid var(--line); border-radius: 14px; }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
 </style>
 </head>
 <body>
@@ -157,6 +193,7 @@ footer { margin-top: 48px; font-size: .82rem; color: var(--muted); }
 
 <nav class="tabs" aria-label="섹션">
   <a href="#exam" data-tab="exam" aria-current="page">⭐ 시험 포인트</a>
+  <a href="#memo" data-tab="memo">암기</a>
   <a href="#weeks" data-tab="weeks">주차별 정리</a>
   <a href="#practice" data-tab="practice">문제 풀기</a>
 </nav>
@@ -164,6 +201,11 @@ footer { margin-top: 48px; font-size: .82rem; color: var(--muted); }
 <!-- ============ 시험 포인트 ============ -->
 <section class="panel" id="exam" data-panel="exam">
   <h2>시험 포인트 모아보기</h2>
+  <div class="cover-bar">
+    <button class="toggle" id="coverToggle" aria-pressed="false">형광펜 가리기</button>
+    <button class="ghost" id="coverReset">다시 전부 가리기</button>
+    <small class="muted">가린 뒤 회색 칸을 누르면 하나씩 보여요</small>
+  </div>
   <p class="muted">이 탭만 외워도 형광펜·퀴즈 범위는 전부 들어갑니다. 주차 순서대로 정리했습니다.</p>
 
   <h3>1. PPT 퀴즈 원문 (변형 출제 예정)</h3>
@@ -211,7 +253,7 @@ footer { margin-top: 48px; font-size: .82rem; color: var(--muted); }
   <div class="point prof">
     <div class="tag">⭐ 5주차 · 답안 작성 주의</div>
     <h4>공동체는 <mark>'공통의 분모'</mark>를 갖는다</h4>
-    <p>공동체 = 코이노니아(κοινωνία). 아리스토텔레스는 모든 종류의 우정(philia)에 의해 공동체가 창조된다고 했다. 그래서 느슨하든 긴밀하든 공동체는 '공통의 분모'를 가진다.</p>
+    <p>공동체 = 코이노니아(κοινωνία). 아리스토텔레스는 모든 종류의 우정(philia)에 의해 공동체가 창조된다고 했다. 그래서 느슨하든 긴밀하든 공동체는 <mark>'공통의 분모'</mark>를 가진다.</p>
     <p><b>답을 쓸 때는 "우정"보다 <mark>"공통의 분모"</mark>로 쓰는 것이 정답입니다.</b> (우정은 공동체가 생기는 계기, 공통의 분모는 공동체가 가지는 특징)</p>
   </div>
 
@@ -388,6 +430,50 @@ footer { margin-top: 48px; font-size: .82rem; color: var(--muted); }
       <li>아리우스파 = 게르만(서방) / 네스토리우스파 = 경교(동방)</li>
       <li>악의 문제: 아우구스티누스(악은 선의 부재) · 레비나스(절대적 악, 신정론 거부) · 몰트만(고통과 함께 하시는 하나님)</li>
     </ul>
+  </div>
+</section>
+
+<!-- ============ 암기 ============ -->
+<section class="panel" id="memo" data-panel="memo" hidden>
+  <h2>암기 연습</h2>
+  <p class="muted">시험 포인트(형광펜·퀴즈·교수님 강조)만 모았습니다. 빈칸으로 먼저 외우고, 플래시카드로 확인하세요.</p>
+  <div class="toolbar">
+    <div class="seg" role="group" aria-label="암기 방식">
+      <button data-mode="cloze" aria-pressed="true">빈칸 채우기</button>
+      <button data-mode="cards" aria-pressed="false">플래시카드</button>
+    </div>
+  </div>
+  <div class="toolbar" role="group" aria-label="주차 선택" id="memoWeeks">
+    <button class="chip" data-mw="all" aria-pressed="true">전체</button>
+    <button class="chip" data-mw="1" aria-pressed="false">1주차</button>
+    <button class="chip" data-mw="4" aria-pressed="false">4주차</button>
+    <button class="chip" data-mw="5" aria-pressed="false">5주차</button>
+    <button class="chip" data-mw="6" aria-pressed="false">6주차</button>
+  </div>
+
+  <div id="clozeArea">
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="빈칸 방식">
+        <button data-cm="tap" aria-pressed="true">눌러서 확인</button>
+        <button data-cm="type" aria-pressed="false">직접 입력</button>
+      </div>
+      <button class="ghost" id="clozeHideAll">빈칸 다시 가리기</button>
+      <button class="ghost" id="clozeShuffle">순서 섞기</button>
+    </div>
+    <p class="muted" id="clozeHint">빈칸을 누르면 정답이 보여요. 머릿속으로 먼저 말해 보고 누르세요.</p>
+    <div id="clozeList"></div>
+  </div>
+
+  <div id="cardArea" hidden>
+    <div class="toolbar">
+      <button class="ghost" id="cardOnlyUnknown">모르는 것만 다시</button>
+      <button class="ghost" id="cardRestart">처음부터</button>
+    </div>
+    <div class="fc-wrap">
+      <div class="fc-meta"><span id="fcPos"></span><span id="fcKnown"></span></div>
+      <div class="bar"><i id="fcBar"></i></div>
+      <div id="fcStage"></div>
+    </div>
   </div>
 </section>
 
@@ -1046,7 +1132,7 @@ footer { margin-top: 48px; font-size: .82rem; color: var(--muted); }
   function route() {
     var h = (location.hash || '').slice(1);
     if (weekIds.indexOf(h) >= 0) show('weeks', h);
-    else if (h === 'weeks' || h === 'practice' || h === 'exam') show(h);
+    else if (['weeks', 'practice', 'exam', 'memo'].indexOf(h) >= 0) show(h);
     else show('exam');
   }
   tabs.forEach(function (t) {
@@ -1318,6 +1404,261 @@ footer { margin-top: 48px; font-size: .82rem; color: var(--muted); }
     state = {}; order = Q.map(function (_, i) { return i; }); render();
   });
   render();
+
+  // ---------- 형광펜 가리기 (시험 포인트 탭) ----------
+  var examPanel = document.getElementById('exam');
+  var coverBtn = document.getElementById('coverToggle');
+  coverBtn.addEventListener('click', function () {
+    var on = coverBtn.getAttribute('aria-pressed') !== 'true';
+    coverBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    examPanel.classList.toggle('covered', on);
+    examPanel.querySelectorAll('.shown').forEach(function (m) { m.classList.remove('shown'); });
+    coverBtn.textContent = on ? '형광펜 다시 보기' : '형광펜 가리기';
+  });
+  document.getElementById('coverReset').addEventListener('click', function () {
+    examPanel.querySelectorAll('.shown').forEach(function (m) { m.classList.remove('shown'); });
+  });
+  examPanel.addEventListener('click', function (e) {
+    if (!examPanel.classList.contains('covered')) return;
+    var m = e.target.closest('mark, .quizbox .a, .point.prof li b');
+    if (m) m.classList.toggle('shown');
+  });
+
+  // ---------- 빈칸 / 플래시카드 데이터 ----------
+  // {{정답|다른 정답}} 형식
+  var CLOZE = [
+    [1, 'PBL 수업에서 학습자는 {{주동적}}이고 {{주체적}}으로 문제를 찾아 팀 토론을 하고, 교수자는 {{조력자}}의 역할을 감당한다.'],
+    [1, '구한말 서울: {{배재}}학당, 경신학당, {{이화}}학당 / 평양: {{숭실}}학당, 숭의학당, 숭덕학당'],
+    [1, '서울의 기독교 학교는 {{세속}}교육을 강화해 {{사회}}지도자를 육성했고, 후에 일제와 {{친화적}} 관계를 유지했다.'],
+    [1, '평양은 서울보다 {{10}}년 정도 후에 개교, {{기독교}} 교육을 강조해 {{교회}}지도자와 {{민족}}지도자를 육성, 후에 {{신사참배}} 문제로 자진폐교했다.'],
+    [1, '숭실의 설립자 {{베어드|윌리엄 베어드}}는 {{미북장로교}} 선교사로 {{1891}}년 내한하여 {{1931}}년까지 조선선교를 했다.'],
+    [1, '베어드는 조선선교부의 교육시스템을 창출한 {{교육고문}}이었다.'],
+    [1, '토착적 기독교 교육론은 조선선교부의 교육정책인 <{{우리의 교육정책}}>의 핵심 사상이다.'],
+    [1, '미션스쿨 설립의 목적은 {{토착교회}}의 형성과 발전, 그 {{지도자}} 육성에 역점을 두었다.'],
+    [1, '{{조선어}}를 통한 교육을 강조한 숭실대학은 일제의 {{신사참배}} 정책을 거부하고 수많은 {{민족운동가}}들을 배출했다.'],
+    [1, '숭실은 {{1897}}년 10월 베어드의 {{사랑방}}에서 {{중등반}}으로 시작했다.'],
+    [1, '1898년 60명의 지원자 중 {{13}}명을 선발했고, 학생이 늘자 {{신양리}} 39번지에 2층 한옥 교사를 신축했다.'],
+    [1, '{{1906}}년 {{감리교}}와 연합으로 국내 최초의 대학을 설립하고, 영어로 {{Union Christian College|연합기독교대학}}라 명명했다.'],
+    [1, '{{1908}}년 대한제국의 {{고종}}황제로부터 국내 최초의 대학 인가를 받았다.'],
+    [1, '{{1919}}년 3.1운동 이후 조선총독부는 {{무단}}통치에서 {{문화}}통치로 전환했다.'],
+    [1, '{{1938}}년 숭실대학은 {{신사참배}} 거부로 자진폐교했다.'],
+    [1, '{{1954}}년 5월 10일 {{영락교회}} 교육관에서 숭실이 재건되었다.'],
+    [4, '플라톤: 인간은 {{이성}}적 존재이며 {{철학}}적 사유를 통해 완전에 이르는 지식을 얻을 수 있다.'],
+    [4, '플라톤의 영혼 세 부분은 {{이성}}, {{기개}}, {{욕망}}이며, 이 중 이성이 나머지 두 부분을 통제하고 조화롭게 이끄는 영혼의 {{통치자}}다.'],
+    [4, '아리스토텔레스: 인간은 {{정치}}적, {{사회}}적 동물이다.'],
+    [4, '아리스토텔레스: 인간은 본능적으로 {{공동체}} 형성 욕구가 있고, {{사고}}능력과 {{소통}}능력으로 복잡한 사회를 구성한다.'],
+    [4, '아리스토텔레스가 말한 인간의 궁극적 목표: {{지고한 선}} 추구 → 행복({{유다이모니아}}) 성취'],
+    [4, '데카르트: "나는 {{생각}}한다, 그러므로 나는 {{존재}}한다." → {{근대}}철학의 출발점'],
+    [4, '데카르트가 본 인간의 본질은 {{사유하는 실체}}(Res {{Cogitans}})이고, 존재 양식은 {{심신 이원론|심신이원론}}이다.'],
+    [5, '공동체 = {{코이노니아}}. 아리스토텔레스는 모든 종류의 {{우정}}에 의해 공동체가 창조된다고 했다.'],
+    [5, '느슨하든 긴밀하든, 공동체는 \'{{공통의 분모}}\'를 가진다. (답안엔 우정 X)'],
+    [5, '공동체의 세 가지 기능: {{귀속감|소속감}}/소속감, {{훈육}}의 장, {{다중 정체성|다중정체성}}'],
+    [5, '훈육의 장 = 삶의 {{방식}}·{{철학}}·{{덕}}을 배우는 곳'],
+    [5, '{{사르트르}}: "타인은 {{지옥}}이다" (연극 《{{출구 없음|출구없음}}》)'],
+    [5, '"타인은 지옥이다" = 타인의 {{시선}}, 판단, 기대로 인해 {{감금}}을 느끼고 감정적·심리적 고통을 겪는다.'],
+    [5, '르네 {{지라르}}: 사회적 혐오와 폭력의 대상 = {{희생양}}. 인간의 욕망은 {{모방}}적이다.'],
+    [5, '혐오의 심리적 기저를 {{수치심}}에서 찾고, 이것이 법과 전통의 기초가 되었다고 한 철학자: {{누스바움}}'],
+    [5, '선한 사마리아인 비유: 제사장과 레위인 = {{깨끗한}} 사람, 사마리아인 = {{부정한}} 사람'],
+    [5, '"내 이웃은 누구인가?" → "누가 강도 만난 사람의 {{이웃}}이 되어 주었는가?"'],
+    [5, '인간을 이해하려면 {{관찰자}}적 관점이 아니라 {{참여자}}적 관점을 취해야 한다.'],
+    [6, '아리스토텔레스의 이상 정체: {{군주}}정, {{귀족}}정, {{민주}}정(Polity)'],
+    [6, '아리스토텔레스의 타락 정체: {{참주}}정, {{과두}}정, {{우민}}정(Democracy)'],
+    [6, '귀족정은 {{공동선}}을 추구하고 {{덕}}을 중시한다. 과두정은 통치하는 소수의 {{사익}}을 추구하고 {{재산}}이나 출신으로 통치권이 결정된다.'],
+    [6, '귀족정은 덕에 기반해 {{안정}}적이고 지속 가능하며, 과두정은 이기적 목적으로 사회적 {{불안}}과 불만이 생긴다.'],
+    [6, '아우구스티누스 두 왕국론: 신의 도성 = {{향유}}의 대상 / 인간의 도성 = {{이용}}의 대상'],
+    [6, '권력은 {{향유}}의 대상이 아니라 {{이용}}의 대상이다.'],
+    [6, '한나 {{아렌트}}: {{정치}}적인 것 vs {{사회}}적인 것'],
+    [6, '아렌트: 정치적인 것 = {{자유}}와 평등, {{말}}과 행위 / 사회적인 것 = 생계·경제의 {{필요}}'],
+    [6, '맹자 – {{왕도}}정치 / 로크 – 자원의 {{희소성}} / 현대 민주주의 – 최상이 아니라 {{적합}}한 제도']
+  ];
+  var CARDS = [
+    [1, 'PBL 수업에서 교수자의 역할은?', '조력자의 역할'],
+    [1, '숭실의 설립자는?', '윌리엄 베어드\n(미북장로교 선교사, 1891 내한 ~ 1931)'],
+    [1, '베어드의 교육사상 이름은?', '토착적 기독교 교육론'],
+    [1, '토착적 기독교 교육론의 핵심 3가지', '① <우리의 교육정책>의 핵심 사상\n② 토착교회의 형성·발전, 지도자 육성\n③ 조선어를 통한 교육 → 신사참배 거부, 민족운동가 배출'],
+    [1, '서울 vs 평양 기독교 교육', '서울: 세속교육, 사회지도자, 일제와 친화적\n평양: 10년 늦게 개교, 기독교 교육, 교회·민족지도자, 신사참배 문제로 자진폐교'],
+    [1, '서울의 기독교 학교 3곳 / 평양의 학교', '서울: 배재학당, 경신학당, 이화학당\n평양: 숭실학당 (숭의·숭덕)'],
+    [1, '숭실의 시작 (연도·장소)', '1897년 10월, 베어드의 사랑방, 중등반'],
+    [1, '첫 학생 선발 인원 / 교사 신축 장소', '60명 중 13명 / 신양리 39번지'],
+    [1, '국내 최초의 대학 설립 (연도·연합 교단·영어 이름)', '1906년, 감리교와 연합\nUnion Christian College (연합기독교대학)'],
+    [1, '국내 최초의 대학 인가', '1908년, 대한제국 고종황제'],
+    [1, '1919년 3.1운동 이후 총독부의 변화', '무단통치 → 문화통치'],
+    [1, '숭실 자진폐교 (연도·이유)', '1938년, 신사참배 거부'],
+    [1, '서울 숭실 재건 (연도·장소)', '1954년 5월 10일, 영락교회 교육관'],
+    [4, '플라톤이 본 인간', '이성적 존재.\n철학적 사유를 통해 완전에 이르는 지식을 얻는다'],
+    [4, '플라톤 영혼의 세 부분과 통치자', '이성 · 기개 · 욕망\n통치자 = 이성 (기개와 욕망을 통제·조화)'],
+    [4, '아리스토텔레스가 본 인간', '정치적·사회적 동물\n본능적 공동체 형성 욕구, 사고능력과 소통능력'],
+    [4, '아리스토텔레스: 인간의 궁극적 목표', '지고한 선 추구 → 행복(유다이모니아)'],
+    [4, '데카르트: 근대철학의 출발점이 된 명제', '나는 생각한다, 그러므로 나는 존재한다\n(Cogito ergo sum)'],
+    [4, '데카르트: 인간의 본질 / 존재 양식', '사유하는 실체(Res Cogitans) / 심신 이원론'],
+    [5, '공동체를 뜻하는 그리스어', '코이노니아 (κοινωνία)'],
+    [5, '공동체가 가지는 것 (아리스토텔레스)', '공통의 분모\n(우정에 의해 창조되지만, 답은 "공통의 분모")'],
+    [5, '⭐ 공동체의 세 가지 기능', '① 귀속감/소속감\n② 훈육(discipline/training)의 장\n③ 다중 정체성'],
+    [5, '"타인은 지옥이다"는 누구의 말? 무슨 뜻?', '사르트르 (《출구 없음》)\n타인의 시선·판단·기대로 감금감과 심리적 고통을 겪는다'],
+    [5, '희생양 메커니즘', '르네 지라르\n모방 욕망 → 경쟁 → 갈등 → 희생양에게 전가 → 신성화'],
+    [5, '혐오의 기저를 수치심에서 찾은 철학자', '마사 누스바움\n(혐오·수치심 → 도덕과 법)'],
+    [5, '선한 사마리아인: 깨끗한 사람 / 부정한 사람', '깨끗한: 제사장, 레위인 (지나감)\n부정한: 사마리아인 (돌봄)'],
+    [5, '예수가 바꾼 질문', '"내 이웃은 누구인가?"\n→ "누가 이웃이 되어 주었는가?"'],
+    [5, '5주차 결론: 인간 이해의 관점', '관찰자적 관점 X → 참여자적 관점 O'],
+    [6, '아리스토텔레스 이상 정체 3가지', '군주정 · 귀족정 · 민주정(Polity)'],
+    [6, '아리스토텔레스 타락 정체 3가지', '참주정 · 과두정 · 우민정(Democracy)'],
+    [6, '바람직한 정치체제가 아닌 것? (군주정·귀족정·과두정·민주정)', '과두정'],
+    [6, '귀족정 vs 과두정 (목적·자격)', '귀족정: 공동선, 덕\n과두정: 소수의 사익, 재산이나 출신'],
+    [6, '민주정치 vs 우민정치 구분 기준 3가지', '① 법률에 대한 충실 – 다수결\n② 중산층의 대표성 – 부의 분배\n③ 공동선 추구 – 통제 미비'],
+    [6, '아우구스티누스 두 왕국론의 두 태도', '신의 도성(하나님 나라) = 향유\n인간의 도성(세속 세계) = 이용'],
+    [6, '⭐ 한나 아렌트의 정치 이론', '정치적인 것 vs 사회적인 것'],
+    [6, '아렌트: 정치적인 것 vs 사회적인 것', '정치적: 공적 영역, 자유·평등, 말과 행위\n사회적: 생계·경제의 필요, 관리·행정'],
+    [6, '맹자 / 로크 / 현대 민주주의', '왕도정치 / 자원의 희소성 / 최상이 아닌 적합한 제도']
+  ];
+
+  function norm(t) { return String(t).toLowerCase().replace(/[\s.,·'"()<>\-]/g, ''); }
+  function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } }
+
+  var memoWeek = 'all', clozeMode = 'tap', clozeOrder = CLOZE.map(function (_, i) { return i; });
+  var clozeList = document.getElementById('clozeList');
+
+  function renderCloze() {
+    clozeList.innerHTML = '';
+    clozeOrder.forEach(function (i) {
+      var it = CLOZE[i];
+      if (memoWeek !== 'all' && String(it[0]) !== memoWeek) return;
+      var card = document.createElement('div');
+      card.className = 'card';
+      var meta = '<div class="meta"><span class="badge">' + it[0] + '주차</span></div>';
+      var parts = it[1].split(/\{\{(.+?)\}\}/);
+      var html = '';
+      parts.forEach(function (p, k) {
+        if (k % 2 === 0) { html += esc(p); return; }
+        var ans = p.split('|');
+        if (clozeMode === 'tap') {
+          html += '<button class="blank" aria-label="빈칸, 눌러서 정답 보기">' + esc(ans[0]) + '</button>';
+        } else {
+          var w = Math.max(3, ans[0].length * 1.3 + 1);
+          html += '<input type="text" autocomplete="off" autocapitalize="off" spellcheck="false" style="width:' + w + 'em" data-ans="' + esc(p) + '" aria-label="빈칸">';
+        }
+      });
+      card.innerHTML = meta + '<div class="cloze">' + html + '</div>';
+      if (clozeMode === 'type') {
+        var row = document.createElement('div');
+        row.className = 'row';
+        var check = document.createElement('button'); check.className = 'reveal'; check.textContent = '채점';
+        var show = document.createElement('button'); show.className = 'ghost'; show.textContent = '정답 보기';
+        row.appendChild(check); row.appendChild(show); card.appendChild(row);
+        var inputs = card.querySelectorAll('input');
+        check.addEventListener('click', function () {
+          card.querySelectorAll('.fix').forEach(function (f) { f.remove(); });
+          inputs.forEach(function (inp) {
+            var ok = inp.dataset.ans.split('|').some(function (a) { return norm(a) === norm(inp.value); });
+            inp.classList.toggle('ok', ok); inp.classList.toggle('no', !ok);
+            if (!ok) { var f = document.createElement('span'); f.className = 'fix'; f.textContent = '→ ' + inp.dataset.ans.split('|')[0]; inp.after(f); }
+          });
+        });
+        show.addEventListener('click', function () {
+          inputs.forEach(function (inp) { inp.value = inp.dataset.ans.split('|')[0]; inp.classList.remove('no'); inp.classList.add('ok'); });
+          card.querySelectorAll('.fix').forEach(function (f) { f.remove(); });
+        });
+        inputs.forEach(function (inp, n) {
+          inp.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); if (inputs[n + 1]) inputs[n + 1].focus(); else check.click(); }
+          });
+        });
+      }
+      clozeList.appendChild(card);
+    });
+  }
+  clozeList.addEventListener('click', function (e) {
+    var b = e.target.closest('.blank');
+    if (b) b.classList.toggle('shown');
+  });
+  document.querySelectorAll('[data-cm]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      clozeMode = b.dataset.cm;
+      document.querySelectorAll('[data-cm]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      document.getElementById('clozeHint').textContent = clozeMode === 'tap'
+        ? '빈칸을 누르면 정답이 보여요. 머릿속으로 먼저 말해 보고 누르세요.'
+        : '빈칸에 직접 써 보고 "채점"을 누르세요. 띄어쓰기는 무시하고 채점해요. Enter로 다음 칸 이동.';
+      document.getElementById('clozeHideAll').hidden = clozeMode !== 'tap';
+      renderCloze();
+    });
+  });
+  document.getElementById('clozeHideAll').addEventListener('click', function () {
+    clozeList.querySelectorAll('.blank.shown').forEach(function (b) { b.classList.remove('shown'); });
+  });
+  document.getElementById('clozeShuffle').addEventListener('click', function () {
+    shuffle(clozeOrder); renderCloze();
+  });
+  function shuffle(a) { for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+
+  // ---------- flashcards ----------
+  var known = store('hb-known') || {};
+  var deck = [], pos = 0, flipped = false;
+  var stage = document.getElementById('fcStage');
+  function cardIds() {
+    return CARDS.map(function (_, i) { return i; }).filter(function (i) { return memoWeek === 'all' || String(CARDS[i][0]) === memoWeek; });
+  }
+  function buildDeck(onlyUnknown) {
+    deck = shuffle(cardIds().filter(function (i) { return !onlyUnknown || !known[i]; }));
+    pos = 0; flipped = false; renderCard();
+  }
+  function renderCard() {
+    var ids = cardIds();
+    var k = ids.filter(function (i) { return known[i]; }).length;
+    document.getElementById('fcKnown').textContent = '외움 ' + k + ' / ' + ids.length;
+    document.getElementById('fcBar').style.width = (ids.length ? k / ids.length * 100 : 0) + '%';
+    if (pos >= deck.length) {
+      document.getElementById('fcPos').textContent = '';
+      var left = ids.length - k;
+      stage.innerHTML = '<div class="done"><p><b>' + (deck.length ? '한 바퀴 끝!' : '남은 카드가 없어요.') + '</b></p><p class="muted">' +
+        (left ? '아직 못 외운 카드 ' + left + '장이 있어요. "모르는 것만 다시"를 눌러 보세요.' : '이 범위의 카드를 전부 외웠어요.') + '</p></div>';
+      return;
+    }
+    var c = CARDS[deck[pos]];
+    document.getElementById('fcPos').textContent = (pos + 1) + ' / ' + deck.length + ' · ' + c[0] + '주차';
+    stage.innerHTML = '';
+    var face = document.createElement('button');
+    face.className = 'fc' + (flipped ? ' back' : '');
+    face.innerHTML = '<span>' + esc(flipped ? c[2] : c[1]) + '<small>' + (flipped ? '알았으면 "알아요", 헷갈리면 "몰라요"' : '눌러서 정답 보기') + '</small></span>';
+    face.addEventListener('click', function () { flipped = !flipped; renderCard(); });
+    stage.appendChild(face);
+    if (flipped) {
+      var btns = document.createElement('div'); btns.className = 'fc-btns';
+      btns.innerHTML = '<button class="no">몰라요</button><button class="yes">알아요</button>';
+      btns.querySelector('.no').addEventListener('click', function () { mark(false); });
+      btns.querySelector('.yes').addEventListener('click', function () { mark(true); });
+      stage.appendChild(btns);
+    }
+  }
+  function mark(ok) {
+    var id = deck[pos];
+    if (ok) known[id] = 1; else delete known[id];
+    store('hb-known', known);
+    pos++; flipped = false; renderCard();
+  }
+  document.getElementById('cardOnlyUnknown').addEventListener('click', function () { buildDeck(true); });
+  document.getElementById('cardRestart').addEventListener('click', function () {
+    cardIds().forEach(function (i) { delete known[i]; });
+    store('hb-known', known); buildDeck(false);
+  });
+
+  // ---------- 모드 / 주차 ----------
+  document.querySelectorAll('[data-mode]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      document.querySelectorAll('[data-mode]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      var cards = b.dataset.mode === 'cards';
+      document.getElementById('clozeArea').hidden = cards;
+      document.getElementById('cardArea').hidden = !cards;
+      if (cards) buildDeck(false);
+    });
+  });
+  document.querySelectorAll('[data-mw]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      memoWeek = b.dataset.mw;
+      document.querySelectorAll('[data-mw]').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      renderCloze();
+      if (!document.getElementById('cardArea').hidden) buildDeck(false);
+    });
+  });
+  renderCloze();
 })();
 </script>
 </body>
