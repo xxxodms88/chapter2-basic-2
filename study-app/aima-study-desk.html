@@ -145,6 +145,24 @@ button, input, textarea { font: inherit; color: inherit; }
 .term .src { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
 .term .del { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 0.8rem; align-self: start; }
 
+/* Study range + progress */
+.plan { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+.plan-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.plan-title { font-weight: 600; }
+.plan-range { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.9rem; display: flex; align-items: center; gap: 6px; }
+.plan-range input { width: 4.5em; padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); font-family: var(--font-mono); }
+.plan-stat { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.9rem; margin-left: auto; }
+.bar { height: 8px; background: var(--paper); border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+.bar > span { display: block; height: 100%; background: var(--accent); width: 0; transition: width .3s; }
+.map { display: grid; grid-template-columns: repeat(auto-fill, minmax(26px, 1fr)); gap: 3px; }
+.cell { height: 22px; border: 1px solid var(--line); background: var(--paper); border-radius: 4px; font-family: var(--font-mono); font-size: 0.62rem; color: var(--muted); cursor: pointer; padding: 0; font-variant-numeric: tabular-nums; }
+.cell.done { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.cell.cur { outline: 2px solid var(--hl); outline-offset: 1px; color: var(--ink); font-weight: 600; }
+.cell.cur.done { color: var(--accent-ink); }
+.cell:disabled { cursor: default; }
+.map-legend { font-size: 0.8rem; color: var(--muted); }
+.btn.done-on { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
+
 .foot { color: var(--muted); font-size: 0.82rem; max-width: 80ch; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -162,6 +180,18 @@ button, input, textarea { font: inherit; color: inherit; }
     </div>
   </header>
 
+  <section class="plan" aria-label="공부 범위와 진도">
+    <div class="plan-row">
+      <span class="plan-title">공부 범위</span>
+      <span class="plan-range">PDF p.<input type="number" id="rangeStart" min="1" aria-label="시작 페이지"> – <input type="number" id="rangeEnd" min="1" aria-label="끝 페이지"></span>
+      <span class="map-legend">목차부터 3장 Solving Problems by Searching까지</span>
+      <span class="plan-stat" id="planStat"></span>
+    </div>
+    <div class="bar" aria-hidden="true"><span id="planBar"></span></div>
+    <div class="map" id="pageMap"></div>
+    <span class="map-legend" id="mapLegend">칸을 누르면 그 페이지로 이동해요. 다 본 페이지는 '완료'를 눌러 파랗게 채우세요.</span>
+  </section>
+
   <main class="desk">
     <section class="source" aria-label="원문 페이지">
       <div class="pager">
@@ -169,6 +199,7 @@ button, input, textarea { font: inherit; color: inherit; }
         <div class="num">p.<input type="number" id="pageNum" min="1" value="1" aria-label="PDF 페이지 번호"><span id="pageTotal">/ 예시</span></div>
         <button class="btn small" id="nextBtn" type="button" aria-label="다음 페이지">▶</button>
         <label class="chk"><input type="checkbox" id="withNext"> 다음 페이지까지 함께</label>
+        <button class="btn small" id="doneBtn" type="button" aria-pressed="false">완료</button>
         <span class="fname" id="fname"><span class="example-flag">예시 텍스트</span></span>
       </div>
       <div class="page" id="pageText" tabindex="0"></div>
@@ -303,7 +334,48 @@ A rational agent selects, for each possible percept sequence, the action that is
     glossary: store.get("aima.glossary", []),
     results: store.get("aima.results", {}),
     ctrl: {},
+    range: store.get("aima.range", { start: 14, end: 108 }),
+    done: new Set(),
   };
+
+  // ---------- study range + progress ----------
+  function rangeLen() { return Math.max(0, state.range.end - state.range.start + 1); }
+  function saveDone() { if (state.fileId) store.set("aima.done." + state.fileId, [...state.done]); }
+  function renderPlan() {
+    const { start, end } = state.range;
+    $("#rangeStart").value = start; $("#rangeEnd").value = end;
+    let n = 0; for (const p of state.done) if (p >= start && p <= end) n++;
+    const len = rangeLen(), pct = len ? Math.round((n / len) * 100) : 0;
+    $("#planStat").textContent = `완료 ${n} / ${len}쪽 · ${pct}%`;
+    $("#planBar").style.width = pct + "%";
+    const map = $("#pageMap"); map.innerHTML = "";
+    const pdf = state.mode === "pdf";
+    for (let p = start; p <= end && len <= 600; p++) {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "cell"; b.textContent = p;
+      if (state.done.has(p)) b.classList.add("done");
+      if (pdf && p === state.page) { b.classList.add("cur"); b.setAttribute("aria-current", "page"); }
+      b.disabled = !pdf || p > state.total;
+      b.setAttribute("aria-label", `p.${p}${state.done.has(p) ? " 완료" : ""}`);
+      b.onclick = () => go(p);
+      map.appendChild(b);
+    }
+    $("#mapLegend").textContent = pdf
+      ? "칸을 누르면 그 페이지로 이동해요. 다 본 페이지는 '완료'를 눌러 파랗게 채우세요."
+      : "PDF를 열면 칸을 눌러 페이지로 이동하고 진도를 표시할 수 있어요.";
+    const db = $("#doneBtn"), on = pdf && state.done.has(state.page);
+    db.disabled = !pdf;
+    db.classList.toggle("done-on", on);
+    db.setAttribute("aria-pressed", String(on));
+    db.textContent = on ? "완료 ✓" : "완료";
+  }
+  function setRange() {
+    let s = Math.max(1, Number($("#rangeStart").value) | 0), e = Math.max(1, Number($("#rangeEnd").value) | 0);
+    if (e < s) [s, e] = [e, s];
+    state.range = { start: s, end: e };
+    store.set("aima.range", state.range);
+    renderPlan();
+  }
 
   // ---------- Claude ----------
   let sampleFn = undefined; // undefined: not resolved yet, null: unavailable
@@ -676,6 +748,7 @@ ${context()}`,
     }
     updateButtons();
     showCached();
+    renderPlan();
   }
 
   async function openPdf(file) {
@@ -688,7 +761,8 @@ ${context()}`,
       state.pdf = pdf; state.total = pdf.numPages;
       state.fileName = file.name; state.fileId = `${file.name}:${file.size}`;
       state.mode = "pdf";
-      state.page = Math.min(Math.max(1, store.get("aima.lastPage." + state.fileId, 1)), state.total);
+      state.page = Math.min(Math.max(1, store.get("aima.lastPage." + state.fileId, state.range.start)), state.total);
+      state.done = new Set(store.get("aima.done." + state.fileId, []));
       $("#pageTotal").textContent = `/ ${state.total}`;
       $("#pageNum").max = state.total;
       const fn = $("#fname"); fn.textContent = file.name; fn.title = file.name;
@@ -754,8 +828,17 @@ ${context()}`,
     $("#pageText").classList.remove("loading"); $("#pageText").textContent = t;
     $("#fname").textContent = "붙여넣은 텍스트"; $("#pageTotal").textContent = state.pdf ? `/ ${state.total}` : "/ –";
     $("#pastePane").hidden = true;
-    if (state.pdf) { state.mode = "paste"; }
-    updateButtons(); showCached();
+    updateButtons(); showCached(); renderPlan();
+  };
+  $("#rangeStart").addEventListener("change", setRange);
+  $("#rangeEnd").addEventListener("change", setRange);
+  $("#doneBtn").onclick = () => {
+    if (state.mode !== "pdf") return;
+    const pages = [state.page];
+    if (state.withNext && state.page < state.total) pages.push(state.page + 1);
+    const on = !state.done.has(state.page);
+    pages.forEach((p) => (on ? state.done.add(p) : state.done.delete(p)));
+    saveDone(); renderPlan();
   };
   $("#prevBtn").onclick = () => go(state.page - 1);
   $("#nextBtn").onclick = () => go(state.page + 1);
@@ -790,6 +873,7 @@ ${context()}`,
   updateButtons();
   showCached();
   renderGlossary();
+  renderPlan();
   setTab(store.get("aima.tab", "explain"));
 })();
 </script>
