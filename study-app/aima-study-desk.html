@@ -64,6 +64,13 @@ button, input, textarea { font: inherit; color: inherit; }
 
 /* Source page */
 .source { background: var(--card); border: 1px solid var(--line); border-radius: 12px; display: flex; flex-direction: column; min-width: 0; }
+.source-head { background: var(--card); border-radius: 12px 12px 0 0; }
+/* Desktop: the left column scrolls on its own, so the selection panel under the page is reached by scrolling the left side. */
+@media (min-width: 960px) {
+  .source { max-height: calc(100vh - env(safe-area-inset-top, 0px) - 24px); overflow-y: auto; overscroll-behavior: contain; }
+  .source-head { position: sticky; top: 0; z-index: 5; }
+  .source .bookview, .source .page { max-height: none; overflow-y: visible; flex: none; }
+}
 .pager { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 10px 14px; border-bottom: 1px solid var(--line); }
 .pager .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; display: flex; align-items: center; gap: 6px; font-size: 0.9rem; }
 .pager input[type=number] { width: 4.5em; padding: 3px 6px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); font-family: var(--font-mono); }
@@ -74,6 +81,7 @@ button, input, textarea { font: inherit; color: inherit; }
 .paste { padding: 14px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); }
 .paste textarea { width: 100%; min-height: 140px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); font-family: var(--font-book); resize: vertical; }
 .selbar { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px 16px; border-top: 2px solid var(--hl); background: var(--card); }
+.sel-jump { position: sticky; bottom: 12px; align-self: center; z-index: 6; margin-top: -40px; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); border-radius: 99px; padding: 6px 14px; font-size: 0.85rem; font-weight: 600; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.2); }
 .sel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .sel-head button { border: 0; background: none; cursor: pointer; color: var(--muted); font-size: 1rem; }
 .sel-quote { margin: 0; padding: 6px 12px; border-left: 3px solid var(--hl); font-family: var(--font-book); font-size: 0.95rem; color: var(--muted); max-height: 7.5em; overflow: auto; overflow-wrap: anywhere; }
@@ -249,6 +257,7 @@ button, input, textarea { font: inherit; color: inherit; }
 
   <main class="desk">
     <section class="source" aria-label="원문 페이지">
+      <div class="source-head">
       <div class="pager">
         <button class="btn small" id="prevBtn" type="button" aria-label="이전 페이지">◀</button>
         <div class="num">p.<input type="number" id="pageNum" min="1" value="1" aria-label="PDF 페이지 번호"><span id="pageTotal">/ 예시</span></div>
@@ -269,8 +278,10 @@ button, input, textarea { font: inherit; color: inherit; }
         </div>
         <button class="btn small" id="wideBtn" type="button" aria-pressed="false">넓게 보기</button>
       </div>
+      </div>
       <div class="bookview" id="bookView" hidden></div>
       <div class="page" id="pageText" tabindex="0"></div>
+      <button class="sel-jump" id="selJump" type="button" hidden>↓ 선택한 부분 해석 보기</button>
       <div class="selbar" id="selbar" hidden aria-live="polite">
         <div class="sel-head"><span class="tag">선택한 부분 해석 · 해설</span><button type="button" id="selClose" aria-label="닫기">✕</button></div>
         <blockquote class="sel-quote" id="selQuote"></blockquote>
@@ -1179,13 +1190,14 @@ ${context()}`,
   // Quick translation + explanation of the selected passage, shown right under the page.
   const selCache = {};
   let selCtrl = null, selShown = "", selTimer = null;
-  function closeSel() { if (selCtrl) selCtrl.abort(); selCtrl = null; selShown = ""; $("#selbar").hidden = true; }
+  function closeSel() { if (selCtrl) selCtrl.abort(); selCtrl = null; selShown = ""; $("#selbar").hidden = true; $("#selJump").hidden = true; }
   async function interpretSelection() {
     const sel = state.selection;
     if (!sel || sel === selShown) return;
     selShown = sel;
     const bar = $("#selbar"), out = $("#selOut"), st = $("#selSt");
     bar.hidden = false;
+    setTimeout(() => updateSelJump(), 60);
     $("#selQuote").textContent = sel;
     st.className = "status"; st.textContent = "";
     if (selCache[sel]) { renderMd(out, selCache[sel]); return; }
@@ -1228,6 +1240,13 @@ ${clip(state.text).slice(0, 4000)}
     $(id).addEventListener("keyup", (e) => { if (e.shiftKey) scheduleInterpret(); });
   });
   $("#selClose").onclick = closeSel;
+  // When the panel is below the visible part of the left column, offer a jump to it.
+  let selVisible = true;
+  if (window.IntersectionObserver) {
+    new IntersectionObserver((es) => { selVisible = es[0].isIntersecting; updateSelJump(); }, { root: window.matchMedia("(min-width: 960px)").matches ? $(".source") : null, threshold: 0.15 }).observe($("#selbar"));
+  }
+  function updateSelJump() { $("#selJump").hidden = $("#selbar").hidden || selVisible; }
+  $("#selJump").onclick = () => $("#selbar").scrollIntoView({ block: "start", behavior: "smooth" });
 
   document.addEventListener("selectionchange", () => {
     const s = window.getSelection();
