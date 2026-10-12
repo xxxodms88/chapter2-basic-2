@@ -145,6 +145,26 @@ button, input, textarea { font: inherit; color: inherit; }
 .term .src { font-family: var(--font-mono); font-size: 0.75rem; color: var(--muted); }
 .term .del { border: 0; background: none; color: var(--muted); cursor: pointer; font-size: 0.8rem; align-self: start; }
 
+/* Book view: the real PDF page */
+@media (min-width: 960px) { .desk.wide { grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); } }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.seg button { border: 0; background: var(--card); padding: 4px 10px; font-size: 0.85rem; cursor: pointer; }
+.seg button + button { border-left: 1px solid var(--line); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+.zoom { display: inline-flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.zoom span { min-width: 3.6em; text-align: center; color: var(--muted); }
+.bookview { --desk: #e6e9ef; background: var(--desk); padding: 16px; max-height: min(80vh, 1100px); overflow: auto; min-height: 240px; display: flex; flex-direction: column; gap: 16px; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bookview { --desk: #0b0e14; } }
+:root[data-theme="dark"] .bookview { --desk: #0b0e14; }
+.sheet { position: relative; margin: 0 auto; flex: none; background: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,.18), 0 6px 18px rgba(0,0,0,.10); }
+.sheet canvas { display: block; }
+.sheet .pno { position: absolute; top: -1px; right: -1px; transform: translateY(-100%); font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); }
+.bookview .empty { margin: auto; background: var(--card); }
+.textLayer { position: absolute; inset: 0; overflow: hidden; line-height: 1; text-align: initial; -webkit-text-size-adjust: none; text-size-adjust: none; forced-color-adjust: none; transform-origin: 0 0; z-index: 2; }
+.textLayer span, .textLayer br { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
+.textLayer ::selection { background: rgba(255, 214, 0, 0.45); color: transparent; }
+.textLayer .endOfContent { display: block; position: absolute; inset: 100% 0 0; z-index: -1; cursor: default; user-select: none; }
+
 /* Study range + progress */
 .plan { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
 .plan-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
@@ -231,6 +251,19 @@ button, input, textarea { font: inherit; color: inherit; }
         <button class="btn small" id="doneBtn" type="button" aria-pressed="false">완료</button>
         <span class="fname" id="fname"><span class="example-flag">예시 텍스트</span></span>
       </div>
+      <div class="pager" id="viewBar">
+        <div class="seg" role="group" aria-label="보기 방식">
+          <button type="button" id="viewBook" aria-pressed="true">책 화면</button>
+          <button type="button" id="viewText" aria-pressed="false">텍스트</button>
+        </div>
+        <div class="zoom" id="zoomBox">
+          <button class="btn small" id="zoomOut" type="button" aria-label="축소">−</button>
+          <span id="zoomLbl">맞춤</span>
+          <button class="btn small" id="zoomIn" type="button" aria-label="확대">+</button>
+        </div>
+        <button class="btn small" id="wideBtn" type="button" aria-pressed="false">넓게 보기</button>
+      </div>
+      <div class="bookview" id="bookView" hidden></div>
       <div class="page" id="pageText" tabindex="0"></div>
       <div class="selbar" id="selbar" hidden>
         <span>선택한 부분이 있어요.</span>
@@ -940,6 +973,8 @@ ${context()}`,
     el.classList.add("loading"); el.textContent = `p.${state.page} 불러오는 중…`;
     $("#pageNum").value = state.page;
     store.set("aima.lastPage." + state.fileId, state.page);
+    applyView();
+    if (state.view === "book") renderSheets();
     try {
       let t = await extractPage(state.page);
       if (state.withNext && state.page < state.total) t += `\n\n──── p.${state.page + 1} ────\n\n` + (await extractPage(state.page + 1));
@@ -963,13 +998,13 @@ ${context()}`,
     el.classList.add("loading"); el.textContent = "PDF 여는 중… 큰 파일은 몇 초 걸려요.";
     try {
       const buf = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+      const pdf = await pdfjsLib.getDocument({ data: buf, isEvalSupported: false, disableFontFace: true }).promise;
       state.pdf = pdf; state.total = pdf.numPages;
       state.fileName = file.name; state.fileId = `${file.name}:${file.size}`;
       state.mode = "pdf";
+      state.range = store.get("aima.range." + state.fileId, { start: 1, end: state.total });
       state.page = Math.min(Math.max(1, store.get("aima.lastPage." + state.fileId, state.range.start)), state.total);
       state.done = new Set(store.get("aima.done." + state.fileId, []));
-      state.range = store.get("aima.range." + state.fileId, { start: 1, end: state.total });
       $("#pageTotal").textContent = `/ ${state.total}`;
       $("#pageNum").max = state.total;
       const fn = $("#fname"); fn.textContent = file.name; fn.title = file.name;
@@ -981,6 +1016,87 @@ ${context()}`,
     }
   }
   function alertStatus(msg) { const el = $("#pageText"); el.classList.remove("loading"); el.textContent = msg; }
+
+  // ---------- book view (real PDF rendering) ----------
+  const ZOOMS = [1, 1.25, 1.5, 1.75, 2];
+  state.view = store.get("aima.view", "book");
+  state.zoom = 0; // index into ZOOMS, 0 = fit width
+  state.wide = store.get("aima.wide", false);
+  let renderTasks = [], lastWidth = 0;
+
+  function applyView() {
+    const book = state.mode === "pdf" && state.view === "book" && !!window.pdfjsLib;
+    $("#bookView").hidden = !book;
+    $("#pageText").hidden = book;
+    $("#viewBar").hidden = state.mode !== "pdf";
+    $("#viewBook").setAttribute("aria-pressed", String(state.view === "book"));
+    $("#viewText").setAttribute("aria-pressed", String(state.view !== "book"));
+    $("#zoomBox").hidden = state.view !== "book";
+    $("#zoomLbl").textContent = state.zoom === 0 ? "맞춤" : Math.round(ZOOMS[state.zoom] * 100) + "%";
+    $("#zoomOut").disabled = state.zoom === 0;
+    $("#zoomIn").disabled = state.zoom === ZOOMS.length - 1;
+    $(".desk").classList.toggle("wide", state.wide);
+    $("#wideBtn").setAttribute("aria-pressed", String(state.wide));
+    $("#wideBtn").classList.toggle("done-on", state.wide);
+  }
+
+  let renderSeq = 0;
+  async function renderSheets() {
+    const seq = ++renderSeq;
+    const view = $("#bookView");
+    renderTasks.forEach((t) => { try { t.cancel(); } catch {} });
+    renderTasks = [];
+    const pages = [state.page];
+    if (state.withNext && state.page < state.total) pages.push(state.page + 1);
+    view.innerHTML = `<div class="empty">p.${state.page} 그리는 중…</div>`;
+    const avail = Math.max(260, view.clientWidth - 32);
+    lastWidth = view.clientWidth;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    let first = true;
+    for (const n of pages) {
+      try {
+        const page = await state.pdf.getPage(n);
+        if (seq !== renderSeq) return;
+        const scale = (avail / page.getViewport({ scale: 1 }).width) * ZOOMS[state.zoom];
+        const vp = page.getViewport({ scale });
+        const sheet = document.createElement("div");
+        sheet.className = "sheet";
+        sheet.style.width = vp.width + "px"; sheet.style.height = vp.height + "px";
+        sheet.style.setProperty("--scale-factor", scale);
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.floor(vp.width * dpr); canvas.height = Math.floor(vp.height * dpr);
+        canvas.style.width = vp.width + "px"; canvas.style.height = vp.height + "px";
+        canvas.setAttribute("aria-label", `PDF ${n}쪽`);
+        const tl = document.createElement("div"); tl.className = "textLayer";
+        sheet.append(canvas, tl);
+        if (pages.length > 1) { const pno = document.createElement("span"); pno.className = "pno"; pno.textContent = `p.${n}`; sheet.appendChild(pno); }
+        if (first) { view.innerHTML = ""; first = false; }
+        view.appendChild(sheet);
+        const task = page.render({ canvasContext: canvas.getContext("2d"), viewport: vp, transform: dpr !== 1 ? [dpr, 0, 0, dpr, 0, 0] : null });
+        renderTasks.push(task);
+        await task.promise;
+        if (seq !== renderSeq) return;
+        const tc = await page.getTextContent();
+        if (seq !== renderSeq) return;
+        if (pdfjsLib.renderTextLayer) pdfjsLib.renderTextLayer({ textContentSource: tc, container: tl, viewport: vp });
+      } catch (e) {
+        if (e && e.name === "RenderingCancelledException") return;
+        if (seq !== renderSeq) return;
+        view.innerHTML = '<div class="empty">이 페이지를 그리지 못했어요. \'텍스트\' 보기로 바꿔 보세요.</div>';
+        return;
+      }
+    }
+  }
+  function rerender() { if (state.mode === "pdf" && state.view === "book") renderSheets(); }
+
+  if (window.ResizeObserver) {
+    let rt;
+    new ResizeObserver(() => {
+      const w = $("#bookView").clientWidth;
+      if (!w || Math.abs(w - lastWidth) < 24) return;
+      clearTimeout(rt); rt = setTimeout(rerender, 200);
+    }).observe($("#bookView"));
+  }
 
   function updateButtons() {
     const pdf = state.mode === "pdf";
@@ -1002,7 +1118,7 @@ ${context()}`,
     const s = window.getSelection();
     if (!s || s.isCollapsed) { $("#selbar").hidden = true; return; }
     const node = s.anchorNode && (s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentElement);
-    if (!node || !$("#pageText").contains(node)) return;
+    if (!node || !($("#pageText").contains(node) || $("#bookView").contains(node))) return;
     const t = s.toString().trim();
     if (t.length < 3) return;
     state.selection = t.slice(0, 1500);
@@ -1035,7 +1151,7 @@ ${context()}`,
     $("#pageText").classList.remove("loading"); $("#pageText").textContent = t;
     $("#fname").textContent = "붙여넣은 텍스트"; $("#pageTotal").textContent = state.pdf ? `/ ${state.total}` : "/ –";
     $("#pastePane").hidden = true;
-    updateButtons(); showCached(); renderPlan();
+    updateButtons(); applyView(); showCached(); renderPlan();
   };
   $("#rangeStart").addEventListener("change", setRange);
   $("#rangeEnd").addEventListener("change", setRange);
@@ -1047,6 +1163,11 @@ ${context()}`,
     pages.forEach((p) => (on ? state.done.add(p) : state.done.delete(p)));
     saveDone(); renderPlan();
   };
+  $("#viewBook").onclick = () => { state.view = "book"; store.set("aima.view", "book"); applyView(); rerender(); };
+  $("#viewText").onclick = () => { state.view = "text"; store.set("aima.view", "text"); renderTasks.forEach((t) => { try { t.cancel(); } catch {} }); applyView(); };
+  $("#zoomIn").onclick = () => { state.zoom = Math.min(ZOOMS.length - 1, state.zoom + 1); applyView(); rerender(); };
+  $("#zoomOut").onclick = () => { state.zoom = Math.max(0, state.zoom - 1); applyView(); rerender(); };
+  $("#wideBtn").onclick = () => { state.wide = !state.wide; store.set("aima.wide", state.wide); applyView(); };
   $("#prevBtn").onclick = () => go(state.page - 1);
   $("#nextBtn").onclick = () => go(state.page + 1);
   $("#pageNum").addEventListener("change", (e) => go(Number(e.target.value)));
@@ -1085,6 +1206,7 @@ ${context()}`,
   // ---------- boot ----------
   $("#pageText").textContent = SAMPLE_TEXT;
   updateButtons();
+  applyView();
   showCached();
   renderGlossary();
   renderPlan();
