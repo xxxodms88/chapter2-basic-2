@@ -11,3 +11,4 @@ node_modules/
 #Runtime data
 # 저작권이 있는 교재 PDF는 커밋하지 않음
 *.pdf
+study-app/problems.json

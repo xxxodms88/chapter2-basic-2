@@ -163,6 +163,35 @@ button, input, textarea { font: inherit; color: inherit; }
 .map-legend { font-size: 0.8rem; color: var(--muted); }
 .btn.done-on { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
 
+/* Problem book */
+.pb-filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pb-filters .sep { width: 1px; height: 20px; background: var(--line); margin: 0 4px; }
+.chipbtn { border: 1px solid var(--line); background: var(--paper); border-radius: 99px; padding: 3px 11px; font-size: 0.85rem; cursor: pointer; }
+.chipbtn[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.pb-filters select { padding: 4px 8px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); font-size: 0.85rem; }
+.pb-stat { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 0.85rem; color: var(--muted); }
+.pb-list { display: flex; flex-direction: column; gap: 8px; }
+.pb { border: 1px solid var(--line); border-radius: 10px; }
+.pb > summary { list-style: none; cursor: pointer; padding: 10px 14px; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 2px 10px; align-items: baseline; }
+.pb > summary::-webkit-details-marker { display: none; }
+.pb[open] > summary { border-bottom: 1px solid var(--line); }
+.pb-id { font-family: var(--font-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
+.pb-title { font-weight: 600; min-width: 0; }
+.pb-meta { grid-column: 2 / 4; font-size: 0.78rem; color: var(--muted); display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.pb-stars { color: var(--accent); letter-spacing: 1px; }
+.badge { font-size: 0.72rem; font-weight: 600; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--line); color: var(--muted); white-space: nowrap; }
+.badge.ok { border-color: var(--ok); color: var(--ok); background: var(--ok-bg); }
+.badge.review { border-color: var(--bad); color: var(--bad); background: var(--bad-bg); }
+.pb-body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 14px; }
+.pb-sec { display: flex; flex-direction: column; gap: 6px; }
+.pb-sec > .tag { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.pb-exam { background: var(--paper); border-radius: 8px; padding: 10px 14px; }
+.pb-hint { font-size: 0.9rem; border-left: 3px solid var(--hl); padding: 4px 10px; }
+.pb-answer { border-left: 3px solid var(--ok); padding: 4px 0 4px 14px; }
+.pb-draft { width: 100%; min-height: 90px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); resize: vertical; }
+.pb-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pb-grade { border-left: 3px solid var(--accent); padding: 4px 0 4px 14px; }
+
 .foot { color: var(--muted); font-size: 0.82rem; max-width: 80ch; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
 </style>
@@ -184,7 +213,7 @@ button, input, textarea { font: inherit; color: inherit; }
     <div class="plan-row">
       <span class="plan-title">공부 범위</span>
       <span class="plan-range">PDF p.<input type="number" id="rangeStart" min="1" aria-label="시작 페이지"> – <input type="number" id="rangeEnd" min="1" aria-label="끝 페이지"></span>
-      <span class="map-legend">목차부터 3장 Solving Problems by Searching까지</span>
+      <span class="map-legend">1장 Introduction ~ 3장 Solving Problems by Searching</span>
       <span class="plan-stat" id="planStat"></span>
     </div>
     <div class="bar" aria-hidden="true"><span id="planBar"></span></div>
@@ -222,6 +251,29 @@ button, input, textarea { font: inherit; color: inherit; }
         <button class="tab" role="tab" data-tab="quiz" aria-selected="false">퀴즈</button>
         <button class="tab" role="tab" data-tab="ask" aria-selected="false">질문</button>
         <button class="tab" role="tab" data-tab="glossary" aria-selected="false">용어집<span class="count" id="glCount">0</span></button>
+        <button class="tab" role="tab" data-tab="book" aria-selected="false">문제집<span class="count" id="pbCount"></span></button>
+      </div>
+
+      <div class="panel" id="panel-book" role="tabpanel" hidden>
+        <div class="panel-head">
+          <p>1~3장 연습문제를 한국어로 옮기고 시험형으로 다시 만든 문제집이에요. 답을 써서 Claude에게 채점받을 수 있어요.</p>
+        </div>
+        <div class="pb-filters" id="pbFilters">
+          <button class="chipbtn" type="button" data-ch="all" aria-pressed="true">전체</button>
+          <button class="chipbtn" type="button" data-ch="1" aria-pressed="false">1장</button>
+          <button class="chipbtn" type="button" data-ch="2" aria-pressed="false">2장</button>
+          <button class="chipbtn" type="button" data-ch="3" aria-pressed="false">3장</button>
+          <span class="sep" aria-hidden="true"></span>
+          <select id="pbType" aria-label="문제 유형"><option value="all">모든 유형</option></select>
+          <select id="pbStatus" aria-label="풀이 상태">
+            <option value="all">모든 상태</option>
+            <option value="todo">안 푼 문제</option>
+            <option value="review">다시 볼 문제</option>
+            <option value="ok">맞힌 문제</option>
+          </select>
+        </div>
+        <div class="pb-stat" id="pbStat"></div>
+        <div class="pb-list" id="pbList"><div class="empty">문제집을 불러오는 중…</div></div>
       </div>
 
       <div class="panel" id="panel-explain" role="tabpanel">
@@ -334,7 +386,7 @@ A rational agent selects, for each possible percept sequence, the action that is
     glossary: store.get("aima.glossary", []),
     results: store.get("aima.results", {}),
     ctrl: {},
-    range: store.get("aima.range", { start: 14, end: 108 }),
+    range: store.get("aima.range", { start: 1, end: 119 }),
     done: new Set(),
   };
 
@@ -373,8 +425,162 @@ A rational agent selects, for each possible percept sequence, the action that is
     let s = Math.max(1, Number($("#rangeStart").value) | 0), e = Math.max(1, Number($("#rangeEnd").value) | 0);
     if (e < s) [s, e] = [e, s];
     state.range = { start: s, end: e };
-    store.set("aima.range", state.range);
+    store.set(state.fileId ? "aima.range." + state.fileId : "aima.range", state.range);
     renderPlan();
+  }
+
+  // ---------- problem book ----------
+  const pb = {
+    data: null, ch: "all",
+    status: store.get("aima.pb.status", {}),
+    draft: store.get("aima.pb.draft", {}),
+  };
+  const STATUS_LABEL = { ok: "맞힘", review: "다시 보기" };
+
+  function pbFiltered() {
+    if (!pb.data) return [];
+    const type = $("#pbType").value, st = $("#pbStatus").value;
+    return pb.data.problems.filter((p) =>
+      (pb.ch === "all" || String(p.ch) === pb.ch) &&
+      (type === "all" || p.type === type) &&
+      (st === "all" || (st === "todo" ? !pb.status[p.id] : pb.status[p.id] === st)));
+  }
+  function pbStats() {
+    if (!pb.data) return;
+    const all = pb.data.problems, ok = all.filter((p) => pb.status[p.id] === "ok").length,
+      rv = all.filter((p) => pb.status[p.id] === "review").length;
+    $("#pbCount").textContent = `${ok}/${all.length}`;
+    $("#pbStat").textContent = `맞힘 ${ok} · 다시 보기 ${rv} · 안 품 ${all.length - ok - rv} (전체 ${all.length}문제)`;
+  }
+  function el(tag, cls, text) { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+
+  function pbCard(p) {
+    const d = el("details", "pb"); d.dataset.id = p.id;
+    const s = el("summary");
+    const badge = el("span", "badge" + (pb.status[p.id] ? " " + pb.status[p.id] : ""), STATUS_LABEL[pb.status[p.id]] || "안 품");
+    const meta = el("span", "pb-meta");
+    meta.append(el("span", null, p.type), el("span", "pb-stars", "★".repeat(p.level) + "☆".repeat(3 - p.level)), el("span", null, `${p.ch}장 · p.${p.page}`));
+    s.append(el("span", "pb-id", p.id), el("span", "pb-title", p.title), badge, meta);
+    d.appendChild(s);
+    d.addEventListener("toggle", () => { if (d.open && !d.dataset.built) { d.dataset.built = "1"; d.appendChild(pbBody(p, badge)); } });
+    return d;
+  }
+
+  function pbBody(p, badge) {
+    const body = el("div", "pb-body");
+
+    const sec1 = el("div", "pb-sec");
+    const t1 = el("span", "tag", "원래 문제 (번역)");
+    const go2 = el("button", "btn small", `PDF p.${p.page} 원문 보기`); go2.type = "button";
+    go2.onclick = () => {
+      if (!state.pdf) { $("#fileInput").click(); return; }
+      state.mode = "pdf"; $("#fname").textContent = state.fileName; $("#pageTotal").textContent = `/ ${state.total}`;
+      if (state.page === p.page) loadPage(); else go(p.page);
+      $(".source").scrollIntoView({ block: "start", behavior: "smooth" });
+    };
+    t1.appendChild(go2);
+    const ko = el("div", "md"); renderMd(ko, p.ko);
+    sec1.append(t1, ko);
+
+    const sec2 = el("div", "pb-sec");
+    const ex = el("div", "md pb-exam"); renderMd(ex, p.exam);
+    sec2.append(el("span", "tag", "시험형 재구성 문제"), ex);
+
+    const sec3 = el("div", "pb-sec");
+    const hints = el("div", "pb-sec");
+    const hb = el("button", "btn small", `힌트 보기 (${p.hints.length}개)`); hb.type = "button";
+    let shown = 0;
+    hb.onclick = () => {
+      if (shown < p.hints.length) { const h = el("div", "pb-hint md"); renderMd(h, `**힌트 ${shown + 1}.** ${p.hints[shown]}`); hints.appendChild(h); shown++; }
+      hb.textContent = shown < p.hints.length ? `다음 힌트 (${shown}/${p.hints.length})` : "힌트를 모두 봤어요";
+      hb.disabled = shown >= p.hints.length;
+    };
+    sec3.append(el("div", "pb-row"), hints); sec3.firstChild.appendChild(hb);
+
+    const sec4 = el("div", "pb-sec");
+    const ta = el("textarea", "pb-draft"); ta.id = "draft-" + p.id.replace(".", "-");
+    ta.placeholder = "여기에 내 답안을 써 보세요. 쓰는 내용은 이 브라우저에 저장돼요.";
+    ta.value = pb.draft[p.id] || "";
+    let saveT; ta.addEventListener("input", () => { clearTimeout(saveT); saveT = setTimeout(() => { pb.draft[p.id] = ta.value; store.set("aima.pb.draft", pb.draft); }, 400); });
+    const row = el("div", "pb-row");
+    const gradeBtn = el("button", "btn primary small", "Claude에게 채점받기"); gradeBtn.type = "button";
+    const ansBtn = el("button", "btn small", "모범답안 보기"); ansBtn.type = "button";
+    row.append(gradeBtn, ansBtn);
+    const gst = el("div", "status"); gst.setAttribute("aria-live", "polite");
+    const grade = el("div", "md pb-grade"); grade.hidden = true;
+    const ans = el("div", "md pb-answer"); ans.hidden = true;
+    ansBtn.onclick = () => {
+      if (!ans.dataset.r) { renderMd(ans, p.answer); ans.dataset.r = "1"; }
+      ans.hidden = !ans.hidden; ansBtn.textContent = ans.hidden ? "모범답안 보기" : "모범답안 숨기기";
+    };
+    gradeBtn.onclick = async () => {
+      const mine = ta.value.trim();
+      if (!mine) { gst.className = "status"; gst.textContent = "먼저 답안을 써 주세요. 짧아도 괜찮아요."; ta.focus(); return; }
+      const prompt = `${TUTOR}
+
+학생의 답안을 채점해 줘. [모범답안]을 기준으로 하되, 표현이 다르거나 다른 올바른 접근이면 인정해. 모범답안을 그대로 다 보여 주지 말고 학생 답안에 대한 피드백에 집중해. 형식:
+## 점수 (10점 만점)
+## 잘한 점
+## 빠졌거나 틀린 점
+## 이렇게 고치면 좋아요 (짧게)
+
+[문제 ${p.id}]
+${p.exam}
+
+[모범답안]
+${p.answer}
+
+[학생 답안]
+${mine}`;
+      if (!(await needClaude(gst, prompt))) return;
+      gradeBtn.disabled = true; gst.className = "status"; gst.textContent = "채점하는 중…"; grade.hidden = false; grade.innerHTML = "";
+      try {
+        const { text } = await sampleFn(prompt, { cache: false, onText: ({ text }) => renderMd(grade, text) });
+        renderMd(grade, text); gst.textContent = "";
+      } catch (e) {
+        if (e && e.text) renderMd(grade, e.text); else grade.hidden = true;
+        gst.className = "status err"; gst.textContent = errText(e);
+      } finally { gradeBtn.disabled = false; }
+    };
+    sec4.append(el("span", "tag", "내 답안"), ta, row, gst, grade, ans);
+
+    const sec5 = el("div", "pb-row");
+    const mk = (label, val) => {
+      const b = el("button", "btn small", label); b.type = "button";
+      b.onclick = () => {
+        if (val) pb.status[p.id] = val; else delete pb.status[p.id];
+        store.set("aima.pb.status", pb.status);
+        badge.className = "badge" + (val ? " " + val : ""); badge.textContent = STATUS_LABEL[val] || "안 품";
+        pbStats();
+      };
+      return b;
+    };
+    sec5.append(el("span", "tag", "결과 기록"), mk("맞혔어요", "ok"), mk("다시 볼래요", "review"), mk("초기화", null));
+
+    body.append(sec1, sec2, sec3, sec4, sec5);
+    return body;
+  }
+
+  function renderBook() {
+    const list = $("#pbList");
+    if (!pb.data) return;
+    const items = pbFiltered();
+    list.innerHTML = "";
+    if (!items.length) { list.innerHTML = '<div class="empty">조건에 맞는 문제가 없어요. 필터를 바꿔 보세요.</div>'; return; }
+    items.forEach((p) => list.appendChild(pbCard(p)));
+  }
+
+  async function loadBook() {
+    try {
+      const r = await fetch("problems.json", { cache: "no-cache" });
+      if (!r.ok) throw new Error(r.status);
+      pb.data = await r.json();
+      const types = [...new Set(pb.data.problems.map((p) => p.type))];
+      types.forEach((t) => { const o = el("option", null, t); o.value = t; $("#pbType").appendChild(o); });
+      pbStats(); renderBook();
+    } catch {
+      $("#pbList").innerHTML = '<div class="empty">문제집 데이터를 불러오지 못했어요. 페이지를 새로고침해 주세요.</div>';
+    }
   }
 
   // ---------- Claude ----------
@@ -763,6 +969,7 @@ ${context()}`,
       state.mode = "pdf";
       state.page = Math.min(Math.max(1, store.get("aima.lastPage." + state.fileId, state.range.start)), state.total);
       state.done = new Set(store.get("aima.done." + state.fileId, []));
+      state.range = store.get("aima.range." + state.fileId, { start: 1, end: state.total });
       $("#pageTotal").textContent = `/ ${state.total}`;
       $("#pageNum").max = state.total;
       const fn = $("#fname"); fn.textContent = file.name; fn.title = file.name;
@@ -866,6 +1073,13 @@ ${context()}`,
   $("#suggest").querySelectorAll("button").forEach((b) => (b.onclick = () => ask(b.textContent)));
   $("#resetChat").onclick = resetChat;
   $("#glFilter").addEventListener("input", renderGlossary);
+  $("#pbFilters").querySelectorAll(".chipbtn").forEach((b) => b.addEventListener("click", () => {
+    pb.ch = b.dataset.ch;
+    $("#pbFilters").querySelectorAll(".chipbtn").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    renderBook();
+  }));
+  $("#pbType").addEventListener("change", renderBook);
+  $("#pbStatus").addEventListener("change", renderBook);
   $("#copyGl").onclick = (e) => copyText(state.glossary.map((t) => `${t.en}\t${t.ko}\t${t.def}`).join("\n") || "", e.currentTarget);
 
   // ---------- boot ----------
@@ -874,6 +1088,7 @@ ${context()}`,
   showCached();
   renderGlossary();
   renderPlan();
+  loadBook();
   setTab(store.get("aima.tab", "explain"));
 })();
 </script>
