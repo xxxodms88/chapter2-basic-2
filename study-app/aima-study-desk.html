@@ -73,7 +73,13 @@ button, input, textarea { font: inherit; color: inherit; }
 .page.loading { color: var(--muted); font-style: italic; }
 .paste { padding: 14px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); }
 .paste textarea { width: 100%; min-height: 140px; padding: 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); font-family: var(--font-book); resize: vertical; }
-.selbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 14px; border-top: 1px solid var(--line); font-size: 0.85rem; color: var(--muted); }
+.selbar { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px 16px; border-top: 2px solid var(--hl); background: var(--card); }
+.sel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.sel-head button { border: 0; background: none; cursor: pointer; color: var(--muted); font-size: 1rem; }
+.sel-quote { margin: 0; padding: 6px 12px; border-left: 3px solid var(--hl); font-family: var(--font-book); font-size: 0.95rem; color: var(--muted); max-height: 7.5em; overflow: auto; overflow-wrap: anywhere; }
+.sel-out { min-height: 1.6em; }
+.sel-out h2 { font-size: 0.98rem; margin: 0.6em 0 0.25em; border: 0; padding: 0; }
+.sel-actions { display: flex; flex-wrap: wrap; gap: 8px; padding-top: 10px; border-top: 1px solid var(--line); }
 .tag { font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
 .example-flag { display: inline-block; background: var(--hl); color: var(--hl-ink); font-size: 0.75rem; font-weight: 600; padding: 1px 8px; border-radius: 99px; }
 
@@ -265,10 +271,15 @@ button, input, textarea { font: inherit; color: inherit; }
       </div>
       <div class="bookview" id="bookView" hidden></div>
       <div class="page" id="pageText" tabindex="0"></div>
-      <div class="selbar" id="selbar" hidden>
-        <span>선택한 부분이 있어요.</span>
-        <button class="btn small" id="askSelBtn" type="button">이 부분 질문하기</button>
-        <button class="btn small" id="explainSelBtn" type="button">이 문장 풀이</button>
+      <div class="selbar" id="selbar" hidden aria-live="polite">
+        <div class="sel-head"><span class="tag">선택한 부분 해석 · 해설</span><button type="button" id="selClose" aria-label="닫기">✕</button></div>
+        <blockquote class="sel-quote" id="selQuote"></blockquote>
+        <div class="md sel-out" id="selOut"></div>
+        <div class="status" id="selSt"></div>
+        <div class="sel-actions">
+          <button class="btn small" id="askSelBtn" type="button">이 부분 질문하기</button>
+          <button class="btn small" id="explainSelBtn" type="button">이 문장 자세히 풀이</button>
+        </div>
       </div>
       <div class="paste" id="pastePane" hidden>
         <span class="tag">원문 붙여넣기</span>
@@ -311,8 +322,11 @@ button, input, textarea { font: inherit; color: inherit; }
 
       <div class="panel" id="panel-explain" role="tabpanel">
         <div class="panel-head">
-          <p>핵심 요약, 단락별 풀이, 용어, 헷갈리는 점을 정리해요.</p>
-          <button class="btn primary" id="runExplain" type="button">이 페이지 해설</button>
+          <p>핵심 요약, 단락별 풀이, 용어, 헷갈리는 점을 정리해요. 페이지를 열면 자동으로 준비돼요.</p>
+          <div class="actions">
+            <label class="chk"><input type="checkbox" id="autoExplain"> 자동 해설</label>
+            <button class="btn small" id="runExplain" type="button">다시 해설</button>
+          </div>
         </div>
         <div class="status" id="st-explain" aria-live="polite"></div>
         <div class="md" id="out-explain"></div>
@@ -793,7 +807,9 @@ ${context()}`,
       } else if (cached) {
         renderMd(out, cached); st.textContent = `${locLabel()} 기준 · 저장된 결과`;
       } else {
-        out.innerHTML = `<div class="empty">${locLabel()}의 ${kind === "explain" ? "해설" : "번역"}이 아직 없어요. 오른쪽 위 버튼을 누르세요.</div>`;
+        out.innerHTML = kind === "explain" && state.autoExplain && state.mode === "pdf"
+          ? `<div class="empty">${locLabel()} 해설을 준비하고 있어요…</div>`
+          : `<div class="empty">${locLabel()}의 ${kind === "explain" ? "해설" : "번역"}이 아직 없어요. 오른쪽 위 버튼을 누르세요.</div>`;
         st.textContent = "";
       }
     }
@@ -973,6 +989,7 @@ ${context()}`,
     el.classList.add("loading"); el.textContent = `p.${state.page} 불러오는 중…`;
     $("#pageNum").value = state.page;
     store.set("aima.lastPage." + state.fileId, state.page);
+    closeSel();
     applyView();
     if (state.view === "book") renderSheets();
     try {
@@ -990,6 +1007,33 @@ ${context()}`,
     updateButtons();
     showCached();
     renderPlan();
+    autoExplainPage(seq);
+  }
+
+  // Explanations are prepared automatically: the current page first, then the next page in the background.
+  state.autoExplain = store.get("aima.autoExplain", true);
+  async function autoExplainPage(seq) {
+    if (!state.autoExplain || state.mode !== "pdf" || !state.text.trim()) return;
+    if (!state.results[resultKey("explain")]) {
+      await runMarkdown("explain", PROMPTS.explain(), "explain");
+      if (seq !== loadSeq) return;
+    }
+    prefetchExplain(state.page + 1, seq);
+  }
+  async function prefetchExplain(n, seq) {
+    if (state.withNext || n > state.total || n > state.range.end || !sampleFn) return;
+    let t;
+    try { t = await extractPage(n); } catch { return; }
+    if (seq !== loadSeq || !t.trim()) return;
+    const saved = [state.text, state.page];
+    state.text = t; state.page = n;
+    const prompt = PROMPTS.explain(), key = resultKey("explain");
+    [state.text, state.page] = saved;
+    if (state.results[key]) return;
+    try {
+      const { text } = await sampleFn(prompt, { cache: true });
+      state.results[key] = text; store.set("aima.results", state.results);
+    } catch {}
   }
 
   async function openPdf(file) {
@@ -1113,16 +1157,69 @@ ${context()}`,
   }
 
   // ---------- selection ----------
-  function clearSelection() { state.selection = ""; $("#selChip").hidden = true; $("#selbar").hidden = true; }
+  function clearSelection() { state.selection = ""; $("#selChip").hidden = true; }
+
+  // Quick translation + explanation of the selected passage, shown right under the page.
+  const selCache = {};
+  let selCtrl = null, selShown = "", selTimer = null;
+  function closeSel() { if (selCtrl) selCtrl.abort(); selCtrl = null; selShown = ""; $("#selbar").hidden = true; }
+  async function interpretSelection() {
+    const sel = state.selection;
+    if (!sel || sel === selShown) return;
+    selShown = sel;
+    const bar = $("#selbar"), out = $("#selOut"), st = $("#selSt");
+    bar.hidden = false;
+    $("#selQuote").textContent = sel;
+    st.className = "status"; st.textContent = "";
+    if (selCache[sel]) { renderMd(out, selCache[sel]); return; }
+    const prompt = `${TUTOR}
+
+학생이 원문에서 아래 부분을 선택했어. 짧고 바로 이해되게 답해 줘. 형식(마크다운):
+## 해석
+(자연스러운 한국어 번역. 핵심 용어는 한국어(English))
+## 해설
+(무슨 뜻인지, 왜 중요한지 2~4문장. 필요하면 쉬운 예 하나)
+
+[선택한 부분]
+"""
+${sel}
+"""
+
+[주변 원문 일부]
+"""
+${clip(state.text).slice(0, 4000)}
+"""`;
+    out.innerHTML = "";
+    if (!(await needClaude(st, prompt))) return;
+    if (selCtrl) selCtrl.abort();
+    const ctrl = new AbortController(); selCtrl = ctrl;
+    st.textContent = "해석하는 중…";
+    try {
+      const { text } = await sampleFn(prompt, { signal: ctrl.signal, cache: true, modelTier: "quick", onText: ({ text }) => { if (selShown === sel) renderMd(out, text); } });
+      if (selShown !== sel) return;
+      selCache[sel] = text; renderMd(out, text); st.textContent = "";
+    } catch (e) {
+      if (selShown !== sel || (e && e.code === "cancelled")) return;
+      if (e && e.text) renderMd(out, e.text);
+      st.className = "status err"; st.textContent = errText(e);
+    } finally { if (selCtrl === ctrl) selCtrl = null; }
+  }
+  function scheduleInterpret() { clearTimeout(selTimer); selTimer = setTimeout(interpretSelection, 450); }
+  ["#pageText", "#bookView"].forEach((id) => {
+    $(id).addEventListener("mouseup", scheduleInterpret);
+    $(id).addEventListener("touchend", scheduleInterpret);
+    $(id).addEventListener("keyup", (e) => { if (e.shiftKey) scheduleInterpret(); });
+  });
+  $("#selClose").onclick = closeSel;
+
   document.addEventListener("selectionchange", () => {
     const s = window.getSelection();
-    if (!s || s.isCollapsed) { $("#selbar").hidden = true; return; }
+    if (!s || s.isCollapsed) return;
     const node = s.anchorNode && (s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentElement);
     if (!node || !($("#pageText").contains(node) || $("#bookView").contains(node))) return;
     const t = s.toString().trim();
     if (t.length < 3) return;
     state.selection = t.slice(0, 1500);
-    $("#selbar").hidden = false;
   });
   function showChip() {
     if (!state.selection) return;
@@ -1179,13 +1276,18 @@ ${context()}`,
   });
 
   $("#runExplain").onclick = () => runMarkdown("explain", PROMPTS.explain(), "explain");
+  $("#autoExplain").checked = state.autoExplain;
+  $("#autoExplain").addEventListener("change", (e) => {
+    state.autoExplain = e.target.checked; store.set("aima.autoExplain", state.autoExplain);
+    if (state.autoExplain) autoExplainPage(loadSeq);
+  });
   $("#runTranslate").onclick = () => runMarkdown("translate", PROMPTS.translate(), "translate");
   $("#runQuiz").onclick = runQuiz;
   $("#runGlossary").onclick = runGlossary;
-  $("#askSelBtn").onclick = () => { setTab("ask"); showChip(); $("#selbar").hidden = true; $("#askInput").focus(); };
+  $("#askSelBtn").onclick = () => { state.selection = selShown || state.selection; setTab("ask"); showChip(); $("#askInput").focus(); };
   $("#explainSelBtn").onclick = () => {
-    const sel = state.selection; if (!sel) return;
-    setTab("explain"); $("#selbar").hidden = true;
+    const sel = selShown || state.selection; if (!sel) return;
+    setTab("explain");
     runMarkdown("explain", PROMPTS.explainSel(sel), null);
   };
   $("#clearSel").onclick = clearSelection;
