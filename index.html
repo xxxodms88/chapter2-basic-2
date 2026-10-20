@@ -283,6 +283,11 @@ li.CodeMirror-hint-active { background: #04395e; color: #ffffff; }
 .cond li { margin: 2px 0; }
 .sig { font-family: var(--font-mono); font-size: 13px; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; display: inline-block; margin-bottom: 12px; overflow-x: auto; max-width: 100%; }
 .qsec { margin-top: 14px; }
+.names { margin: 0 0 14px; }
+.names ul { margin: 0; padding: 8px 12px 8px 1.8em; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 8px; font-size: 13.5px; }
+.names li { margin: 2px 0; }
+.names b { font-weight: 600; color: var(--muted); font-size: 12.5px; }
+.names code { font-family: var(--font-mono); font-size: 13px; overflow-wrap: anywhere; }
 
 /* CodeMirror 5.65.16 (MIT) 기본 스타일 */
 .CodeMirror {
@@ -615,7 +620,7 @@ color: white;
       <button data-mode="quiz">함수 퀴즈</button>
       <button data-mode="concept">개념 빈칸</button>
       <button data-mode="code">코드 빈칸</button>
-      <button data-mode="blank">백지 테스트</button>
+      <button data-mode="blank">직접 코딩</button>
       <button data-mode="output">출력 예측</button>
     </div>
     <div class="chips" id="chapters" role="group" aria-label="장 선택"></div>
@@ -893,6 +898,10 @@ int main(void)
 }
 
 @@ fixerr | 2 | Mini Project: 오류 수정
+## out
+안녕하세요?
+이번 코드에는 많은 오류가 있다네요
+제가 다 고쳐보겠습니다.
 ## desc
 아래 오류투성이 코드를 올바르게 고쳐 써 보자.
 ## given
@@ -1130,6 +1139,8 @@ int main(void)
 }
 
 @@ sizeof | 4 | 자료형 크기 (sizeof)
+## nograde
+사이트 실행기는 float를 8바이트로 처리해서
 ## desc
 sizeof 연산자로 각 자료형의 크기(바이트)를 출력한다.
 ## note
@@ -1253,6 +1264,8 @@ int main(void)
 }
 
 @@ escape | 4 | 이스케이프 시퀀스 (아이디/패스워드)
+## nograde
+\b(백스페이스)가 화면마다 다르게 보여서
 ## desc
 \b로 커서를 뒤로 옮기고, \a로 경고음을 내고, \"로 큰따옴표를 출력한다.
 ## in
@@ -1721,6 +1734,8 @@ int main(void)
 }
 
 @@ xor | 5 | Lab: XOR를 이용한 암호화
+## nograde
+암호화된 문자가 화면마다 다른 깨진 문자로 나와서
 ## desc
 문자 data = 'a', 키 key = 0xff 일 때 data ^ key 로 암호화한 문자와, 암호문 ^ key 로 복호화한 원래 문자를 출력한다.
 ## out
@@ -3825,16 +3840,16 @@ int main(void)
 ==============
 연도 원리금
 ==============
- 1 10700000.0
- 2 11449000.0
- 3 12250430.0
- 4 13107960.1
- 5 14025517.3
- 6 15007303.5
- 7 16057814.8
- 8 17181861.8
- 9 18384592.1
-10 19671513.6
+ 110700000.0
+ 211449000.0
+ 312250430.0
+ 413107960.1
+ 514025517.3
+ 615007303.5
+ 716057814.8
+ 817181861.8
+ 918384592.1
+1019671513.6
 ## code
 #include <stdio.h>
 #define RATE {{0.07}}               // 이율
@@ -5261,6 +5276,8 @@ void init()
 }
 
 @@ varargs | 9 | 가변 매개 변수 sum()
+## nograde
+사이트 실행기가 stdarg.h를 지원하지 않아서
 ## desc
 매개 변수 개수가 바뀌는 함수. stdarg.h의 va_list, va_start, va_arg, va_end를 쓴다. (사이트 실행기는 stdarg.h를 지원하지 않습니다)
 ## out
@@ -9760,7 +9777,7 @@ PIN 번호를 입력하세요: 로그인 실패!
   "use strict";
   const CH = { 1: "1장 C언어 소개", 2: "2장 프로그램 작성 과정", 3: "3장 C프로그램 구성요소", 4: "4장 변수와 자료형", 5: "5장 수식과 연산자", 6: "6장 조건문", 7: "7장 반복문", 8: "8장 함수", 9: "9장 함수와 변수" };
   const MODES = {
-    theory: "이론 정리", codes: "코드 정리", quiz: "함수 퀴즈", concept: "개념 빈칸", code: "코드 빈칸", blank: "백지 테스트", output: "출력 예측"
+    theory: "이론 정리", codes: "코드 정리", quiz: "함수 퀴즈", concept: "개념 빈칸", code: "코드 빈칸", blank: "직접 코딩", output: "출력 예측"
   };
 
   // ── storage (실패해도 동작) ──
@@ -9988,6 +10005,8 @@ PIN 번호를 입력하세요: 로그인 실패!
         h("div", { class: "actions" },
           h("button", { class: "btn primary", onclick: grade }, "채점"),
           h("button", { class: "btn", onclick: () => revealInputs(ins) }, "정답 보기"),
+          twoStepButton("빈칸 모두 지우기", "btn", () => { ins.forEach(i => { i.value = ""; i.classList.remove("ok", "bad", "shown"); }); res.textContent = ""; ins[0] && ins[0].focus(); }),
+          h("button", { class: "btn", onclick: () => { mode = "blank"; cur.blank = p.id; store.set("cur", cur); store.set("mode", mode); render(); scrollTo(0, 0); } }, "직접 코딩으로 풀기 →"),
           h("button", { class: "btn", onclick: next }, "다음 문제"),
           h("button", { class: "btn", onclick: rand }, "랜덤"), res));
     });
@@ -10337,7 +10356,7 @@ PIN 번호를 입력하세요: 로그인 실패!
         buttons: [gradeBtn,
           h("button", { class: "vbtn", onclick: () => showHint() }, "힌트"),
           h("button", { class: "vbtn", onclick: () => showSol() }, "정답"),
-          h("button", { class: "vbtn", onclick: () => reset() }, "초기화")],
+          twoStepButton("초기화", "vbtn", () => reset())],
         onChange: v => store.set(draftKey, v)
       });
       let lockMark = locked ? ide.ed.lock(q.main) : null;
@@ -10401,26 +10420,122 @@ PIN 번호를 입력하세요: 로그인 실패!
     });
   }
 
-  // ── 모드: 백지 테스트 ──
+  // ── 직접 코딩 도우미: 사용할 이름 목록, 출력 비교, 두 번 눌러 지우기 ──
+  function splitTop(t) {
+    const out = []; let d = 0, cur = "";
+    for (const c of t) { if (c === "(") d++; if (c === ")") d--; if (c === "," && d === 0) { out.push(cur); cur = ""; } else cur += c; }
+    out.push(cur); return out;
+  }
+  function namesOf(code) {
+    const vars = new Map(), funcs = [], defs = [], seen = new Set();
+    const addVar = (type, name) => { type = type.replace(/\s+/g, " ").trim(); if (seen.has(type + name)) return; seen.add(type + name); if (!vars.has(type)) vars.set(type, []); vars.get(type).push(name); };
+    const T = "((?:static\\s+|register\\s+|auto\\s+|const\\s+)*(?:unsigned\\s+|signed\\s+|long\\s+)*(?:int|double|float|char|long|short))";
+    code.split("\n").forEach(raw => {
+      const line = raw.replace(/\/\/.*$/, "");
+      let m;
+      if ((m = line.match(/^#define\s+(\w+)\s+(.+?)\s*$/)) && !/^_CRT/.test(m[1])) defs.push(m[1] + " " + m[2]);
+      if ((m = line.match(new RegExp("^\\s*(void|" + T.slice(1, -1) + ")\\s+(\\w+)\\s*\\(([^)]*)\\)\\s*\\{?\\s*$"))) && m[2] !== "main") {
+        const sig = line.trim().replace(/\s*\{$/, "");
+        if (!funcs.some(f => f.includes(" " + m[2] + "("))) funcs.push(sig);
+        (m[3] || "").split(",").forEach(pp => { const q = pp.trim().match(/^(.*\S)\s+(\w+)$/); if (q && q[1] !== "void") addVar(q[1] + " (매개변수)", q[2]); });
+        return;
+      }
+      if ((m = line.match(new RegExp("^\\s*" + T + "\\s+([^;]+);")))) {
+        if (/\)\s*$/.test(m[2]) && /^\w+\s*\(/.test(m[2].trim())) return;   // 함수 원형
+        splitTop(m[2]).forEach(part => { const q = part.trim().match(/^\**\s*(\w+)/); if (q) addVar(m[1].replace(/^(const\s+)+/, ""), q[1]); });
+      }
+      const f = line.match(new RegExp("for\\s*\\(\\s*" + T + "\\s+(\\w+)"));
+      if (f) addVar(f[1], f[2]);
+    });
+    return { vars, funcs, defs };
+  }
+  function namesBox(code) {
+    const { vars, funcs, defs } = namesOf(code);
+    if (!vars.size && !funcs.length && !defs.length) return null;
+    const rows = [];
+    if (funcs.length) rows.push(h("li", {}, h("b", { text: "함수 " }), h("code", { text: funcs.join("   ") })));
+    vars.forEach((ns, t) => rows.push(h("li", {}, h("b", { text: t + " " }), h("code", { text: ns.join(", ") }))));
+    if (defs.length) rows.push(h("li", {}, h("b", { text: "기호 상수 " }), h("code", { text: defs.join("   ") })));
+    return h("div", { class: "names" }, h("div", { class: "label", text: "사용할 이름 (이 이름을 쓰면 정답 코드와 비교하기 쉬워요)" }), h("ul", {}, rows));
+  }
+  function similarity(a, b) {
+    a = a.slice(0, 1500); b = b.slice(0, 1500);
+    if (!a.length && !b.length) return 1;
+    let prev = new Uint16Array(b.length + 1), curr = new Uint16Array(b.length + 1);
+    for (let i = 1; i <= a.length; i++) {
+      for (let j = 1; j <= b.length; j++) curr[j] = a[i - 1] === b[j - 1] ? prev[j - 1] + 1 : Math.max(prev[j], curr[j - 1]);
+      [prev, curr] = [curr, prev];
+    }
+    return 2 * prev[b.length] / (a.length + b.length);
+  }
+  // 예시 출력과 "얼추" 비교: 숫자는 순서대로 같아야 하고, 문구는 비슷하면 된다
+  function looseCompare(expected, input, got) {
+    const NUM = /-?\d+(?:\.\d+)?/g;
+    const nums = t => (t.match(NUM) || []).map(Number);
+    const all = nums(expected), ins = nums(input), gn = nums(got);
+    const eq = (a, b) => Math.abs(a - b) <= 1e-6 * Math.max(1, Math.abs(a));
+    const same = (a, b) => a.length === b.length && a.every((v, i) => eq(v, b[i]));
+    // 입력값이 예시 출력 어디에 찍혔는지 모르므로, 입력 숫자를 하나씩 빼 보는 경우를 모두 시도한다
+    let tries = 0, best = null;
+    const search = (arr, k, from) => {
+      if (++tries > 20000) return false;
+      if (k === ins.length) { if (!best) best = arr; return same(arr, gn); }
+      let found = false;
+      for (let i = from; i < arr.length; i++) if (eq(arr[i], ins[k])) { found = true; if (search(arr.slice(0, i).concat(arr.slice(i + 1)), k + 1, i)) return true; }
+      return !found && search(arr, k + 1, from);
+    };
+    const numOk = search(all, 0, 0);
+    const en = numOk ? gn : (best || all);
+    let es = expected.replace(/\s+/g, "").replace(NUM, "");
+    input.split(/\s+/).filter(t => t && !/^-?\d/.test(t)).forEach(t => { es = es.replace(t, ""); });
+    const sim = similarity(es, got.replace(/\s+/g, "").replace(NUM, ""));
+    const pass = en.length ? numOk && sim >= 0.5 : sim >= 0.8;
+    return { pass, numOk, sim, en, gn };
+  }
+  function twoStepButton(label, cls, action) {
+    const b = h("button", { class: cls }, label);
+    let t = null;
+    b.addEventListener("click", () => {
+      if (b.dataset.arm) { clearTimeout(t); delete b.dataset.arm; b.textContent = label; action(); return; }
+      b.dataset.arm = "1"; b.textContent = "한 번 더 누르면 지워져요";
+      t = setTimeout(() => { delete b.dataset.arm; b.textContent = label; }, 3000);
+    });
+    return b;
+  }
+
+  // ── 모드: 직접 코딩 (백지 테스트) ──
   function renderBlank(main) {
     picker(main, progs.filter(inChap), "blank", "blank:", (sheet, p, next, rand) => {
       header(sheet, p);
       sheet.append(ioBox(p));
       if (p.given) sheet.append(h("div", { class: "given" }, h("div", { class: "label", text: "주어진 코드 (오류 있음)" }), h("pre", { class: "box", text: p.given })));
       const answer = solve(p.code);
+      const nb = namesBox(answer);
+      if (nb) sheet.append(nb);
       const draftKey = "draft:" + p.id;
+      const canRun = p.out && !("norun" in p) && !("nograde" in p) && !/\.\.\.|…|난수/.test(p.out);
+      const runGradeBtn = h("button", { class: "vbtn grade", title: "입력 예시로 실행해서 실행 결과와 비교" }, "✓ 실행 채점");
+      const clearBtn = twoStepButton("전체 지우기", "vbtn", () => { ide.ed.setValue(""); store.set(draftKey, ""); out.replaceChildren(); hintBox.replaceChildren(); res.textContent = ""; ide.ed.focus(); });
       const ide = makeIDE({
+        buttons: [runGradeBtn, clearBtn],
         id: p.id, filename: p.id + ".c", value: store.get(draftKey, ""), input: p.in || "",
         onChange: v => store.set(draftKey, v),
         onRan: (r, line) => {
-          if (!p.out || "norun" in p || r.compile || r.runtime || r.timeout || r.unavailable) return;
-          if (/\.\.\.|…|난수/.test(p.out)) return;
-          const exp = normOut(p.out), got = normOut(r.text);
-          const same = got === exp || sameWithEcho(exp, got, (p.in || "").split("\n").map(normOut).filter(Boolean));
-          line(same ? "ok" : "warn", same ? "○ 실행 결과가 예시와 같습니다.\n" : "△ 실행 결과가 예시와 다릅니다. 위의 '실행 결과'와 비교해 보세요.\n");
+          if (r.unavailable) return;
+          if (!canRun) { line("tnote", ("nograde" in p ? p.nograde : !p.out ? "이 문제는 실행 결과 예시가 없어서" : "이 문제는 실행 결과가 매번 달라서") + " 실행 채점을 하지 않아요. '정답 코드와 비교'를 써 주세요.\n"); return; }
+          if (normOut(ide.stdin.value) !== normOut(p.in || "")) { line("tnote", "입력 칸이 예시와 달라서 채점하지 않았어요. ✓ 실행 채점을 누르면 예시 입력으로 채점합니다.\n"); return; }
+          if (r.compile || r.runtime || r.timeout) { line("err", "✕ 실행이 끝까지 되지 않아 채점할 수 없어요.\n"); res.textContent = "✕ 실행 실패"; res.className = "result bad"; return; }
+          const c = looseCompare(p.out, p.in || "", r.text || "");
+          if (c.pass) line("ok", "○ 실행 채점 통과 — 숫자가 모두 맞고 출력 문구도 비슷합니다 (문구 일치 " + Math.round(c.sim * 100) + "%).\n");
+          else if (!c.numOk) line("err", "✕ 출력된 숫자가 예시와 다릅니다.\n   예시의 숫자: " + (c.en.join(", ") || "없음") + "\n   내 출력 숫자: " + (c.gn.join(", ") || "없음") + "\n");
+          else line("err", "✕ 숫자는 맞지만 출력 문구가 예시와 많이 다릅니다 (문구 일치 " + Math.round(c.sim * 100) + "%).\n");
+          res.textContent = c.pass ? "○ 실행 채점 통과" : "✕ 실행 결과가 달라요";
+          res.className = "result " + (c.pass ? "ok" : "bad");
+          if (c.pass) markDone("blank:" + p.id, 100);
         }
       });
       const ta = { get value() { return ide.ed.getValue(); }, set value(v) { ide.ed.setValue(v); }, focus: () => ide.ed.focus() };
+      runGradeBtn.addEventListener("click", async () => { ide.stdin.value = p.in || ""; runGradeBtn.disabled = true; await ide.run(); runGradeBtn.disabled = false; });
       const loose = h("input", { type: "checkbox", id: "loose" });
       loose.checked = store.get("loose", false);
       loose.addEventListener("change", () => store.set("loose", loose.checked));
@@ -10436,7 +10551,7 @@ PIN 번호를 입력하세요: 로그인 실패!
         const perfect = okN === A.length && mb.every(Boolean);
         res.textContent = (perfect ? "○ 통과 " : "✕ ") + okN + " / " + A.length + " 구문 (" + pct + "%)";
         res.className = "result " + (perfect ? "ok" : "bad");
-        markDone("blank:" + p.id, perfect ? 100 : Math.min(pct, 99));
+        markDone("blank:" + p.id, perfect ? 100 : Math.min(pct, 99, done["blank:" + p.id] >= 100 ? 99 : pct));
         // 정답 줄별 상태
         const byLine = {};
         A.forEach((u, k) => (byLine[u.line] = byLine[u.line] || []).push(ma[k]));
@@ -10467,14 +10582,13 @@ PIN 번호를 입력하세요: 로그인 실패!
         hintBox.replaceChildren(h("div", { class: "label", text: "힌트: 각 줄의 첫 단어" }), h("pre", { class: "box", text: lines.join("\n") }));
       };
       sheet.append(
-        h("div", { class: "label", text: "백지에 전체 코드를 써 보세요 — ▶ 실행으로 직접 돌려 보고, 채점으로 정답 코드와 비교합니다" }), ide.el,
+        h("div", { class: "label", text: "처음부터 직접 코딩해 보세요 — ✓ 실행 채점은 출력의 숫자가 같고 문구가 비슷하면 통과입니다" }), ide.el,
         h("div", { class: "opts" },
-          h("label", { for: "loose" }, loose, "printf 안내 문구는 무시하고 %d, \\n 같은 형식만 채점")),
+          h("label", { for: "loose" }, loose, "정답 코드와 비교할 때 printf 안내 문구는 무시하고 %d, \\n 같은 형식만 보기")),
         h("div", { class: "actions" },
-          h("button", { class: "btn primary", onclick: grade }, "구문 채점"),
+          h("button", { class: "btn", onclick: grade }, "정답 코드와 비교"),
           h("button", { class: "btn", onclick: hint }, "힌트"),
           h("button", { class: "btn", onclick: () => { hintBox.replaceChildren(h("div", { class: "label", text: "정답 코드" }), h("pre", { class: "box", text: answer })); } }, "정답 보기"),
-          h("button", { class: "btn", onclick: () => { ta.value = ""; store.set(draftKey, ""); out.replaceChildren(); hintBox.replaceChildren(); res.textContent = ""; ta.focus(); } }, "지우기"),
           h("button", { class: "btn", onclick: next }, "다음 문제"),
           h("button", { class: "btn", onclick: rand }, "랜덤"), res),
         hintBox, out);
@@ -10592,7 +10706,7 @@ PIN 번호를 입력하세요: 로그인 실패!
                 b.append(ioBox(p), h("pre", { class: "code", text: solve(p.code) }),
                   h("div", { class: "actions" },
                     h("button", { class: "btn", onclick: () => { mode = "code"; cur.code = p.id; store.set("cur", cur); store.set("mode", mode); render(); scrollTo(0, 0); } }, "코드 빈칸으로 풀기"),
-                    h("button", { class: "btn", onclick: () => { mode = "blank"; cur.blank = p.id; store.set("cur", cur); store.set("mode", mode); render(); scrollTo(0, 0); } }, "백지 테스트로 풀기")));
+                    h("button", { class: "btn", onclick: () => { mode = "blank"; cur.blank = p.id; store.set("cur", cur); store.set("mode", mode); render(); scrollTo(0, 0); } }, "직접 코딩으로 풀기")));
                 d.append(b);
               }
             });
