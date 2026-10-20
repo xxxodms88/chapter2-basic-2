@@ -283,6 +283,13 @@ li.CodeMirror-hint-active { background: #04395e; color: #ffffff; }
 .cond li { margin: 2px 0; }
 .sig { font-family: var(--font-mono); font-size: 13px; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; display: inline-block; margin-bottom: 12px; overflow-x: auto; max-width: 100%; }
 .qsec { margin-top: 14px; }
+.hints { display: grid; gap: 10px; margin-top: 12px; }
+.hint { border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 10px 14px; background: var(--paper); min-width: 0; }
+.hint ul { margin: 2px 0 0; padding-left: 1.2em; font-size: 14px; }
+.hint li { margin: 3px 0; }
+.hint code { font-family: var(--font-mono); font-size: 12.5px; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 4px; padding: 0 4px; overflow-wrap: anywhere; }
+.hint code.ans { color: var(--accent); font-weight: 600; }
+.hint pre { margin-top: 4px; }
 .names { margin: 0 0 14px; }
 .names ul { margin: 0; padding: 8px 12px 8px 1.8em; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 8px; font-size: 13.5px; }
 .names li { margin: 2px 0; }
@@ -9981,6 +9988,72 @@ PIN 번호를 입력하세요: 로그인 실패!
     return io;
   }
 
+  // ── 단계별 힌트: 1 풀이 방향, 2 핵심 조건·식, 3 코드 뼈대 ──
+  function hintLevels(p) {
+    const code = solve(p.code);
+    const body = code.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+    const L1 = [];
+    const scans = (body.match(/\bscanf(_s)?\s*\(/g) || []).length;
+    const funcs = [];
+    body.replace(/^\s*(?:static\s+)?(?:void|int|long|double|float|char)\s+(\w+)\s*\([^)]*\)\s*\{?\s*$/gm, (m, n) => { if (n !== "main" && !funcs.includes(n)) funcs.push(n); return m; });
+    if (funcs.length) L1.push("main 말고 함수 " + funcs.map(f => f + "()").join(", ") + "를 만든다. main에서 호출해 결과를 쓴다.");
+    if (scans) L1.push("scanf로 값을 " + (scans > 1 ? scans + "번 " : "") + "입력받는다. 변수 앞에 &를 붙인다.");
+    const elif = (body.match(/\belse\s+if\b/g) || []).length;
+    if (/\bswitch\s*\(/.test(body)) L1.push("switch 문으로 값에 따라 나눈다. case마다 break를 잊지 말고, 묶을 case는 break 없이 붙여 쓴다.");
+    else if (elif) L1.push("if - else if(" + elif + "번) - else 로 조건을 위에서부터 차례로 검사한다. 먼저 걸린 조건 하나만 실행된다.");
+    else if (/\belse\b/.test(body)) L1.push("if - else 로 참일 때와 거짓일 때를 나눈다.");
+    else if (/\bif\s*\(/.test(body)) L1.push("if 문으로 조건이 참일 때만 실행한다.");
+    if (/\bdo\s*\{?\s*$/m.test(body) || /\bdo\s*\{/.test(body)) L1.push("do-while 로 먼저 한 번 실행하고 조건을 나중에 검사한다. 끝에 세미콜론.");
+    if (/\bwhile\s*\(/.test(body) && !/\}\s*while\s*\(/.test(body)) L1.push(/while\s*\(\s*1\s*\)/.test(body) ? "while (1) 무한 루프를 돌다가 조건이 맞으면 break 로 빠져나온다." : "while 문으로 조건이 참인 동안 반복한다. 반복 변수를 바꾸는 것을 잊지 않는다.");
+    const fors = (body.match(/\bfor\s*\(/g) || []).length;
+    if (fors > 1 && /for[^\n]*\n[^\n]*for|for[^{]*\{[^}]*for/.test(body)) L1.push("for 문을 겹쳐서(중첩) 바깥은 줄, 안쪽은 한 줄의 내용을 반복한다.");
+    else if (fors) L1.push("for (초기식; 조건식; 증감식) 으로 정해진 횟수만큼 반복한다.");
+    if (/\bstatic\b/.test(body)) L1.push("static 변수는 함수가 끝나도 값이 남는다. 처음 한 번만 초기화된다.");
+    funcs.forEach(f => { const re = new RegExp("\\b" + f + "\\s*\\([^)]*\\)\\s*\\{[\\s\\S]*?\\b" + f + "\\s*\\("); if (re.test(body)) L1.push(f + "()는 자기 자신을 다시 부르는 재귀 함수다. 먼저 종료 조건을 쓴다."); });
+    const ops = [];
+    if (/[^%"]%\s*[\w(]/.test(body.replace(/"(?:[^"\\]|\\.)*"/g, '""'))) ops.push("% (나머지)");
+    if (/&&/.test(body)) ops.push("&& (그리고)");
+    if (/\|\|/.test(body)) ops.push("|| (또는)");
+    if (/\?[^:\n]+:/.test(body.replace(/"(?:[^"\\]|\\.)*"/g, '""'))) ops.push("? : (조건 연산자)");
+    if (/\(double\)|\b\d+\.\d+\s*\/|\/\s*\d+\.\d+/.test(body)) ops.push("실수 나눗셈 (정수끼리 나누면 소수점이 버려짐)");
+    if (ops.length) L1.push("자주 쓰는 연산: " + ops.join(", "));
+    if (!L1.length) L1.push("printf로 실행 결과와 똑같이 출력한다. 줄바꿈은 \\n.");
+    // 2단계: 빈칸 중 조건·계산이 들어간 것
+    const L2 = [];
+    const seen = new Set();
+    p.code.split("\n").forEach(line => {
+      const re = /\{\{([\s\S]*?)\}\}(?!\})/g; let m;
+      while ((m = re.exec(line))) {
+        const ans = m[1].split("§")[0];
+        if (!/[<>=!&|%*\/+\-?]|\(|'/.test(ans) || /^%[-\d.l]*[a-z]$/.test(ans) || /^&\w+$/.test(ans) || seen.has(ans)) continue;
+        seen.add(ans);
+        const ctx = solve(line.slice(0, m.index)).trim() + " ▢ " + solve(line.slice(m.index + m[0].length)).trim();
+        L2.push({ ctx: ctx.replace(/\s+/g, " ").slice(0, 70), ans });
+      }
+    });
+    // 3단계: 핵심 식을 가린 코드 뼈대
+    const L3 = p.code.replace(/\{\{([\s\S]*?)\}\}(?!\})/g, (m0, a) => { const t = a.split("§")[0]; return /[<>=!&|%*\/+\-?(]/.test(t) && t.length > 1 && !/^%[-+ #0-9.]*(?:l|h|ll)?[a-zA-Z%]$/.test(t) && !/^&\w+$/.test(t) ? "____" : t; });
+    return { L1, L2: L2.slice(0, 8), L3 };
+  }
+  function hintStepper(box, levels) {
+    let step = 0;
+    const btn = h("button", { class: "btn" });
+    const area = h("div", { class: "hints" });
+    const titles = ["힌트 1 · 풀이 방향", "힌트 2 · 핵심 조건과 계산식", "힌트 3 · 코드 뼈대 (핵심 식만 가림)"];
+    const draw = () => {
+      area.replaceChildren();
+      if (step >= 1) area.append(h("div", { class: "hint" }, h("div", { class: "label", text: titles[0] }), h("ul", {}, levels.L1.map(t => h("li", {}, inline(t))))));
+      if (step >= 2) area.append(h("div", { class: "hint" }, h("div", { class: "label", text: titles[1] }),
+        levels.L2.length ? h("ul", {}, levels.L2.map(x => h("li", {}, h("code", { text: x.ctx }), "  →  ", h("code", { class: "ans", text: x.ans })))) : h("p", { text: "이 문제는 특별한 조건식 없이 순서대로 출력하면 됩니다." })));
+      if (step >= 3) area.append(h("div", { class: "hint" }, h("div", { class: "label", text: titles[2] }), h("pre", { class: "box", text: levels.L3 })));
+      btn.textContent = step < 3 ? "힌트 " + (step + 1) + " 열기 (" + step + "/3)" : "힌트 접기";
+    };
+    btn.addEventListener("click", () => { step = step < 3 ? step + 1 : 0; draw(); });
+    draw();
+    box.replaceChildren(area);
+    return btn;
+  }
+
   // ── 모드: 코드 빈칸 ──
   function renderCode(main) {
     picker(main, progs.filter(inChap), "code", "code:", (sheet, p, next, rand) => {
@@ -10001,14 +10074,17 @@ PIN 번호를 입력하세요: 로그인 실패!
         markDone("code:" + p.id, Math.round(ok / ins.length * 100));
       };
       enterToNext(ins, grade);
+      const hintArea = h("div");
+      const hintBtn = hintStepper(hintArea, hintLevels(p));
       sheet.append(h("div", { class: "label", text: "빈칸 " + ins.length + "개 · 공백은 무시, 대소문자는 구분" }), pre,
         h("div", { class: "actions" },
           h("button", { class: "btn primary", onclick: grade }, "채점"),
           h("button", { class: "btn", onclick: () => revealInputs(ins) }, "정답 보기"),
+          hintBtn,
           twoStepButton("빈칸 모두 지우기", "btn", () => { ins.forEach(i => { i.value = ""; i.classList.remove("ok", "bad", "shown"); }); res.textContent = ""; ins[0] && ins[0].focus(); }),
           h("button", { class: "btn", onclick: () => { mode = "blank"; cur.blank = p.id; store.set("cur", cur); store.set("mode", mode); render(); scrollTo(0, 0); } }, "직접 코딩으로 풀기 →"),
           h("button", { class: "btn", onclick: next }, "다음 문제"),
-          h("button", { class: "btn", onclick: rand }, "랜덤"), res));
+          h("button", { class: "btn", onclick: rand }, "랜덤"), res), hintArea);
     });
   }
 
@@ -10397,8 +10473,13 @@ PIN 번호를 입력하세요: 로그인 실패!
         markDone("quiz:" + q.id, Math.round(pass / tests.length * 100));
       }
       gradeBtn.addEventListener("click", grade);
+      const qh = (q.hint || "").split("\n").filter(Boolean).map(l => l.replace(/^- /, ""));
+      let qstep = 0;
       function showHint() {
-        extra.replaceChildren(h("div", { class: "label", text: "힌트" }), h("ul", { class: "cond" }, (q.hint || "힌트가 없습니다.").split("\n").filter(Boolean).map(l => h("li", {}, inline(l.replace(/^- /, ""))))));
+        if (!qh.length) { extra.replaceChildren(h("p", { class: "legend", text: "이 문제는 따로 준비된 힌트가 없습니다." })); return; }
+        qstep = Math.min(qstep + 1, qh.length);
+        extra.replaceChildren(h("div", { class: "hint" }, h("div", { class: "label", text: "힌트 " + qstep + " / " + qh.length + (qstep < qh.length ? " — 힌트 버튼을 다시 누르면 다음 힌트" : "") }),
+          h("ol", { class: "cond" }, qh.slice(0, qstep).map(l => h("li", {}, inline(l))))));
       }
       function showSol() {
         const full = q.head + "\n\n" + q.sol + "\n\n" + (q.solmain || q.main) + "\n";
@@ -10573,25 +10654,19 @@ PIN 번호를 입력하세요: 로그인 실패!
             h("pre", { class: "box", text: extras.map(u => ta.value.slice(u.start, u.end).replace(/\s*\n\s*/g, " ")).join("\n") })) : null
         );
       };
-      const hint = () => {
-        const lines = answer.split("\n").map(l => {
-          if (!l.trim() || /^\s*(\/\/|\/\*)/.test(l)) return l.trim() ? l.replace(/\S.*/, "// …") : "";
-          const m = l.match(/^(\s*)([^\s(;]+)/);
-          return m ? m[1] + m[2] + " …" : l;
-        });
-        hintBox.replaceChildren(h("div", { class: "label", text: "힌트: 각 줄의 첫 단어" }), h("pre", { class: "box", text: lines.join("\n") }));
-      };
+      const hintArea = h("div");
+      const hintBtn = hintStepper(hintArea, hintLevels(p));
       sheet.append(
         h("div", { class: "label", text: "처음부터 직접 코딩해 보세요 — ✓ 실행 채점은 출력의 숫자가 같고 문구가 비슷하면 통과입니다" }), ide.el,
         h("div", { class: "opts" },
           h("label", { for: "loose" }, loose, "정답 코드와 비교할 때 printf 안내 문구는 무시하고 %d, \\n 같은 형식만 보기")),
         h("div", { class: "actions" },
           h("button", { class: "btn", onclick: grade }, "정답 코드와 비교"),
-          h("button", { class: "btn", onclick: hint }, "힌트"),
+          hintBtn,
           h("button", { class: "btn", onclick: () => { hintBox.replaceChildren(h("div", { class: "label", text: "정답 코드" }), h("pre", { class: "box", text: answer })); } }, "정답 보기"),
           h("button", { class: "btn", onclick: next }, "다음 문제"),
           h("button", { class: "btn", onclick: rand }, "랜덤"), res),
-        hintBox, out);
+        hintArea, hintBox, out);
     });
   }
 
