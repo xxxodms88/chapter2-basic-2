@@ -106,6 +106,8 @@ pre.code { margin: 0; background: var(--code-bg); border: 1px solid var(--rule);
 .btn { font: inherit; font-size: 14px; border-radius: 8px; padding: 8px 14px; cursor: pointer; border: 1px solid var(--rule); background: var(--paper); color: var(--ink); }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--paper); font-weight: 700; }
 .btn:hover { border-color: var(--accent); }
+.btn.hold { user-select: none; -webkit-user-select: none; touch-action: none; -webkit-touch-callout: none; }
+.btn.hold.active { background: var(--part-soft); border-color: var(--part); color: var(--part); }
 .result { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
 .result.ok { color: var(--ok); }
 .result.bad { color: var(--pen); }
@@ -9933,6 +9935,29 @@ PIN 번호를 입력하세요: 로그인 실패!
     });
     return ok;
   }
+  // 누르고 있는 동안만 정답을 보여 주고, 떼면 내가 쓴 답으로 되돌린다
+  function holdReveal(label, inputs, cls) {
+    const b = h("button", { class: (cls || "btn") + " hold", title: "누르고 있는 동안만 정답이 보여요" }, label);
+    let saved = null;
+    const show = () => {
+      if (saved) return;
+      saved = inputs.map(i => [i.value, i.className]);
+      inputs.forEach(i => { i.value = i._answers[0]; i.classList.remove("ok", "bad"); i.classList.add("shown"); });
+      b.classList.add("active");
+    };
+    const hide = () => {
+      if (!saved) return;
+      inputs.forEach((i, k) => { i.value = saved[k][0]; i.className = saved[k][1]; });
+      saved = null; b.classList.remove("active");
+    };
+    b.addEventListener("pointerdown", e => { e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch (x) {} show(); });
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach(ev => b.addEventListener(ev, hide));
+    b.addEventListener("keydown", e => { if ((e.key === " " || e.key === "Enter") && !e.repeat) { e.preventDefault(); show(); } });
+    b.addEventListener("keyup", e => { if (e.key === " " || e.key === "Enter") hide(); });
+    b.addEventListener("blur", hide);
+    b.addEventListener("contextmenu", e => e.preventDefault());
+    return b;
+  }
   function revealInputs(inputs) {
     inputs.forEach(inp => { if (!inp.classList.contains("ok")) { inp.value = inp._answers[0]; inp.classList.remove("bad"); inp.classList.add("shown"); } });
   }
@@ -9965,7 +9990,7 @@ PIN 번호를 입력하세요: 로그인 실패!
       const mk = h("span", { class: "mk", "aria-live": "polite" });
       const row = h("div", { class: "cq" }, h("span", { class: "n", text: String(i + 1).padStart(2, "0") }), t,
         h("div", { style: "display:flex;gap:6px;align-items:center" },
-          h("button", { class: "btn peek", onclick: () => { revealInputs(ins); } }, "정답"), mk));
+          holdReveal("정답", ins, "btn peek"), mk));
       row._ins = ins; row._mk = mk; row._q = q;
       rows.push(row); allInputs.push(...ins);
       box.append(row);
@@ -9985,7 +10010,7 @@ PIN 번호를 입력하세요: 로그인 실패!
     enterToNext(allInputs, grade);
     const actions = () => h("div", { class: "actions" },
       h("button", { class: "btn primary", onclick: grade }, "전체 채점"),
-      h("button", { class: "btn", onclick: () => revealInputs(allInputs) }, "전체 정답 보기"),
+      holdReveal("전체 정답 보기 (누르고 있기)", allInputs),
       h("button", { class: "btn", onclick: () => render() }, "다시 풀기"), res);
     main.append(h("div", { class: "sheet" },
       h("div", { class: "qhead" }, h("h2", { text: "개념 빈칸 채우기" }), h("span", { class: "tag", text: chap ? CH[chap] : "전체 " + list.length + "문항" })),
@@ -10159,7 +10184,7 @@ PIN 번호를 입력하세요: 로그인 실패!
       sheet.append(h("div", { class: "label", text: "빈칸 " + ins.length + "개 · 공백은 무시, 대소문자는 구분 · 변수 선언 칸은 int x, y; 처럼 한 줄 전체를 씁니다" }), pre,
         h("div", { class: "actions" },
           h("button", { class: "btn primary", onclick: grade }, "채점"),
-          h("button", { class: "btn", onclick: () => revealInputs(ins) }, "정답 보기"),
+          holdReveal("정답 보기 (누르고 있기)", ins),
           hintBtn,
           twoStepButton("빈칸 모두 지우기", "btn", () => { ins.forEach(i => { i.value = ""; i.classList.remove("ok", "bad", "shown"); }); res.textContent = ""; ins[0] && ins[0].focus(); }),
           h("button", { class: "btn", onclick: () => { mode = "blank"; cur.blank = p.id; store.set("cur", cur); store.set("mode", mode); render(); scrollTo(0, 0); } }, "직접 코딩으로 풀기 →"),
