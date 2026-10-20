@@ -830,13 +830,13 @@ int {{main}}(void)
 Hello World!
 Kim ChulSoo
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
     printf("Hello World!{{\n}}");
     printf("Kim ChulSoo{{\n}}");
-    return 0;
+    {{return 0;}}
 }
 
 @@ gugu3 | 2 | 3단 일부 출력
@@ -847,14 +847,14 @@ int main(void)
 3 X 2 = 6
 3 X 3 = 9
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    printf("3 X 1 = 3\n");
-    printf("3 X 2 = 6\n");
+    {{printf}}("3 X 1 = 3\n");
+    {{printf}}("3 X 2 = 6\n");
     printf("3 X 3 = 9{{\n}}");
-    return 0;
+    {{return 0;}}
 }
 
 @@ calc | 2 | Lab: 간단한 계산
@@ -866,15 +866,15 @@ int main(void)
 2*3=6
 2/3=0
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
     printf("2+3={{%d}}\n", 2 + 3);
-    printf("2-3=%d\n", 2 - 3);
+    printf("2-3={{%d}}\n", 2 - 3);
     printf("2*3=%d\n", 2 {{*}} 3);
     printf("2/3=%d\n", 2 {{/}} 3);
-    return 0;
+    {{return 0;}}
 }
 
 @@ ascii | 2 | LAB 연습1: 아스키 코드 출력
@@ -883,13 +883,13 @@ int main(void)
 ## out
 C -> 67
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
     {{char}} id = {{'C'}};
     printf("{{%c}} -> {{%d}}\n", id, id);
-    return 0;
+    {{return 0;}}
 }
 
 @@ fixerr | 2 | Mini Project: 오류 수정
@@ -905,14 +905,14 @@ int Main(void)
     return 0;
 )
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int {{main}}(void)
 {{{}}
     printf({{"안녕하세요?\n"}});
     printf("이번 코드에는 많은 오류가 있다네요\n"){{;}}
     {{printf}}("제가 다 고쳐보겠습니다.\n");
-    return 0;
+    {{return 0;}}
 {{}}}
 
 @@ add1 | 3 | 덧셈 프로그램 #1 (주석)
@@ -922,19 +922,19 @@ x에 100, y에 200을 저장하고 합을 출력한다. 주석 3가지 방법을
 두수의 합: 300
 ## code
 /* 두 개의 숫자의 합을 계산하는 프로그램 */
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x;      // 첫 번째 정수를 저장할 변수
-    int y;      // 두 번째 정수를 저장할 변수
+    {{int}} x;      // 첫 번째 정수를 저장할 변수
+    {{int}} y;      // 두 번째 정수를 저장할 변수
     int sum;    // 두 정수의 합을 저장하는 변수
 
-    x = 100;
-    y = 200;
+    x = {{100}};
+    y = {{200}};
     {{sum = x + y;}}
     printf("두수의 합: {{%d}}", sum);
-    return 0;
+    {{return 0;}}
 }
 
 @@ four | 3 | Lab: 사칙 연산
@@ -955,17 +955,17 @@ int main(void)
     int y;
     int sum, diff, mul, div;
 
-    x = 20;
-    y = 10;
+    x = {{20}};
+    y = {{10}};
 
-    sum = x + y;
+    sum = {{x + y}};
     diff = {{x - y}};
     mul = {{x * y}};
     div = {{x / y}};
 
-    printf("두수의 합: %d\n", sum);
-    printf("두수의 차: %d\n", diff);
-    printf("두수의 곱: %d\n", mul);
+    printf("두수의 합: {{%d}}\n", sum);
+    printf("두수의 차: {{%d}}\n", diff);
+    printf("두수의 곱: {{%d}}\n", mul);
     printf("두수의 몫: %d\n", {{div}});
     return 0;
 }
@@ -980,16 +980,16 @@ scanf()로 정수 하나를 입력받아 출력한다. scanf()에는 변수의 �
 입력된 정수 = 25
 ## code
 #define {{_CRT_SECURE_NO_WARNINGS}}
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x;  // 정수를 저장할 변수
+    {{int}} x;  // 정수를 저장할 변수
 
-    printf("정수를 입력하시오: ");
+    {{printf}}("정수를 입력하시오: ");
     scanf("{{%d}}", {{&x}});
-    printf("입력된 정수 = %d \n", x);
-    return 0;
+    printf("입력된 정수 = {{%d}} \n", x);
+    {{return 0;}}
 }
 
 @@ add2 | 3 | 덧셈 프로그램 #2 (입력)
@@ -1004,22 +1004,22 @@ int main(void)
 두수의 합: 30
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
     int x;      // 첫번째 정수를 저장할 변수
-    int y;      // 두번째 정수를 저장할 변수
+    {{int}} y;      // 두번째 정수를 저장할 변수
     int sum;    // 2개의 정수의 합을 저장할 변수
 
     printf("첫번째 숫자를 입력하시오:");
     {{scanf("%d", &x);}}
-    printf("두번째 숫자를 입력하시오:");
+    {{printf}}("두번째 숫자를 입력하시오:");
     {{scanf("%d", &y);}}
 
-    sum = x + y;
-    printf("두수의 합: %d", sum);
-    return 0;
+    sum = {{x + y}};
+    printf("두수의 합: {{%d}}", sum);
+    {{return 0;}}
 }
 
 @@ salary | 3 | 연봉 계산기
@@ -1033,18 +1033,18 @@ int main(void)
 ## code
 #define _CRT_SECURE_NO_WARNINGS
 /* 월수령액을 계산하는 프로그램 */
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int ysalary;    // 연봉
-    int msalary;    // 월수령액
+    {{int}} ysalary;    // 연봉
+    {{int}} msalary;    // 월수령액
 
-    printf("연봉을 입력하시오(단위: 만원): ");
+    {{printf}}("연봉을 입력하시오(단위: 만원): ");
     scanf("%d", {{&ysalary}});
     msalary = {{ysalary / 12}};
-    printf("월수령액(단위: 만원): %d\n", msalary);
-    return 0;
+    printf("월수령액(단위: 만원): {{%d}}\n", msalary);
+    {{return 0;}}
 }
 
 @@ circle | 3 | 원의 면적
@@ -1057,18 +1057,18 @@ int main(void)
 원의 면적 : 314.000000
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
     {{float}} radius;   // 원의 반지름
-    float area;     // 면적
+    {{float}} area;     // 면적
 
-    printf("반지름을 입력하시오 : ");
+    {{printf}}("반지름을 입력하시오 : ");
     scanf("{{%f}}", &radius);
     area = {{3.14 * radius * radius}};
-    printf("원의 면적 : %f\n", area);
-    return 0;
+    printf("원의 면적 : {{%f}}\n", area);
+    {{return 0;}}
 }
 
 @@ exchange | 3 | 환율 계산
@@ -1084,22 +1084,22 @@ int main(void)
 ## code
 /* 환율을 계산하는 프로그램 */
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    double rate;    // 원/달러 환율
-    double usd;     // 달러화
+    {{double}} rate;    // 원/달러 환율
+    {{double}} usd;     // 달러화
     int krw;        // 원화는 정수형 변수로 선언
 
     printf("환율을 입력하시오: ");
     scanf("{{%lf}}", &rate);
-    printf("원화 금액을 입력하시오: ");
-    scanf("%d", &krw);
+    {{printf}}("원화 금액을 입력하시오: ");
+    scanf("{{%d}}", &krw);
 
     usd = {{krw / rate}};
     printf("원화 %d원은 {{%lf}}달러입니다.\n", krw, usd);
-    return 0;
+    {{return 0;}}
 }
 
 @@ rect | 3 | Mini Project: 사각형의 둘레와 면적
@@ -1110,22 +1110,22 @@ w=10.0, h=5.0인 사각형의 넓이와 둘레를 double형으로 계산한다.
 사각형의 둘레: 30.000000
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
     double w;
     double h;
-    double area;
+    {{double}} area;
     double perimeter;
 
-    w = 10.0;
-    h = 5.0;
+    w = {{10.0}};
+    h = {{5.0}};
     area = {{w * h}};
     perimeter = {{2 * (w + h)}};
 
-    printf("사각형의 넓이: %lf\n", area);
-    printf("사각형의 둘레: %lf\n", perimeter);
+    printf("사각형의 넓이: {{%lf}}\n", area);
+    printf("사각형의 둘레: {{%lf}}\n", perimeter);
     return 0;
 }
 
@@ -1143,18 +1143,18 @@ long형의 크기: 4
 float형의 크기: 4
 double형의 크기: 8
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x;
+    {{int}} x;
 
     printf("변수x의  크기: %d\n", {{sizeof(x)}});
-    printf("char형의 크기: %d\n", sizeof(char));
-    printf("int형의  크기: %d\n", sizeof(int));
+    printf("char형의 크기: {{%d}}\n", sizeof(char));
+    printf("int형의  크기: {{%d}}\n", sizeof(int));
     printf("short형의 크기: %d\n", sizeof({{short}}));
-    printf("long형의 크기: %d\n", sizeof(long));
-    printf("float형의 크기: %d\n", sizeof(float));
+    printf("long형의 크기: {{%d}}\n", sizeof(long));
+    printf("float형의 크기: {{%d}}\n", sizeof(float));
     printf("double형의 크기: %d\n", {{sizeof}}(double));
     return 0;
 }
@@ -1166,7 +1166,7 @@ short와 unsigned short의 최댓값에 1을 더해 오버플로우를 확인한
 s_money = -32768
 u_money = 0
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 #include <{{limits.h}}>
 
 int main(void)
@@ -1174,12 +1174,12 @@ int main(void)
     short s_money = {{SHRT_MAX}};               // 최대값으로 초기화 (32767)
     {{unsigned}} short u_money = USHRT_MAX;     // 최대값으로 초기화 (65535)
 
-    s_money = s_money + 1;
-    printf("s_money = %d\n", s_money);
+    s_money = {{s_money + 1}};
+    printf("s_money = {{%d}}\n", s_money);
 
-    u_money = u_money + 1;
-    printf("u_money = %d\n", u_money);
-    return 0;
+    u_money = {{u_money + 1}};
+    printf("u_money = {{%d}}\n", u_money);
+    {{return 0;}}
 }
 
 @@ intconst | 4 | 정수 상수 (8진수, 16진수)
@@ -1191,18 +1191,18 @@ y = 8
 z = 16
 ## code
 /* 정수 상수 프로그램 */
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x = 10;     // 10진수
+    int x = {{10}};     // 10진수
     int y = {{010}};    // 8진수, 값은 8
     int z = {{0x10}};   // 16진수, 값은 16
 
-    printf("x = %d\n", x);
-    printf("y = %d\n", y);
-    printf("z = %d\n", z);
-    return 0;
+    printf("x = {{%d}}\n", x);
+    printf("y = {{%d}}\n", y);
+    printf("z = {{%d}}\n", z);
+    {{return 0;}}
 }
 
 @@ symconst | 4 | 기호 상수 (#define, const)
@@ -1215,20 +1215,20 @@ int main(void)
 연봉은 2400입니다.
 세금은 480.000000입니다.
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 {{#define}} TAX_RATE 0.2
 
 int main(void)
 {
     {{const}} int MONTHS = 12;
-    int m_salary, y_salary;     // 변수 선언
+    {{int}} m_salary, y_salary;     // 변수 선언
 
-    printf("월급을 입력하시요: ");
-    scanf("%d", &m_salary);
+    {{printf}}("월급을 입력하시요: ");
+    scanf("%d", {{&m_salary}});
     y_salary = {{MONTHS * m_salary}};
-    printf("연봉은 %d입니다.\n", y_salary);
+    printf("연봉은 {{%d}}입니다.\n", y_salary);
     printf("세금은 %f입니다.\n", {{y_salary * TAX_RATE}});
-    return 0;
+    {{return 0;}}
 }
 
 @@ charvar | 4 | 문자 변수와 문자 상수
@@ -1239,7 +1239,7 @@ code1 = A
 code2 = A
 ## code
 /* 문자 변수와 문자 상수 */
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
@@ -1247,8 +1247,8 @@ int main(void)
     char code2 = {{65}};    // 아스키 코드로 초기화
 
     printf("code1 = {{%c}}\n", code1);
-    printf("code2 = %c\n", code2);
-    return 0;
+    printf("code2 = {{%c}}\n", code2);
+    {{return 0;}}
 }
 
 @@ escape | 4 | 이스케이프 시퀀스 (아이디/패스워드)
@@ -1263,19 +1263,19 @@ id: 1234
 pass: 5678
 입력된 아이디는 "1234"이고 패스워드는 "5678"입니다.
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int id, pass;
+    {{int}} id, pass;
 
     printf("아이디와 패스워드를 4개의 숫자로 입력하세요:\n");
     printf("id: ____{{\b\b\b\b}}");
-    scanf("%d", &id);
-    printf("pass: ____\b\b\b\b");
-    scanf("%d", &pass);
+    scanf("%d", {{&id}});
+    {{printf}}("pass: ____\b\b\b\b");
+    scanf("{{%d}}", &pass);
     printf("{{\a}}입력된 아이디는 {{\"%d\"}}이고 패스워드는 \"%d\"입니다.", id, pass);
-    return 0;
+    {{return 0;}}
 }
 
 @@ charint | 4 | 정수형으로서의 char형
@@ -1285,15 +1285,15 @@ char형도 8비트 정수이므로 산술 연산이 가능하다.
 65 66 67
 A B C
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    char code = 'A';
+    {{char}} code = 'A';
 
     printf("{{%d}} %d %d \n", code, code + 1, code + 2);
     printf("{{%c}} %c %c \n", code, code + 1, {{code + 2}});
-    return 0;
+    {{return 0;}}
 }
 
 @@ sunlight | 4 | Mini Project: 태양빛 도달 시간
@@ -1304,20 +1304,20 @@ int main(void)
 태양과 지구와의 거리 149600000.000000km
 도달 시간은 8.311111분
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
     {{double}} light_speed = 300000;    // 빛의 속도
-    double distance = 149600000;        // 태양과 지구 사이 거리
-    double time;                        // 시간
+    double distance = {{149600000}};        // 태양과 지구 사이 거리
+    {{double}} time;                        // 시간
 
     time = {{distance / light_speed}};  // 거리를 빛의 속도로 나눈다.
     time = {{time / 60.0}};             // 초를 분으로 변환한다.
 
-    printf("빛의 속도는 %fkm/s \n", light_speed);
-    printf("태양과 지구와의 거리 %fkm \n", distance);
-    printf("도달 시간은 %f분\n", time);
+    printf("빛의 속도는 {{%f}}km/s \n", light_speed);
+    printf("태양과 지구와의 거리 {{%f}}km \n", distance);
+    printf("도달 시간은 {{%f}}분\n", time);
     return 0;
 }
 
@@ -1340,18 +1340,18 @@ int main(void)
 
 int main() {
     float order1, order2;
-    float total1, total2;
+    {{float}} total1, total2;
 
     printf("첫 번째 사람의 주문 금액을 입력하세요: ");
-    scanf_s("%f", &order1);
-    printf("두 번째 사람의 주문 금액을 입력하세요: ");
-    scanf_s("%f", &order2);
+    scanf_s("%f", {{&order1}});
+    {{printf}}("두 번째 사람의 주문 금액을 입력하세요: ");
+    scanf_s("{{%f}}", &order2);
 
     total1 = {{round}}(order1 * {{1.10}});
-    total2 = round(order2 * 1.10);
+    total2 = {{round(order2 * 1.10)}};
 
     printf("첫 번째 사람의 최종 지불 금액: {{%.2f}}\n", total1);
-    printf("두 번째 사람의 최종 지불 금액: %.2f\n", total2);
+    printf("두 번째 사람의 최종 지불 금액: {{%.2f}}\n", total2);
     return 0;
 }
 
@@ -1364,20 +1364,20 @@ int main() {
 화성의 대기 압력을 입력하세요 (Pascal 단위): 600
 화성의 대기 압력은 지구의 약 0.59% 입니다.
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main() {
-    float marsPressure;
-    float earthPressure = 101325.0;   // 지구의 평균 대기 압력 (Pascal)
+    {{float}} marsPressure;
+    float earthPressure = {{101325.0}};   // 지구의 평균 대기 압력 (Pascal)
     float ratio;
 
-    printf("화성의 대기 압력을 입력하세요 (Pascal 단위): ");
-    scanf_s("%f", &marsPressure);
+    {{printf}}("화성의 대기 압력을 입력하세요 (Pascal 단위): ");
+    scanf_s("{{%f}}", &marsPressure);
 
     ratio = {{(marsPressure / earthPressure) * 100}};
 
     printf("화성의 대기 압력은 지구의 약 %.2f{{%%}} 입니다.\n", ratio);
-    return 0;
+    {{return 0;}}
 }
 
 @@ fuel | 4 | 도전문제3: 연료 계산기
@@ -1392,22 +1392,22 @@ int main() {
 주어진 연료로 주행할 수 있는 거리는 약 450.00 km입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main() {
-    double fuelEfficiency;  // 연비 (km/l)
-    double currentFuel;     // 현재 연료량 (l)
+    {{double}} fuelEfficiency;  // 연비 (km/l)
+    {{double}} currentFuel;     // 현재 연료량 (l)
     double distance;        // 주행 가능 거리 (km)
 
     printf("자동차의 연비 (1리터당 주행 가능한 거리)를 입력하세요 (km/l): ");
     scanf_s("{{%lf}}", &fuelEfficiency);
-    printf("현재 연료 탱크의 연료량을 입력하세요 (l): ");
-    scanf_s("%lf", &currentFuel);
+    {{printf}}("현재 연료 탱크의 연료량을 입력하세요 (l): ");
+    scanf_s("{{%lf}}", &currentFuel);
 
     distance = {{fuelEfficiency * currentFuel}};
 
     printf("주어진 연료로 주행할 수 있는 거리는 약 {{%.2lf}} km입니다.\n", distance);
-    return 0;
+    {{return 0;}}
 }
 
 @@ intops | 5 | 정수 사칙 연산과 나머지
@@ -1432,12 +1432,12 @@ int main(void)
     printf("두개의 정수를 입력하시오: ");
     scanf("{{%d %d}}", &x, &y);
 
-    result = x + y;
-    printf("%d + %d = %d\n", x, y, result);
-    result = x - y;     // 뺄셈
-    printf("%d - %d = %d\n", x, y, result);
-    result = x * y;     // 곱셈
-    printf("%d * %d = %d\n", x, y, result);
+    result = {{x + y}};
+    printf("{{%d}} + %d = %d\n", x, y, result);
+    result = {{x - y}};     // 뺄셈
+    printf("{{%d}} - %d = %d\n", x, y, result);
+    result = {{x * y}};     // 곱셈
+    printf("{{%d}} * %d = %d\n", x, y, result);
     result = x / y;     // 나눗셈
     printf("%d / %d = %d\n", x, y, result);
     result = {{x % y}};     // 나머지
@@ -1455,18 +1455,18 @@ int main(void)
 1000초는 16분 40초입니다.
 ## code
 // 나머지 연산자 프로그램
-#include <stdio.h>
-#define SEC_PER_MINUTE 60   // 1분은 60초
+#include <{{stdio.h}}>
+#define SEC_PER_MINUTE {{60}}   // 1분은 60초
 
 int main(void)
 {
-    int input, minute, second;
+    {{int}} input, minute, second;
 
-    printf("초를 입력하시요: ");
-    scanf("%d", &input);
+    {{printf}}("초를 입력하시요: ");
+    scanf("%d", {{&input}});
     minute = {{input / SEC_PER_MINUTE}};    // 몇 분
     second = {{input % SEC_PER_MINUTE}};    // 몇 초
-    printf("%d초는 %d분 %d초입니다. \n", input, minute, second);
+    printf("%d초는 {{%d}}분 %d초입니다. \n", input, minute, second);
     return 0;
 }
 
@@ -1482,19 +1482,19 @@ y=10
 y++의 값=10
 y=11
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x = 10, y = 10;
+    {{int}} x = 10, y = 10;
 
-    printf("x=%d\n", x);
+    printf("x={{%d}}\n", x);
     printf("++x의 값=%d\n", {{++x}});
-    printf("x=%d\n\n", x);
+    printf("x={{%d}}\n\n", x);
 
-    printf("y=%d\n", y);
+    printf("y={{%d}}\n", y);
     printf("y++의 값=%d\n", {{y++}});
-    printf("y=%d\n", y);
+    printf("y={{%d}}\n", y);
     return 0;
 }
 
@@ -1520,22 +1520,22 @@ int main(void)
     int price, c5000, c1000, c500, c100;
 
     printf("물건 값을 입력하시오: ");
-    scanf("%d", &price);
+    scanf("{{%d}}", &price);
     printf("사용자가 낸 돈: ");
-    scanf("%d", &user);
+    scanf("%d", {{&user}});
 
     change = {{user - price}};
     c5000 = {{change / 5000}};
     change = {{change % 5000}};
-    c1000 = change / 1000;
-    change = change % 1000;
-    c500 = change / 500;
+    c1000 = {{change / 1000}};
+    change = {{change % 1000}};
+    c500 = {{change / 500}};
     change = change % 500;
     c100 = {{change / 100}};
     change = change % 100;
 
     printf("오천원권: %d장\n", c5000);
-    printf("천원권: %d장\n", c1000);
+    printf("천원권: {{%d}}장\n", c1000);
     printf("오백원 동전: %d개\n", c500);
     printf("백원 동전: %d개\n", c100);
     return 0;
@@ -1551,18 +1551,18 @@ int main(void)
 수식 y=x=3의 값은 3
 ## code
 /* 대입 연산자 프로그램 */
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x, y;
+    {{int}} x, y;
 
-    x = 1;
-    printf("수식 x+1의 값은 %d\n", x + 1);
+    x = {{1}};
+    printf("수식 x+1의 값은 {{%d}}\n", x + 1);
     printf("수식 y=x+1의 값은 %d\n", {{y = x + 1}});
-    printf("수식 y=10+(x=2+7)의 값은 %d\n", y = 10 + (x = 2 + 7));
+    printf("수식 y=10+(x=2+7)의 값은 {{%d}}\n", y = 10 + (x = 2 + 7));
     printf("수식 y=x=3의 값은 %d\n", {{y = x = 3}});
-    return 0;
+    {{return 0;}}
 }
 
 @@ compound | 5 | 복합 대입 연산자
@@ -1572,18 +1572,18 @@ x += 1 은 x = x + 1, z %= 10 + 20 은 z = z % (10 + 20).
 x = 11  y = 20  z = 3
 ## code
 // 복합 대입 연산자 프로그램
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x = 10, y = 10, z = 33;
+    {{int}} x = 10, y = 10, z = 33;
 
     x {{+=}} 1;
     y {{*=}} 2;
     z {{%=}} 10 + 20;
 
-    printf("x = %d  y = %d  z = %d \n", x, y, z);
-    return 0;
+    printf("x = %d  y = {{%d}}  z = %d \n", x, y, z);
+    {{return 0;}}
 }
 
 @@ relop | 5 | 관계 연산자
@@ -1604,17 +1604,17 @@ x <= y의 결과값: 1
 
 int main(void)
 {
-    int x, y;
+    {{int}} x, y;
 
-    printf("두개의 정수를 입력하시오: ");
-    scanf("%d%d", &x, &y);
+    {{printf}}("두개의 정수를 입력하시오: ");
+    scanf("%d%d", &x, {{&y}});
 
     printf("x == y의 결과값: %d\n", {{x == y}});
     printf("x != y의 결과값: %d\n", {{x != y}});
-    printf("x > y의 결과값: %d\n", x > y);
-    printf("x < y의 결과값: %d\n", x < y);
+    printf("x > y의 결과값: {{%d}}\n", x > y);
+    printf("x < y의 결과값: {{%d}}\n", x < y);
     printf("x >= y의 결과값: %d\n", {{x >= y}});
-    printf("x <= y의 결과값: %d\n", x <= y);
+    printf("x <= y의 결과값: {{%d}}\n", x <= y);
     return 0;
 }
 
@@ -1629,19 +1629,19 @@ int main(void)
 1 || 0의 결과값: 1
 !1의 결과값: 0
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x, y;
+    {{int}} x, y;
 
-    printf("두개의 정수를 입력하시오: ");
-    scanf("%d%d", &x, &y);
+    {{printf}}("두개의 정수를 입력하시오: ");
+    scanf("%d{{%d}}", &x, &y);
 
     printf("%d && %d의 결과값: %d\n", x, y, {{x && y}});
     printf("%d || %d의 결과값: %d\n", x, y, {{x || y}});
     printf("!%d의 결과값: %d\n", x, {{!x}});
-    return 0;
+    {{return 0;}}
 }
 
 @@ leap | 5 | Lab: 윤년
@@ -1653,19 +1653,19 @@ int main(void)
 연도를 입력하시오: 2012
 result=1
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int year, result;
+    {{int}} year, result;
 
-    printf("연도를 입력하시오: ");
-    scanf("%d", &year);
+    {{printf}}("연도를 입력하시오: ");
+    scanf("%d", {{&year}});
 
     result = {{((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)}};
 
-    printf("result=%d \n", result);
-    return 0;
+    printf("result={{%d}} \n", result);
+    {{return 0;}}
 }
 
 @@ maxmin | 5 | 조건 연산자: 큰수, 작은수
@@ -1680,20 +1680,20 @@ int main(void)
 큰수=3
 작은수=2
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x, y;
+    {{int}} x, y;
 
     printf("첫번째 수=");
-    scanf("%d", &x);
-    printf("두번째 수=");
-    scanf("%d", &y);
+    scanf("%d", {{&x}});
+    {{printf}}("두번째 수=");
+    scanf("{{%d}}", &y);
 
     printf("큰수=%d \n", {{(x > y) ? x : y}});
     printf("작은수=%d \n", {{(x < y) ? x : y}});
-    return 0;
+    {{return 0;}}
 }
 
 @@ pass | 5 | LAB 연습: pass / no pass
@@ -1705,17 +1705,17 @@ C언어 점수를 입력받아 70 이상이면 "pass", 그렇지 않으면 "no p
 C언어 점수를 입력하시오: 85
 pass
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int score;
+    {{int}} score;
 
-    printf("C언어 점수를 입력하시오: ");
-    scanf("%d", &score);
+    {{printf}}("C언어 점수를 입력하시오: ");
+    scanf("{{%d}}", &score);
 
     {{(score >= 70)}} ? printf("pass\n") : printf("no pass\n");
-    return 0;
+    {{return 0;}}
 }
 
 @@ xor | 5 | Lab: XOR를 이용한 암호화
@@ -1726,21 +1726,21 @@ x = x ^ key 로 암호화하고, 같은 연산으로 복호화한다.
 원래의 데이터=a
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    char data = 'a';
+    {{char}} data = 'a';
     char key = {{0xff}};
-    char encrpted_data;
+    {{char}} encrpted_data;
 
     encrpted_data = {{data ^ key}};
-    printf("암호화된 문자=%c \n", encrpted_data);
+    printf("암호화된 문자={{%c}} \n", encrpted_data);
 
     char orig_data;
     orig_data = {{encrpted_data ^ key}};
-    printf("원래의 데이터=%c\n", orig_data);
-    return 0;
+    printf("원래의 데이터={{%c}}\n", orig_data);
+    {{return 0;}}
 }
 
 @@ updown | 5 | 올림 변환과 내림 변환
@@ -1749,19 +1749,19 @@ int main(void)
 ## out
 c = 65, i = 11, f = 30.000000
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
     char c;
-    int i;
+    {{int}} i;
     float f;
 
-    c = 65;             // 내림 변환
-    i = 1.23456 + 10;   // 내림 변환
-    f = 10 + 20;        // 올림 변환
+    c = {{65}};             // 내림 변환
+    i = {{1.23456 + 10}};   // 내림 변환
+    f = {{10 + 20}};        // 올림 변환
 
-    printf("c = %d, i = %d, f = %f \n", c, i, f);
+    printf("c = %d, i = {{%d}}, f = %f \n", c, i, f);
     return 0;
 }
 
@@ -1784,19 +1784,19 @@ int main(void)
     int i;
     double f;
 
-    f = 5 / 4;
-    printf("%f\n", f);
+    f = {{5 / 4}};
+    printf("{{%f}}\n", f);
 
     f = {{(double)}}5 / 4;
-    printf("%f\n", f);
+    printf("{{%f}}\n", f);
 
     f = {{5.0}} / 4;
     printf("%f\n", f);
 
-    f = (double)5 / (double)4;
-    printf("%f\n", f);
+    f = {{(double)5 / (double)4}};
+    printf("{{%f}}\n", f);
 
-    i = 1.3 + 1.8;
+    i = {{1.3 + 1.8}};
     printf("%d\n", i);
 
     i = {{(int)1.3 + (int)1.8}};
@@ -1820,16 +1820,16 @@ int main(void)
     int x = 0, y = 0;
     int result;
 
-    result = 2 > 3 || 6 > 7;
-    printf("%d\n", result);
+    result = {{2 > 3 || 6 > 7}};
+    printf("{{%d}}\n", result);
 
-    result = 2 || 3 && 3 > 2;
-    printf("%d\n", result);
+    result = {{2 || 3 && 3 > 2}};
+    printf("{{%d}}\n", result);
 
     result = x = y = 1;
-    printf("%d\n", result);
+    printf("{{%d}}\n", result);
 
-    result = - ++x + y--;
+    result = {{- ++x + y--}};
     printf("%d\n", result);
     return 0;
 }
@@ -1843,18 +1843,18 @@ int main(void)
 화씨온도를 입력하시오90
 섭씨온도는 32.222222입니다
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    double f_temp;
-    double c_temp;
+    {{double}} f_temp;
+    {{double}} c_temp;
 
-    printf("화씨온도를 입력하시오");
+    {{printf}}("화씨온도를 입력하시오");
     scanf("{{%lf}}", &f_temp);
     c_temp = {{5.0 / 9.0}} * (f_temp - 32);
-    printf("섭씨온도는 %f입니다", c_temp);
-    return 0;
+    printf("섭씨온도는 {{%f}}입니다", c_temp);
+    {{return 0;}}
 }
 
 @@ camp | 5 | 도전문제2: 캠프 최종 점수
@@ -1876,20 +1876,20 @@ int main() {
     double test1, test2, average, finalScore;
 
     printf("Enter score for Test1: ");
-    scanf("%lf", &test1);
+    scanf("{{%lf}}", &test1);
     printf("Enter score for Test2: ");
-    scanf("%lf", &test2);
+    scanf("%lf", {{&test2}});
 
     average = {{(test1 + test2) / 2}};
 
     if ({{test1 - test2 > 10 || test2 - test1 > 10}}) {
-        finalScore = average - 5;
+        finalScore = {{average - 5}};
     } else {
-        finalScore = average;
+        finalScore = {{average}};
     }
 
-    printf("Test1 Score: %.1f\n", test1);
-    printf("Test2 Score: %.1f\n", test2);
+    printf("Test1 Score: {{%.1f}}\n", test1);
+    printf("Test2 Score: {{%.1f}}\n", test2);
     printf("Final Score: {{%.1f}}\n", finalScore);
     return 0;
 }
@@ -1909,18 +1909,18 @@ int main(void)
     int a, b, c, x, y;
     int m, total = 0;
 
-    scanf("%d %d %d %d %d", &a, &b, &c, &x, &y);
+    scanf("%d %d %d {{%d}} %d", &a, &b, &c, &x, &y);
 
     if ({{2 * c < a + b}}) {
-        m = (x < y) ? x : y;    // 둘 중 적은 수만큼 반반으로
-        total = m * 2 * c;
-        x -= m;
-        y -= m;
+        m = {{(x < y) ? x : y}};    // 둘 중 적은 수만큼 반반으로
+        total = {{m * 2 * c}};
+        x -= {{m}};
+        y -= {{m}};
     }
     total += {{(a < 2 * c) ? a : 2 * c}} * x;
     total += (b < 2 * c) ? b * y : 2 * c * y;
 
-    printf("%d\n", total);
+    printf("{{%d}}\n", total);
     return 0;
 }
 
@@ -1931,15 +1931,15 @@ int main(void)
 K -> 75
 L -> 76
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    char ch = 'K';
+    {{char}} ch = 'K';
 
-    printf("%c -> %d\n", ch, ch);
+    printf("%c -> {{%d}}\n", ch, ch);
     printf("%c -> %d\n", {{ch + 1}}, ch + 1);
-    return 0;
+    {{return 0;}}
 }
 
 @@ v_circle2 | 3 | 원의 둘레와 면적 (double) | 변형
@@ -1953,18 +1953,18 @@ int main(void)
 원의 면적: 78.500000
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    double radius, round, area;
+    {{double}} radius, round, area;
 
-    printf("반지름을 입력하시오: ");
+    {{printf}}("반지름을 입력하시오: ");
     scanf("{{%lf}}", &radius);
     round = {{2 * 3.14 * radius}};
-    area = 3.14 * radius * radius;
-    printf("원의 둘레: %lf\n", round);
-    printf("원의 면적: %lf\n", area);
+    area = {{3.14 * radius * radius}};
+    printf("원의 둘레: {{%lf}}\n", round);
+    printf("원의 면적: {{%lf}}\n", area);
     return 0;
 }
 
@@ -1980,18 +1980,18 @@ int main(void)
 주급은 200600원입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int wage, hours, pay;
+    {{int}} wage, hours, pay;
 
     printf("시급을 입력하시오: ");
-    scanf("%d", &wage);
-    printf("근무 시간을 입력하시오: ");
-    scanf("%d", &hours);
+    scanf("%d", {{&wage}});
+    {{printf}}("근무 시간을 입력하시오: ");
+    scanf("{{%d}}", &hours);
     pay = {{wage * hours}};
-    printf("주급은 %d원입니다.\n", pay);
+    printf("주급은 {{%d}}원입니다.\n", pay);
     return 0;
 }
 
@@ -2007,19 +2007,19 @@ int main(void)
 25.500000달러는 34425.000000원입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    double rate, usd, krw;
+    {{double}} rate, usd, krw;
 
     printf("환율을 입력하시오: ");
-    scanf("%lf", &rate);
-    printf("달러 금액을 입력하시오: ");
+    scanf("%lf", {{&rate}});
+    {{printf}}("달러 금액을 입력하시오: ");
     scanf("%lf", {{&usd}});
     krw = {{usd * rate}};
-    printf("%lf달러는 %lf원입니다.\n", usd, krw);
-    return 0;
+    printf("{{%lf}}달러는 %lf원입니다.\n", usd, krw);
+    {{return 0;}}
 }
 
 @@ v_unsigned | 4 | unsigned 언더플로우 | 변형
@@ -2028,15 +2028,15 @@ unsigned int 0에서 1을 빼면 가장 큰 값으로 돌아간다. unsigned는 
 ## out
 u = 4294967295
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
     {{unsigned int}} u = 0;
 
-    u = u - 1;
+    u = {{u - 1}};
     printf("u = {{%u}}\n", u);
-    return 0;
+    {{return 0;}}
 }
 
 @@ v_pi | 4 | 기호 상수로 원의 면적 | 변형
@@ -2049,17 +2049,17 @@ int main(void)
 면적: 12.566368
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 {{#define PI 3.141592}}
 
 int main(void)
 {
-    double r;
+    {{double}} r;
 
-    printf("반지름: ");
-    scanf("%lf", &r);
+    {{printf}}("반지름: ");
+    scanf("{{%lf}}", &r);
     printf("면적: %lf\n", {{PI * r * r}});
-    return 0;
+    {{return 0;}}
 }
 
 @@ v_moon | 4 | 달빛 도달 시간 | 변형
@@ -2068,17 +2068,17 @@ int main(void)
 ## out
 도달 시간은 1.281333초
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    double light_speed = 300000;
-    double distance = 384400;
-    double time;
+    double light_speed = {{300000}};
+    double distance = {{384400}};
+    {{double}} time;
 
     time = {{distance / light_speed}};
-    printf("도달 시간은 %f초\n", time);
-    return 0;
+    printf("도달 시간은 {{%f}}초\n", time);
+    {{return 0;}}
 }
 
 @@ v_hms | 5 | 초 → 시간, 분, 초 | 변형
@@ -2091,19 +2091,19 @@ int main(void)
 3725초는 1시간 2분 5초입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int input, hour, minute, second;
+    {{int}} input, hour, minute, second;
 
-    printf("초를 입력하시오: ");
-    scanf("%d", &input);
+    {{printf}}("초를 입력하시오: ");
+    scanf("%d", {{&input}});
     hour = {{input / 3600}};
     minute = {{input % 3600 / 60}};
     second = {{input % 60}};
-    printf("%d초는 %d시간 %d분 %d초입니다.\n", input, hour, minute, second);
-    return 0;
+    printf("%d초는 {{%d}}시간 %d분 %d초입니다.\n", input, hour, minute, second);
+    {{return 0;}}
 }
 
 @@ v_change2 | 5 | 거스름돈 (만원·오십원 추가) | 변형
@@ -2127,15 +2127,15 @@ int main(void)
     int price, money;
 
     printf("물건 값을 입력하시오: ");
-    scanf("%d", &price);
-    money = 50000 - price;
+    scanf("%d", {{&price}});
+    money = {{50000 - price}};
 
-    printf("만원권: %d장\n", money / 10000);
+    printf("만원권: {{%d}}장\n", money / 10000);
     money {{%=}} 10000;
-    printf("천원권: %d장\n", money / 1000);
-    money %= 1000;
+    printf("천원권: {{%d}}장\n", money / 1000);
+    money %= {{1000}};
     printf("오백원: %d개\n", {{money / 500}});
-    money %= 500;
+    money %= {{500}};
     printf("백원: %d개\n", money / 100);
     money %= 100;
     printf("오십원: %d개\n", money / 50);
@@ -2152,17 +2152,17 @@ int main(void)
 화씨온도는 97.700000입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    double c_temp, f_temp;
+    {{double}} c_temp, f_temp;
 
-    printf("섭씨온도를 입력하시오: ");
-    scanf("%lf", &c_temp);
+    {{printf}}("섭씨온도를 입력하시오: ");
+    scanf("%lf", {{&c_temp}});
     f_temp = {{9.0 / 5.0}} * c_temp + 32;
-    printf("화씨온도는 %f입니다.\n", f_temp);
-    return 0;
+    printf("화씨온도는 {{%f}}입니다.\n", f_temp);
+    {{return 0;}}
 }
 
 @@ v_evenodd_cond | 5 | 조건 연산자로 짝수/홀수 | 변형
@@ -2175,16 +2175,16 @@ int main(void)
 홀수
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int n;
+    {{int}} n;
 
-    printf("정수를 입력하시오: ");
-    scanf("%d", &n);
+    {{printf}}("정수를 입력하시오: ");
+    scanf("{{%d}}", &n);
     {{(n % 2 == 0)}} ? printf("짝수\n") : printf("홀수\n");
-    return 0;
+    {{return 0;}}
 }
 
 @@ v_mul35 | 5 | 3과 5의 공배수 판별 | 변형
@@ -2197,17 +2197,17 @@ int main(void)
 result=1
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int n, result;
+    {{int}} n, result;
 
-    printf("정수를 입력하시오: ");
-    scanf("%d", &n);
+    {{printf}}("정수를 입력하시오: ");
+    scanf("%d", {{&n}});
     result = {{(n % 3 == 0) && (n % 5 == 0)}};
-    printf("result=%d\n", result);
-    return 0;
+    printf("result={{%d}}\n", result);
+    {{return 0;}}
 }
 
 @@ positive | 6 | if 문: 양수 판별
@@ -2220,20 +2220,20 @@ int main(void)
 양수입니다.입력된 값은 25입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int number;
+    {{int}} number;
 
     printf("정수를 입력하시오:");
-    scanf("%d", &number);
+    scanf("%d", {{&number}});
 
     {{if}}( {{number > 0}} )
-        printf("양수입니다.");
+        {{printf}}("양수입니다.");
 
-    printf("입력된 값은 %d입니다.", number);
-    return 0;
+    printf("입력된 값은 {{%d}}입니다.", number);
+    {{return 0;}}
 }
 
 @@ absval | 6 | if 문: 절대값
@@ -2247,20 +2247,20 @@ int main(void)
 ## code
 // if 문을 사용하여 절대값을 구하는 프로그램
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int number;
+    {{int}} number;
 
-    printf("정수를 입력하시오:");
-    scanf("%d", &number);
+    {{printf}}("정수를 입력하시오:");
+    scanf("%d", {{&number}});
 
     if( {{number < 0}} )
         number = {{-number}};
 
-    printf("절대값은 %d 입니다.\n", number);
-    return 0;
+    printf("절대값은 {{%d}} 입니다.\n", number);
+    {{return 0;}}
 }
 
 @@ evenodd | 6 | if-else: 짝수와 홀수
@@ -2274,21 +2274,21 @@ int main(void)
 ## code
 // if-else 문을 이용하여 홀수와 짝수를 구분한다.
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int number;
+    {{int}} number;
 
-    printf("정수를 입력하시오:");
-    scanf("%d", &number);
+    {{printf}}("정수를 입력하시오:");
+    scanf("{{%d}}", &number);
 
     if( {{number % 2 == 0}} )
-        printf("입력된 정수는 짝수입니다.\n");
+        {{printf}}("입력된 정수는 짝수입니다.\n");
     {{else}}
         printf("입력된 정수는 홀수입니다.\n");
 
-    return 0;
+    {{return 0;}}
 }
 
 @@ divzero | 6 | if-else: 0으로 나누기 검사
@@ -2307,12 +2307,12 @@ int main(void)
 
 int main(void)
 {
-    int n1, n2, n3;
+    {{int}} n1, n2, n3;
 
-    printf("분자를 입력하시오: ");
-    scanf("%d", &n1);
+    {{printf}}("분자를 입력하시오: ");
+    scanf("%d", {{&n1}});
     printf("분모를 입력하시오: ");
-    scanf("%d", &n2);
+    scanf("{{%d}}", &n2);
 
     if( {{n2 == 0}} )     // 분모가 0인지 검사
     {
@@ -2320,8 +2320,8 @@ int main(void)
     }
     else
     {
-        n3 = n1 / n2;   // 나눗셈 실행
-        printf("결과는 %d입니다.\n", n3);
+        n3 = {{n1 / n2}};   // 나눗셈 실행
+        printf("결과는 {{%d}}입니다.\n", n3);
     }
     return 0;
 }
@@ -2337,19 +2337,19 @@ int main(void)
 ## code
 // 윤년 판단 프로그램
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int year;
+    {{int}} year;
 
-    printf("연도를 입력하시오: ");
-    scanf("%d", &year);
+    {{printf}}("연도를 입력하시오: ");
+    scanf("%d", {{&year}});
 
     if( {{(year % 4 == 0 && year % 100 != 0) || year % 400 == 0}} )
-        printf("%d년은 윤년입니다.\n", year);
+        printf("{{%d}}년은 윤년입니다.\n", year);
     else
-        printf("%d년은 윤년이 아닙니다.\n", year);
+        printf("{{%d}}년은 윤년이 아닙니다.\n", year);
     return 0;
 }
 
@@ -2363,22 +2363,22 @@ int main(void)
 합격: 학점B
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int score;
+    {{int}} score;
 
     printf("성적을 입력하시오: ");
-    scanf("%d", &score);
+    scanf("{{%d}}", &score);
 
-    if (score >= 90)
+    if ({{score >= 90}})
         printf("합격: 학점A\n");
     {{else if}} (score >= 80)
-        printf("합격: 학점B\n");
+        {{printf}}("합격: 학점B\n");
     else if ({{score >= 70}})
         printf("합격: 학점C\n");
-    else if (score >= 60)
+    else if ({{score >= 60}})
         printf("합격: 학점D\n");
     {{else}}
         printf("불합격: 학점F\n");
@@ -2397,22 +2397,22 @@ int main(void)
 불합격
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int skill, interview;
+    {{int}} skill, interview;
 
-    printf("실기 점수: ");
-    scanf("%d", &skill);
+    {{printf}}("실기 점수: ");
+    scanf("%d", {{&skill}});
     printf("면접 점수: ");
-    scanf("%d", &interview);
+    scanf("{{%d}}", &interview);
 
     if ( {{skill >= 80 && interview >= 80}} )
         printf("합격\n");
     else
         printf("불합격\n");
-    return 0;
+    {{return 0;}}
 }
 
 @@ attend | 6 | LAB: 출석·성적 종합 평가
@@ -2439,17 +2439,17 @@ int main(void)
     int late, absent, rate, avg;
 
     printf("지각 횟수: ");
-    scanf("%d", &late);
+    scanf("%d", {{&late}});
     printf("결석 횟수: ");
-    scanf("%d", &absent);
+    scanf("{{%d}}", &absent);
     printf("과제 제출률(%%): ");
-    scanf("%d", &rate);
+    scanf("{{%d}}", &rate);
     printf("시험 평균 점수: ");
-    scanf("%d", &avg);
+    scanf("%d", {{&avg}});
 
     absent = absent + {{late / 3}};   // 지각 3번 = 결석 1번
 
-    if (absent >= 5 && avg < 60)
+    if ({{absent >= 5 && avg < 60}})
         printf("자동 F학점\n");
     else if ({{absent >= 3 && late >= 7 && rate < 70}})
         printf("교무처 면담\n");
@@ -2457,7 +2457,7 @@ int main(void)
         printf("F학점 처리\n");
     else if (absent >= 5)
         printf("학사경고\n");
-    else if (late >= 10)
+    else if ({{late >= 10}})
         printf("출석 상담 필요\n");
     else if (rate < 70)
         printf("재제출 요청\n");
@@ -2485,19 +2485,19 @@ c는 소문자입니다.
 
 int main(void)
 {
-    char ch;
+    {{char}} ch;
 
     printf("문자를 입력하시오: ");
     scanf("{{%c}}", &ch);
 
     if( {{ch >= 'A' && ch <= 'Z'}} )
-        printf("%c는 대문자입니다.\n", ch);
-    else if( ch >= 'a' && ch <= 'z' )
-        printf("%c는 소문자입니다.\n", ch);
+        printf("{{%c}}는 대문자입니다.\n", ch);
+    else if({{ ch >= 'a' && ch <= 'z' }})
+        printf("{{%c}}는 소문자입니다.\n", ch);
     else if( {{ch >= '0' && ch <= '9'}} )
-        printf("%c는 숫자입니다.\n", ch);
+        printf("{{%c}}는 숫자입니다.\n", ch);
     else
-        printf("%c는 기타문자입니다.\n", ch);
+        printf("{{%c}}는 기타문자입니다.\n", ch);
     return 0;
 }
 
@@ -2524,19 +2524,19 @@ int main(void)
     scanf("{{%d %c %d}}", &x, &op, &y);
 
     if( {{op == '+'}} )
-        result = x + y;
-    else if( op == '-' )
+        result = {{x + y}};
+    else if({{ op == '-' }})
         result = x - y;
-    else if( op == '*' )
-        result = x * y;
-    else if( op == '/' )
+    else if({{ op == '*' }})
+        result = {{x * y}};
+    else if({{ op == '/' }})
         result = x / y;
     else if( op == '%' )
         result = {{x % y}};
     else
         printf("지원되지 않는 연산자입니다. ");
 
-    printf("%d %c %d = %d \n", x, op, y, result);
+    printf("%d %c {{%d}} = %d \n", x, op, y, result);
     return 0;
 }
 
@@ -2556,20 +2556,20 @@ a, b, c를 입력받는다. a가 0이면 근은 -c/b, 판별식이 음수면 실
 
 int main(void)
 {
-    double a, b, c, dis;
+    {{double}} a, b, c, dis;
 
-    printf("계수 a, 계수 b, 계수 c를 차례대로 입력하시오: ");
-    scanf("%lf %lf %lf", &a, &b, &c);
+    {{printf}}("계수 a, 계수 b, 계수 c를 차례대로 입력하시오: ");
+    scanf("%lf %lf {{%lf}}", &a, &b, &c);
 
-    if (a == 0)
+    if ({{a == 0}})
         printf("방정식의 근은 %f입니다.", {{-c / b}});
     else
     {
         dis = {{b * b - 4.0 * a * c}};
-        if (dis >= 0)
+        if ({{dis >= 0}})
         {
             printf("방정식의 근은 %f입니다.\n", (-b + {{sqrt(dis)}}) / (2.0 * a));
-            printf("방정식의 근은 %f입니다.\n", (-b - sqrt(dis)) / (2.0 * a));
+            printf("방정식의 근은 {{%f}}입니다.\n", (-b - sqrt(dis)) / (2.0 * a));
         }
         else
             printf("실근이 존재하지 않습니다\n");
@@ -2587,28 +2587,28 @@ int main(void)
 하나
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int number;
+    {{int}} number;
 
-    printf("정수를 입력하시오:");
-    scanf("%d", &number);
+    {{printf}}("정수를 입력하시오:");
+    scanf("{{%d}}", &number);
 
     {{switch}}(number) {
     {{case 0:}}
         printf("없음\n");
         {{break;}}
     case 1:
-        printf("하나\n");
+        {{printf}}("하나\n");
         break;
     case 2:
         printf("둘\n");
         break;
     {{default:}}
         printf("많음\n");
-        break;
+        {{break;}}
     }
     return 0;
 }
@@ -2628,15 +2628,15 @@ int main(void)
 
 int main(void)
 {
-    int month, days;
+    {{int}} month, days;
 
     printf("달을 입력하시오: ");
-    scanf("%d", &month);
+    scanf("%d", {{&month}});
 
-    switch(month)
+    switch({{month}})
     {
     case 2:
-        days = 28;
+        days = {{28}};
         break;
     case 4:
     case 6:
@@ -2645,10 +2645,10 @@ int main(void)
         days = {{30}};
         break;
     default:
-        days = 31;
+        days = {{31}};
         break;
     }
-    printf("%d월의 일수는 %d입니다.\n", month, days);
+    printf("{{%d}}월의 일수는 %d입니다.\n", month, days);
     return 0;
 }
 
@@ -2675,21 +2675,21 @@ int main(void)
     printf("수식을 입력하시오\n");
     printf("(예: 2 + 5) \n");
     printf(">>");
-    scanf("%d %c %d", &x, &op, &y);
+    scanf("%d %c %d", &x, {{&op}}, &y);
 
     switch ({{op}})
     {
     case {{'+'}}:
-        result = x + y;
+        result = {{x + y}};
         break;
     case '-':
-        result = x - y;
+        result = {{x - y}};
         break;
     case '*':
-        result = x * y;
+        result = {{x * y}};
         break;
     case '/':
-        result = x / y;
+        result = {{x / y}};
         break;
     case '%':
         result = x % y;
@@ -2698,7 +2698,7 @@ int main(void)
         printf("지원되지 않는 연산자입니다. \n");
         break;
     }
-    printf("%d %c %d = %d \n", x, op, y, result);
+    printf("{{%d}} %c %d = %d \n", x, op, y, result);
     return 0;
 }
 
@@ -2712,22 +2712,22 @@ int main(void)
 올바른 삼각형
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int a, b, c;
+    {{int}} a, b, c;
 
-    printf("삼각형의 3변을 입력하시오: ");
-    scanf("%d%d%d", &a, &b, &c);
+    {{printf}}("삼각형의 3변을 입력하시오: ");
+    scanf("%d{{%d}}%d", &a, &b, &c);
 
     if ({{(a + b) > c && (b + c) > a && (a + c) > b}}) {
-        printf("올바른 삼각형\n");
+        {{printf}}("올바른 삼각형\n");
     }
     else {
         printf("올바르지 않은 삼각형\n");
     }
-    return 0;
+    {{return 0;}}
 }
 
 @@ tri_type | 6 | Lab: 삼각형 유형 판별
@@ -2740,14 +2740,14 @@ int main(void)
 직각삼각형입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int a, b, c;
+    {{int}} a, b, c;
 
     printf("세 변의 길이를 입력하시오: ");
-    scanf("%d %d %d", &a, &b, &c);
+    scanf("%d {{%d}} %d", &a, &b, &c);
 
     // 삼각형을 이룰 수 있는지 확인
     if ({{(a + b <= c) || (a + c <= b) || (b + c <= a)}}) {
@@ -2757,9 +2757,9 @@ int main(void)
 
     // 삼각형의 종류 판별
     if ({{a == b && b == c}}) {
-        printf("정삼각형입니다.\n");
+        {{printf}}("정삼각형입니다.\n");
     }
-    else if (a == b || b == c || a == c) {
+    else if ({{a == b || b == c || a == c}}) {
         printf("이등변삼각형입니다.\n");
     }
     else if ((a * a + b * b == c * c) ||
@@ -2770,7 +2770,7 @@ int main(void)
     else {
         printf("일반 삼각형입니다.\n");
     }
-    return 0;
+    {{return 0;}}
 }
 
 @@ game369 | 6 | 도전문제: 369 게임
@@ -2790,19 +2790,19 @@ int main(void)
     int n, i, num, digit, clap;
 
     printf("369 게임을 진행할 최대 숫자를 입력하세요: ");
-    scanf("%d", &n);
+    scanf("%d", {{&n}});
 
-    for (i = 1; i <= n; i++) {
+    for (i = 1; i <= n; {{i++}}) {
         num = i;
-        clap = 0;
-        while (num > 0) {
+        clap = {{0}};
+        while ({{num > 0}}) {
             digit = {{num % 10}};
             if ({{digit == 3 || digit == 6 || digit == 9}})
                 clap++;
             num = {{num / 10}};
         }
-        if (clap == 0)
-            printf("%d ", i);
+        if ({{clap == 0}})
+            printf("{{%d}} ", i);
         else {
             while (clap > 0) {
                 printf("짝");
@@ -2825,15 +2825,15 @@ int main(void)
 학점: A
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
     int score;
-    char grade;
+    {{char}} grade;
 
-    printf("점수를 입력하시오: ");
-    scanf("%d", &score);
+    {{printf}}("점수를 입력하시오: ");
+    scanf("%d", {{&score}});
 
     switch ({{score / 10}}) {
     case 10:
@@ -2848,12 +2848,12 @@ int main(void)
         break;
     case 6:
         grade = 'D';
-        break;
+        {{break;}}
     default:
         grade = {{'F'}};
         break;
     }
-    printf("학점: %c\n", grade);
+    printf("학점: {{%c}}\n", grade);
     return 0;
 }
 
@@ -2867,22 +2867,22 @@ int main(void)
 medium
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int ml;
+    {{int}} ml;
 
-    printf("컵의 용량(ml): ");
-    scanf("%d", &ml);
+    {{printf}}("컵의 용량(ml): ");
+    scanf("{{%d}}", &ml);
 
     if ({{ml < 100}})
-        printf("small\n");
+        {{printf}}("small\n");
     else if ({{ml < 200}})
         printf("medium\n");
     else
         printf("large\n");
-    return 0;
+    {{return 0;}}
 }
 
 @@ v_max3 | 6 | 세 수 중 가장 큰 수 | 변형
@@ -2899,17 +2899,17 @@ int main(void)
 
 int main(void)
 {
-    int a, b, c, max;
+    {{int}} a, b, c, max;
 
     printf("세 정수를 입력하시오: ");
-    scanf("%d %d %d", &a, &b, &c);
+    scanf("%d %d {{%d}}", &a, &b, &c);
 
-    max = a;
+    max = {{a}};
     if ({{b > max}})
-        max = b;
-    if (c > max)
+        max = {{b}};
+    if ({{c > max}})
         {{max = c;}}
-    printf("가장 큰 수는 %d입니다.\n", max);
+    printf("가장 큰 수는 {{%d}}입니다.\n", max);
     return 0;
 }
 
@@ -2923,28 +2923,28 @@ int main(void)
 가을
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int month;
+    {{int}} month;
 
     printf("월을 입력하시오: ");
-    scanf("%d", &month);
+    scanf("{{%d}}", &month);
 
-    switch (month) {
+    switch ({{month}}) {
     case 3: case 4: case 5:
         printf("봄\n");
         break;
     case 6: case 7: case 8:
-        printf("여름\n");
+        {{printf}}("여름\n");
         break;
     case 9: case 10: case 11:
         printf("가을\n");
         {{break;}}
     case 12: case 1: case 2:
         printf("겨울\n");
-        break;
+        {{break;}}
     {{default:}}
         printf("잘못된 월\n");
     }
@@ -2968,17 +2968,17 @@ int main(void)
     int age, fee;
 
     printf("나이를 입력하시오: ");
-    scanf("%d", &age);
+    scanf("%d", {{&age}});
 
-    if (age <= 7)
-        fee = 0;
+    if ({{age <= 7}})
+        fee = {{0}};
     else if ({{age <= 13}})
-        fee = 5000;
+        fee = {{5000}};
     else if ({{age < 65}})
-        fee = 10000;
+        fee = {{10000}};
     else
         fee = 3000;
-    printf("요금은 %d원입니다.\n", fee);
+    printf("요금은 {{%d}}원입니다.\n", fee);
     return 0;
 }
 
@@ -3002,17 +3002,17 @@ int main(void)
     float height, weight, bmi;
 
     printf("키 : ");
-    scanf("%f", &height);
+    scanf("%f", {{&height}});
     printf("몸무게 : ");
-    scanf("%f", &weight);
+    scanf("{{%f}}", &weight);
 
-    height = height / 100;    // cm → m
+    height = {{height / 100}};    // cm → m
     bmi = {{weight / (height * height)}};
-    printf("BMI = %.2f\n", bmi);
+    printf("BMI = {{%.2f}}\n", bmi);
 
     if ({{bmi < 18.5}}) printf("저체중\n");
-    else if (bmi < 23) printf("정상체중\n");
-    else if (bmi < 25) printf("과체중\n");
+    else if ({{bmi < 23}}) printf("정상체중\n");
+    else if ({{bmi < 25}}) printf("과체중\n");
     else if (bmi < 30) printf("경도비만\n");
     else printf("고도비만\n");
     return 0;
@@ -3037,22 +3037,22 @@ int main(void)
 ## code
 // while 문을 이용한 구구단 출력 프로그램
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int n;
+    {{int}} n;
     int i = {{1}};
 
-    printf("출력하고 싶은 단: ");
-    scanf("%d", &n);
+    {{printf}}("출력하고 싶은 단: ");
+    scanf("%d", {{&n}});
 
     {{while}} ({{i <= 9}})
     {
-        printf("%d*%d = %d \n", n, i, n * i);
+        printf("%d*{{%d}} = %d \n", n, i, n * i);
         {{i++;}}
     }
-    return 0;
+    {{return 0;}}
 }
 
 @@ sum_w | 7 | while: 1부터 n까지의 합
@@ -3065,23 +3065,23 @@ int main(void)
 1부터 3까지의 합은 6입니다
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int i, n, sum;
+    {{int}} i, n, sum;
 
-    printf("정수를 입력하시오:");
-    scanf("%d", &n);
+    {{printf}}("정수를 입력하시오:");
+    scanf("%d", {{&n}});
 
-    i = 1;
+    i = {{1}};
     sum = {{0}};
     while({{i <= n}})
     {
         {{sum += i;}}
         i++;
     }
-    printf("1부터 %d까지의 합은 %d입니다\n", n, sum);
+    printf("1부터 {{%d}}까지의 합은 %d입니다\n", n, sum);
     return 0;
 }
 
@@ -3108,18 +3108,18 @@ int main(void)
 
 int main(void)
 {
-    int i, n, sum;
+    {{int}} i, n, sum;
 
-    i = 0;
-    sum = 0;
+    i = {{0}};
+    sum = {{0}};
     while ({{i < 5}})
     {
-        printf("값을 입력하시오: ");
-        scanf("%d", &n);
+        {{printf}}("값을 입력하시오: ");
+        scanf("%d", {{&n}});
         sum = {{sum + n}};
         i++;
     }
-    printf("합계는 %d입니다.\n", sum);
+    printf("합계는 {{%d}}입니다.\n", sum);
     return 0;
 }
 
@@ -3132,19 +3132,19 @@ int main(void)
 1은 참입니다.
 0은 거짓입니다.
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int i = 3;
+    int i = {{3}};
 
     while ({{i}})
     {
-        printf("%d은 참입니다.\n", i);
+        printf("{{%d}}은 참입니다.\n", i);
         {{i--;}}
     }
-    printf("%d은 거짓입니다.\n", i);
-    return 0;
+    printf("{{%d}}은 거짓입니다.\n", i);
+    {{return 0;}}
 }
 
 @@ sentinel | 7 | 센티널: 성적 평균
@@ -3177,9 +3177,9 @@ int main(void)
     float sum, average;
 
     // 필요한 변수들을 초기화한다.
-    n = 0;
-    sum = 0;
-    grade = 0;
+    n = {{0}};
+    sum = {{0}};
+    grade = {{0}};
 
     printf("성적 입력을 종료하려면 음수를 입력하시오\n");
 
@@ -3187,8 +3187,8 @@ int main(void)
     while ({{grade >= 0}})
     {
         printf("성적을 입력하시오: ");
-        scanf("%d", &grade);
-        sum += grade;
+        scanf("%d", {{&grade}});
+        sum += {{grade}};
         n++;
     }
     sum = {{sum - grade}};  // 마지막 데이터를 제거한다.
@@ -3196,7 +3196,7 @@ int main(void)
 
     // 평균을 계산하고 화면에 출력한다.
     average = sum / n;
-    printf("성적의 평균은 %f입니다.\n", average);
+    printf("성적의 평균은 {{%f}}입니다.\n", average);
     return 0;
 }
 
@@ -3210,14 +3210,14 @@ y가 0이 될 때까지 r = x % y; x = y; y = r; 을 반복한다.
 최대 공약수는 4입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x, y, r;
+    {{int}} x, y, r;
 
-    printf("두개의 정수를 입력하시오(큰수, 작은수): ");
-    scanf("%d%d", &x, &y);
+    {{printf}}("두개의 정수를 입력하시오(큰수, 작은수): ");
+    scanf("%d{{%d}}", &x, &y);
 
     while ({{y != 0}})
     {
@@ -3225,8 +3225,8 @@ int main(void)
         x = {{y}};
         y = {{r}};
     }
-    printf("최대 공약수는 %d입니다.\n", x);
-    return 0;
+    printf("최대 공약수는 {{%d}}입니다.\n", x);
+    {{return 0;}}
 }
 
 @@ doubling | 7 | Lab: 복리의 무서움 (2배씩)
@@ -3263,16 +3263,16 @@ int main(void)
 29일날 현재 금액=268435456.000000
 30일날 현재 금액=536870912.000000
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void) {
-    double money = 1.0;
+    double money = {{1.0}};
 
     for (int i = {{2}}; {{i <= 30}}; i++) {
         money {{*=}} 2.0;
-        printf("%d일날 현재 금액=%lf\n", i, money);
+        printf("%d일날 현재 금액={{%lf}}\n", i, money);
     }
-    return 0;
+    {{return 0;}}
 }
 
 @@ bacteria | 7 | Assignment02_1: 세균 증식
@@ -3288,21 +3288,21 @@ int main(void) {
 7시간 후: 163840마리
 7시간 후 세균의 수: 163840마리
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int count = 10;     // 초기 세균 수
-    int rate = 4;       // 증식률
-    int hour = 0;
+    int count = {{10}};     // 초기 세균 수
+    int rate = {{4}};       // 증식률
+    int hour = {{0}};
 
     while ({{hour < 7}})
     {
         count = {{count * rate}};
         hour++;
-        printf("%d시간 후: %d마리\n", hour, count);
+        printf("%d시간 후: {{%d}}마리\n", hour, count);
     }
-    printf("7시간 후 세균의 수: %d마리\n", count);
+    printf("7시간 후 세균의 수: {{%d}}마리\n", count);
     return 0;
 }
 
@@ -3312,21 +3312,21 @@ int main(void)
 ## out
 필요한 접기 횟수: 7번
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    double area = 1.0;      // 초기 면적
-    double ratio = 0.5;     // 감소율
-    int count = 0;
+    double area = {{1.0}};      // 초기 면적
+    double ratio = {{0.5}};     // 감소율
+    int count = {{0}};
 
     while ({{area > 0.01}})
     {
         area = {{area * ratio}};
         {{count++;}}
     }
-    printf("필요한 접기 횟수: %d번\n", count);
-    return 0;
+    printf("필요한 접기 횟수: {{%d}}번\n", count);
+    {{return 0;}}
 }
 
 @@ dowhile_sum | 7 | do-while: 0 입력까지 합계
@@ -3346,21 +3346,21 @@ int main(void)
 ## code
 #define _CRT_SECURE_NO_WARNINGS
 // 사용자가 0을 입력할 때까지 숫자를 더한다.
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int number, sum = 0;
+    {{int}} number, sum = 0;
 
     // 루프 몸체가 적어도 한번은 실행된다.
     {{do}}
     {
-        printf("정수를 입력하시오: ");
-        scanf("%d", &number);
-        sum += number;
+        {{printf}}("정수를 입력하시오: ");
+        scanf("%d", {{&number}});
+        sum += {{number}};
     } {{while (number != 0);}}
 
-    printf("숫자들의 합 = %d \n", sum);
+    printf("숫자들의 합 = {{%d}} \n", sum);
     return 0;
 }
 
@@ -3379,23 +3379,23 @@ int main(void)
 ## code
 // do..while 문을 이용한 메뉴
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int i = 0;
+    int i = {{0}};
 
     do
     {
         printf("1---새로만들기\n");
         printf("2---파일열기\n");
         printf("3---파일닫기\n");
-        printf("하나를 선택하시요.\n");
-        scanf("%d", &i);
+        {{printf}}("하나를 선택하시요.\n");
+        scanf("%d", {{&i}});
     } while({{i < 1 || i > 3}});
 
-    printf("선택된 메뉴=%d\n", i);
-    return 0;
+    printf("선택된 메뉴={{%d}}\n", i);
+    {{return 0;}}
 }
 
 @@ guess | 7 | Lab: 숫자 추측 게임
@@ -3421,22 +3421,22 @@ int main(void)
 
 int main(void)
 {
-    int answer = 59;    // 정답
-    int guess;
-    int tries = 0;
+    int answer = {{59}};    // 정답
+    {{int}} guess;
+    int tries = {{0}};
 
     do {
         printf("정답을 추측하여 보시오: ");
-        scanf("%d", &guess);
+        scanf("%d", {{&guess}});
         {{tries++;}}
 
         if ({{guess > answer}})   // 입력한 정수가 정답보다 높으면
             printf("제시한 정수가 높습니다.\n");
-        if (guess < answer)   // 입력한 정수가 정답보다 낮으면
+        if ({{guess < answer}})   // 입력한 정수가 정답보다 낮으면
             printf("제시한 정수가 낮습니다.\n");
     } while ({{guess != answer}});
 
-    printf("축하합니다. 시도횟수=%d\n", tries);
+    printf("축하합니다. 시도횟수={{%d}}\n", tries);
     return 0;
 }
 
@@ -3460,22 +3460,22 @@ int main(void)
     {{srand(time(NULL));}}   // 난수 생성기 초기화
     int answer = {{rand() % 10}};   // 0에서 9 사이의 난수 생성
     int guess;
-    int tries = 0;
+    int tries = {{0}};
 
     do {
         printf("정답을 추측하여 보시오 (0-9): ");
-        scanf("%d", &guess);
+        scanf("%d", {{&guess}});
         tries++;
 
-        if (guess > answer) {
+        if ({{guess > answer}}) {
             printf("제시한 정수가 높습니다.\n");
         }
-        if (guess < answer) {
+        if ({{guess < answer}}) {
             printf("제시한 정수가 낮습니다.\n");
         }
-    } while (guess != answer);
+    } while ({{guess != answer}});
 
-    printf("축하합니다. 시도횟수=%d\n", tries);
+    printf("축하합니다. 시도횟수={{%d}}\n", tries);
     return 0;
 }
 
@@ -3490,15 +3490,15 @@ Hello World!
 Hello World!
 ## code
 // "Hello World!" 5번 출력하기
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int i;
+    {{int}} i;
 
     for ({{i = 0}}; {{i < 5}}; {{i++}})   // i는 0부터 4까지 증가
-        printf("Hello World!\n");
-    return 0;
+        {{printf}}("Hello World!\n");
+    {{return 0;}}
 }
 
 @@ for_sum | 7 | for: 1부터 10까지의 합
@@ -3508,18 +3508,18 @@ int main(void)
 1부터 10까지의 정수의 합= 55
 ## code
 // 반복을 이용한 정수합 프로그램
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int i, sum;
+    {{int}} i, sum;
 
-    sum = 0;
+    sum = {{0}};
     for(i = 1; {{i <= 10}}; i++)
         {{sum += i;}}   // sum = sum + i;와 같음
 
-    printf("1부터 10까지의 정수의 합= %d\n", sum);
-    return 0;
+    printf("1부터 10까지의 정수의 합= {{%d}}\n", sum);
+    {{return 0;}}
 }
 
 @@ fact_for | 7 | for: 팩토리얼
@@ -3533,20 +3533,20 @@ fact는 곱셈 누적이므로 1로 초기화한다. (0으로 하면 결과가 �
 ## code
 // 반복을 이용한 팩토리얼 구하기
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
     long fact = {{1}};
-    int i, n;
+    {{int}} i, n;
 
-    printf("정수를 입력하시요:");
-    scanf("%d", &n);
+    {{printf}}("정수를 입력하시요:");
+    scanf("%d", {{&n}});
 
-    for(i = 1; i <= n; i++)
+    for(i = 1; {{i <= n}}; i++)
         fact = {{fact * i}};
 
-    printf("%d!은 %ld입니다.\n", n, fact);
+    printf("{{%d}}!은 %ld입니다.\n", n, fact);
     return 0;
 }
 
@@ -3561,22 +3561,22 @@ for 문의 초기식·조건식·증감식을 while 문으로 옮겨 쓴다.
 ## code
 // 반복을 이용한 팩토리얼 구하기
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    long fact = 1;
+    long fact = {{1}};
     int i = {{1}}, n;
 
-    printf("정수를 입력하시요: ");
-    scanf("%d", &n);
+    {{printf}}("정수를 입력하시요: ");
+    scanf("%d", {{&n}});
 
     while ({{i <= n}})
     {
-        fact = fact * i;
+        fact = {{fact * i}};
         {{i++;}}
     }
-    printf("%d!은 %ld입니다.", n, fact);
+    printf("{{%d}}!은 %ld입니다.", n, fact);
     return 0;
 }
 
@@ -3591,19 +3591,19 @@ int main(void)
 **********
 ## code
 // 중첩 for 문을 이용하여 *기호를 사각형 모양으로 출력하는 프로그램
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x, y;
+    {{int}} x, y;
 
     for(y = 0; {{y < 5}}; y++)
     {
         for(x = 0; {{x < 10}}; x++)
-            printf("*");
+            {{printf}}("*");
         {{printf("\n");}}
     }
-    return 0;
+    {{return 0;}}
 }
 
 @@ star_tri | 7 | 중첩 for: 별 삼각형
@@ -3616,19 +3616,19 @@ y번째 줄에 별을 y개 출력한다. 안쪽 루프의 조건이 바깥 변�
 ****
 *****
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x, y;
+    {{int}} x, y;
 
-    for(y = 1; y <= 5; y++)
+    for(y = 1; {{y <= 5}}; y++)
     {
         for(x = 0; {{x < y}}; x++)
-            printf("*");
-        printf("\n");   // 내부 반복문이 종료될 때마다 실행
+            {{printf}}("*");
+        {{printf}}("\n");   // 내부 반복문이 종료될 때마다 실행
     }
-    return 0;
+    {{return 0;}}
 }
 
 @@ star_rev | 7 | 중첩 for: 오른쪽 정렬 역삼각형
@@ -3641,19 +3641,19 @@ i번째 줄(0부터)에 공백 i개, 별 5-i개를 출력한다.
    **
     *
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main() {
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; {{i < 5}}; i++) {
         for (int j = 0; {{j < i}}; j++) {
-            printf(" ");
+            {{printf}}(" ");
         }
         for (int j = 0; {{j < (5 - i)}}; j++) {
-            printf("*");
+            {{printf}}("*");
         }
-        printf("\n");
+        {{printf}}("\n");
     }
-    return 0;
+    {{return 0;}}
 }
 
 @@ pythag | 7 | Lab: 직각 삼각형 찾기 (중복 제거)
@@ -3672,16 +3672,16 @@ a ≤ b ≤ c 가 되도록 b는 a부터, c는 b부터 시작해서 같은 삼�
 18 24 30
 20 21 29
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    for (int a = 1; a <= 30; a++)
+    for (int a = 1; {{a <= 30}}; a++)
         for (int b = {{a}}; b <= 30; b++)     // b 시작값을 a로 설정
             for (int c = {{b}}; c <= 30; c++) // c 시작값을 b로 설정
                 if ({{(a * a + b * b) == c * c}})
-                    printf("%d %d %d\n", a, b, c);
-    return 0;
+                    printf("%d {{%d}} %d\n", a, b, c);
+    {{return 0;}}
 }
 
 @@ dice | 7 | 도전문제2: 주사위 합
@@ -3705,20 +3705,20 @@ int main(void)
 
 int main(void) {
     printf("주사위 2개를 던졌을 때 합이 6이 되는 경우:\n");
-    for (int i = 1; i <= 6; i++) {
+    for (int i = 1; {{i <= 6}}; i++) {
         for (int j = {{i}}; j <= 6; j++) {    // j의 시작값을 i로
             if ({{i + j == 6}}) {
-                printf("(%d, %d)\n", i, j);
+                printf("({{%d}}, %d)\n", i, j);
             }
         }
     }
 
     printf("\n주사위 3개를 던졌을 때 합이 10이 되는 경우:\n");
-    for (int i = 1; i <= 6; i++) {
-        for (int j = i; j <= 6; j++) {
+    for (int i = 1; i <= 6; {{i++}}) {
+        for (int j = i; {{j <= 6}}; j++) {
             for (int k = {{j}}; k <= 6; k++) {
-                if (i + j + k == 10) {
-                    printf("(%d, %d, %d)\n", i, j, k);
+                if ({{i + j + k == 10}}) {
+                    printf("({{%d}}, %d, %d)\n", i, j, k);
                 }
             }
         }
@@ -3732,22 +3732,22 @@ int main(void) {
 ## out
 9
 ## code
-#include <stdio.h>
-#define SEED_MONEY 1000000
+#include <{{stdio.h}}>
+#define SEED_MONEY {{1000000}}
 
 int main(void)
 {
-    int year = 0, money = SEED_MONEY;
+    {{int}} year = 0, money = SEED_MONEY;
 
     while({{1}})
     {
         year++;
-        money += money * 0.30;
+        money += {{money * 0.30}};
         if( {{money > 10 * SEED_MONEY}} )
             {{break;}}
     }
-    printf("%d", year);
-    return 0;
+    printf("{{%d}}", year);
+    {{return 0;}}
 }
 
 @@ skip3 | 7 | continue: 3의 배수 제외
@@ -3756,20 +3756,20 @@ int main(void)
 ## out
 1 2 4 5 7 8 10
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int i;
+    {{int}} i;
 
-    for (i = 0; i <= 10; i++)
+    for (i = 0; {{i <= 10}}; i++)
     {
         if ({{i % 3 == 0}})
             {{continue;}}
-        printf("%d ", i);
+        printf("{{%d}} ", i);
     }
-    printf("\n");
-    return 0;
+    {{printf}}("\n");
+    {{return 0;}}
 }
 
 @@ upper | 7 | Lab: 소문자 → 대문자 (break, continue)
@@ -3791,24 +3791,24 @@ Q
 ## code
 // 소문자를 대문자로 변경한다.
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    char letter;
+    {{char}} letter;
 
-    while(1)
+    while({{1}})
     {
-        printf("소문자를 입력하시오: ");
+        {{printf}}("소문자를 입력하시오: ");
         scanf("{{ %c}}", &letter);
 
-        if( letter == 'Q' )
+        if({{ letter == 'Q' }})
             {{break;}}
         if( {{letter < 'a' || letter > 'z'}} )
             {{continue;}}
 
         letter {{-=}} 32;
-        printf("변환된 대문자는 %c입니다.\n", letter);
+        printf("변환된 대문자는 {{%c}}입니다.\n", letter);
     }
     return 0;
 }
@@ -3832,20 +3832,20 @@ int main(void)
 10 19671513.6
 ## code
 #include <stdio.h>
-#define RATE 0.07               // 이율
-#define INVESTMENT 10000000     // 초기 투자금
-#define YEARS 10                // 투자 기간
+#define RATE {{0.07}}               // 이율
+#define INVESTMENT {{10000000}}     // 초기 투자금
+#define YEARS {{10}}                // 투자 기간
 
 int main(void)
 {
-    int i;
-    double total = INVESTMENT;  // 원리금 합계
+    {{int}} i;
+    double total = {{INVESTMENT}};  // 원리금 합계
 
     printf("==============\n");
     printf("연도 원리금\n");
     printf("==============\n");
 
-    for (i = 1; i <= YEARS; i++)
+    for (i = 1; {{i <= YEARS}}; i++)
     {
         total = {{total * (1 + RATE)}};   // 새로운 원리금 계산
         printf("{{%2d%10.1f}}\n", i, total);
@@ -3870,14 +3870,14 @@ int main(void)
 
 int main(void)
 {
-    int x, y, answer, i;
+    {{int}} x, y, answer, i;
 
-    srand(time(NULL));
-    for (i = 0; i < 10; i++) {
+    {{srand}}(time(NULL));
+    for (i = 0; {{i < 10}}; i++) {
         x = {{rand() % 10}};
-        y = rand() % 10;
-        printf("%d + %d = ", x, y);
-        scanf("%d", &answer);
+        y = {{rand() % 10}};
+        printf("%d + {{%d}} = ", x, y);
+        scanf("%d", {{&answer}});
         if ({{x + y == answer}})
             printf("맞았습니다.\n");
         else
@@ -3895,21 +3895,21 @@ int main(void)
 (난수라 매번 다름)
 ## code
 #include <stdio.h>
-#include <stdlib.h>
+#include <{{stdlib.h}}>
 #include <time.h>
 
 int main() {
-    int success = 0, money, i;
+    int success = {{0, money, i}};
 
-    srand(time(0));
-    for (i = 0; i < 100; i++) {
+    {{srand}}(time(0));
+    for (i = 0; i < 100; {{i++}}) {
         money = {{50}};
         while ({{money > 0 && money < 250}}) {
             money += {{(rand() % 2) ? 1 : -1}};
         }
-        if (money >= 250) success++;
+        if ({{money >= 250}}) success++;
     }
-    printf("목표금액에 도달한 횟수: %d 회\n", success);
+    printf("목표금액에 도달한 횟수: {{%d}} 회\n", success);
     return 0;
 }
 
@@ -3923,18 +3923,18 @@ n을 입력받아 1부터 n까지 짝수만 더한다. (i를 2씩 증가)
 1부터 10까지 짝수의 합은 30입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int n, i, sum = 0;
+    {{int}} n, i, sum = 0;
 
-    printf("정수를 입력하시오: ");
-    scanf("%d", &n);
+    {{printf}}("정수를 입력하시오: ");
+    scanf("%d", {{&n}});
 
     for (i = 2; i <= n; {{i += 2}})
-        sum += i;
-    printf("1부터 %d까지 짝수의 합은 %d입니다.\n", n, sum);
+        sum += {{i}};
+    printf("1부터 {{%d}}까지 짝수의 합은 %d입니다.\n", n, sum);
     return 0;
 }
 
@@ -3947,19 +3947,19 @@ int main(void)
 ...
 9*9=81
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int dan, i;
+    {{int}} dan, i;
 
     for (dan = 2; {{dan <= 9}}; dan++)
     {
-        for (i = 1; i <= 9; i++)
+        for (i = 1; {{i <= 9}}; i++)
             printf("%d*%d=%d\n", dan, i, {{dan * i}});
-        printf("\n");
+        {{printf}}("\n");
     }
-    return 0;
+    {{return 0;}}
 }
 
 @@ v_star_down | 7 | 별 역삼각형 | 변형
@@ -3972,19 +3972,19 @@ int main(void)
 **
 *
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int x, y;
+    {{int}} x, y;
 
     for (y = 5; {{y >= 1}}; {{y--}})
     {
-        for (x = 0; x < y; x++)
-            printf("*");
-        printf("\n");
+        for (x = 0; {{x < y}}; x++)
+            {{printf}}("*");
+        {{printf}}("\n");
     }
-    return 0;
+    {{return 0;}}
 }
 
 @@ v_digitsum | 7 | 자릿수의 합 | 변형
@@ -3997,22 +3997,22 @@ int main(void)
 자릿수의 합: 10
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int n, sum = 0;
+    {{int}} n, sum = 0;
 
-    printf("정수를 입력하시오: ");
-    scanf("%d", &n);
+    {{printf}}("정수를 입력하시오: ");
+    scanf("%d", {{&n}});
 
     while ({{n > 0}})
     {
         sum += {{n % 10}};
         n = {{n / 10}};
     }
-    printf("자릿수의 합: %d\n", sum);
-    return 0;
+    printf("자릿수의 합: {{%d}}\n", sum);
+    {{return 0;}}
 }
 
 @@ v_reverse | 7 | 숫자 뒤집기 | 변형
@@ -4029,17 +4029,17 @@ int main(void)
 
 int main(void)
 {
-    int n, reversed = 0;
+    {{int}} n, reversed = 0;
 
-    printf("정수를 입력하시오: ");
-    scanf("%d", &n);
+    {{printf}}("정수를 입력하시오: ");
+    scanf("%d", {{&n}});
 
-    while (n > 0)
+    while ({{n > 0}})
     {
         reversed = {{reversed * 10 + n % 10}};
-        n /= 10;
+        n /= {{10}};
     }
-    printf("뒤집은 수: %d\n", reversed);
+    printf("뒤집은 수: {{%d}}\n", reversed);
     return 0;
 }
 
@@ -4060,14 +4060,14 @@ int main(void)
     int a, b, x, y, r;
 
     printf("두 정수를 입력하시오: ");
-    scanf("%d %d", &a, &b);
+    scanf("%d {{%d}}", &a, &b);
 
-    x = a;
-    y = b;
-    while (y != 0)
+    x = {{a}};
+    y = {{b}};
+    while ({{y != 0}})
     {
-        r = x % y;
-        x = y;
+        r = {{x % y}};
+        x = {{y}};
         y = r;
     }
     printf("최소 공배수는 %d입니다.\n", {{a * b / x}});
@@ -4091,20 +4091,20 @@ int main(void)
     int n, i, is_prime = 1;
 
     printf("정수를 입력하시오: ");
-    scanf("%d", &n);
+    scanf("%d", {{&n}});
 
-    if (n < 2)
-        is_prime = 0;
-    for (i = 2; i < n; i++)
+    if ({{n < 2}})
+        is_prime = {{0}};
+    for (i = 2; {{i < n}}; i++)
     {
         if ({{n % i == 0}})
         {
-            is_prime = 0;
+            is_prime = {{0}};
             {{break;}}
         }
     }
     if (is_prime)
-        printf("%d은 소수입니다.\n", n);
+        printf("{{%d}}은 소수입니다.\n", n);
     else
         printf("%d은 소수가 아닙니다.\n", n);
     return 0;
@@ -4116,16 +4116,16 @@ for 문의 증감식에 *= 를 써서 100 이하의 2의 거듭제곱을 출력�
 ## out
 1 2 4 8 16 32 64
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int i;
+    {{int}} i;
 
     for (i = 1; i <= 100; {{i *= 2}})
-        printf("%d ", i);
-    printf("\n");
-    return 0;
+        printf("{{%d}} ", i);
+    {{printf}}("\n");
+    {{return 0;}}
 }
 
 @@ v_avg_dowhile | 7 | do-while로 양수 평균 | 변형
@@ -4148,19 +4148,19 @@ int main(void)
 
 int main(void)
 {
-    int n, count = 0;
-    double sum = 0;
+    {{int}} n, count = 0;
+    double sum = {{0}};
 
     do {
         printf("양수를 입력하시오(종료: 0 이하): ");
-        scanf("%d", &n);
+        scanf("{{%d}}", &n);
         if ({{n > 0}}) {
-            sum += n;
+            sum += {{n}};
             count++;
         }
-    } while (n > 0);
+    } while ({{n > 0}});
 
-    if (count > 0)
+    if ({{count > 0}})
         printf("평균: %.2f\n", {{sum / count}});
     return 0;
 }
@@ -4173,21 +4173,21 @@ int main(void)
 Hello World!
 ******************************
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 {{void}} print_stars()
 {
-    for (int i = 0; i < 30; i++)
-        printf("*");
+    for (int i = 0; {{i < 30}}; i++)
+        {{printf}}("*");
 }
 
 int main(void)
 {
     {{print_stars();}}
-    printf("\nHello World!\n");
-    print_stars();
+    {{printf}}("\nHello World!\n");
+    {{print_stars}}();
     printf("\n");
-    return 0;
+    {{return 0;}}
 }
 
 @@ maxfn | 8 | 반환값: max() 함수
@@ -4206,7 +4206,7 @@ int main(void)
 
 {{int max(int x, int y)}}
 {
-    if (x > y)
+    if ({{x > y}})
         {{return x;}}
     else
         return y;
@@ -4217,13 +4217,13 @@ int main(void)
     int x, y;
 
     printf("정수를 입력하시오: ");
-    scanf("%d", &x);
-    printf("정수를 입력하시오: ");
-    scanf("%d", &y);
+    scanf("%d", {{&x}});
+    {{printf}}("정수를 입력하시오: ");
+    scanf("{{%d}}", &y);
 
-    int larger;
+    {{int}} larger;
     larger = {{max(x, y)}};
-    printf("더 큰값은 %d입니다. \n", larger);
+    printf("더 큰값은 {{%d}}입니다. \n", larger);
     return 0;
 }
 
@@ -4235,20 +4235,20 @@ int main(void)
 생일축하 합니다!
 사랑하는 친구의 생일축하 합니다!
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 void {{happyBirthday()}}
 {
-    printf("생일축하 합니다! \n");
-    printf("생일축하 합니다! \n");
-    printf("사랑하는 친구의 ");
-    printf("생일축하 합니다! \n");
+    {{printf}}("생일축하 합니다! \n");
+    {{printf}}("생일축하 합니다! \n");
+    {{printf}}("사랑하는 친구의 ");
+    {{printf}}("생일축하 합니다! \n");
 }
 
 int main(void)
 {
     {{happyBirthday();}}
-    return 0;
+    {{return 0;}}
 }
 
 @@ addfn | 8 | Lab: get_integer()와 add()
@@ -4263,13 +4263,13 @@ int main(void)
 두수의 합은 30입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int get_integer()
 {
-    int value;
-    printf("정수를 입력하시오: ");
-    scanf("%d", &value);
+    {{int}} value;
+    {{printf}}("정수를 입력하시오: ");
+    scanf("%d", {{&value}});
     {{return value;}}
 }
 
@@ -4281,10 +4281,10 @@ int add(int x, int y)
 int main(void)
 {
     int x = {{get_integer()}};
-    int y = get_integer();
+    int y = {{get_integer()}};
     int sum = {{add(x, y)}};
 
-    printf("두수의 합은 %d입니다. \n", sum);
+    printf("두수의 합은 {{%d}}입니다. \n", sum);
     return 0;
 }
 
@@ -4298,23 +4298,23 @@ int main(void)
 12!의 값은 479001600입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 {{long factorial(int n)}}
 {
     long result = {{1}};
 
-    for (int i = 1; i <= n; i++)
-        result *= i;    // result = result * i
+    for (int i = 1; {{i <= n}}; i++)
+        result *= {{i}};    // result = result * i
     {{return result;}}
 }
 
 int main(void)
 {
-    int n;
+    {{int}} n;
 
-    printf("알고 싶은 팩토리얼의 값은? ");
-    scanf("%d", &n);
+    {{printf}}("알고 싶은 팩토리얼의 값은? ");
+    scanf("{{%d}}", &n);
     printf("%d!의 값은 %ld입니다. \n", n, {{factorial(n)}});
     return 0;
 }
@@ -4363,19 +4363,19 @@ int main(void)
     char choice;
     double temp;
 
-    while (1) {
+    while ({{1}}) {
         printOptions();
         printf("메뉴에서 선택하세요.");
         choice = {{getchar()}};
-        if (choice == 'q') break;
-        else if (choice == 'c') {
+        if ({{choice == 'q'}}) break;
+        else if ({{choice == 'c'}}) {
             printf("섭씨온도: ");
-            scanf("%lf", &temp);
-            printf("화씨온도: %lf \n", C2F(temp));
+            scanf("{{%lf}}", &temp);
+            printf("화씨온도: {{%lf}} \n", C2F(temp));
         }
         else if (choice == 'f') {
             printf("화씨온도: ");
-            scanf("%lf", &temp);
+            scanf("%lf", {{&temp}});
             printf("섭씨온도: %lf \n", {{F2C(temp)}});
         }
         getchar();  // 앞에서 받았던 엔터키 문자를 삭제하기 위하여 필요!
@@ -4406,9 +4406,9 @@ int main(void)
 {
     int a, b;
 
-    a = get_integer();
-    b = get_integer();
-    printf("C(%d, %d) = %d \n", a, b, combination(a, b));
+    a = {{get_integer()}};
+    b = {{get_integer()}};
+    printf("C(%d, %d) = {{%d}} \n", a, b, combination(a, b));
     return 0;
 }
 
@@ -4421,15 +4421,15 @@ int get_integer(void)
 {
     int n;
     printf("정수를 입력하시오: ");
-    scanf("%d", &n);
+    scanf("%d", {{&n}});
     return n;
 }
 
 int factorial(int n)
 {
     int i;
-    long result = 1;
-    for (i = 1; i <= n; i++)
+    long result = {{1}};
+    for (i = 1; {{i <= n}}; i++)
         result *= i;
     return result;
 }
@@ -4440,19 +4440,19 @@ main 뒤에 정의된 함수를 호출하려면 앞에 함수 원형을 선언�
 ## out
 섭씨 36.000000도는 화씨 96.800000입니다.
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 {{double c_to_f(double c_temp);}}  // 함수 원형
 
 int main(void)
 {
     printf("섭씨 %lf도는 화씨 %lf입니다. \n", 36.0, {{c_to_f(36.0)}});
-    return 0;
+    {{return 0;}}
 }
 
 double c_to_f(double c_temp)
 {
-    return 9.0 / 5.0 * c_temp + 32;
+    {{return 9.0 / 5.0 * c_temp + 32;}}
 }
 
 @@ compsum | 8 | 원형 없이: compute_sum()
@@ -4461,15 +4461,15 @@ double c_to_f(double c_temp)
 ## out
 sum=5050
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int compute_sum(int n)
 {
-    int i;
-    int result = 0;
+    {{int}} i;
+    int result = {{0}};
 
-    for(i = 1; i <= n; i++)
-        result += i;
+    for(i = 1; {{i <= n}}; i++)
+        result += {{i}};
     {{return result;}}
 }
 
@@ -4478,7 +4478,7 @@ int main(void)
     int sum;
 
     sum = {{compute_sum(100)}};
-    printf("sum=%d \n", sum);
+    printf("sum={{%d}} \n", sum);
     return 0;
 }
 
@@ -4490,19 +4490,19 @@ srand(time(NULL))로 시드를 설정하고 1 + rand() % 45 로 1~45 사이 번�
 12 28 41 1 9 18
 (난수라 매번 다름)
 ## code
-#include <stdlib.h>
-#include <stdio.h>
+#include <{{stdlib.h}}>
+#include <{{stdio.h}}>
 #include <time.h>
-#define MAX 45
+#define MAX {{45}}
 
 int main(void)
 {
-    int i;
+    {{int}} i;
 
     {{srand(time(NULL));}}
-    for (i = 0; i < 6; i++)
+    for (i = 0; {{i < 6}}; i++)
         printf("%d ", {{1 + rand() % MAX}});
-    return 0;
+    {{return 0;}}
 }
 
 @@ coin | 8 | Lab: 동전 던지기 게임
@@ -4524,18 +4524,18 @@ coin_toss()가 0 또는 1을 반환한다. 100번 던져 앞면(1)과 뒷면(0)�
 int main(void)
 {
     int toss;
-    int heads = 0;
-    int tails = 0;
+    int heads = {{0}};
+    int tails = {{0}};
 
     srand(time(NULL));
-    for (toss = 0; toss < 100; toss++) {
+    for (toss = 0; toss < 100; {{toss++}}) {
         if ({{coin_toss() == 1}})
             heads++;
         else
             tails++;
     }
-    printf("동전의 앞면: %d \n", heads);
-    printf("동전의 뒷면: %d \n", tails);
+    printf("동전의 앞면: {{%d}} \n", heads);
+    printf("동전의 뒷면: {{%d}} \n", tails);
     return 0;
 }
 
@@ -4543,7 +4543,7 @@ int coin_toss(void)
 {
     int i = {{rand() % 2}};
 
-    if (i == 0)
+    if ({{i == 0}})
         return 0;
     else
         return 1;
@@ -4560,14 +4560,14 @@ CAR #2:*******
 ... (난수라 매번 다름)
 ## code
 #include <stdlib.h>
-#include <stdio.h>
+#include <{{stdio.h}}>
 #include <time.h>
 
 void disp_car(int car_number, int distance)
 {
     int i;
 
-    printf("CAR #%d:", car_number);
+    printf("CAR #{{%d}}:", car_number);
     for (i = 0; {{i < distance / 10}}; i++) {
         printf("*");
     }
@@ -4576,13 +4576,13 @@ void disp_car(int car_number, int distance)
 
 int main(void)
 {
-    int i;
+    {{int}} i;
     int car1_dist = 0, car2_dist = 0;
 
-    srand((unsigned)time(NULL));
-    for (i = 0; i < 6; i++) {
+    {{srand}}((unsigned)time(NULL));
+    for (i = 0; {{i < 6}}; i++) {
         car1_dist += {{rand() % 100}};
-        car2_dist += rand() % 100;
+        car2_dist += {{rand() % 100}};
         {{disp_car(1, car1_dist);}}
         disp_car(2, car2_dist);
         printf("---------------------\n");
@@ -4600,22 +4600,22 @@ floor(내림), ceil(올림), fabs(절대값), pow(거듭제곱), sqrt(제곱근)
 10의 3승은 1000.
 64의 제곱근은 8.
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 #include <{{math.h}}>
 
 int main(void)
 {
-    double result, value = 1.6;
+    {{double}} result, value = 1.6;
 
     result = {{floor(value)}};    // result는 1.0이다.
-    printf("%lf ", result);
+    printf("{{%lf}} ", result);
     result = {{ceil(value)}};     // result는 2.0이다.
-    printf("%lf\n", result);
+    printf("{{%lf}}\n", result);
 
-    printf("12.0의 절대값은 %f\n", fabs(12.0));
+    printf("12.0의 절대값은 {{%f}}\n", fabs(12.0));
     printf("-12.0의 절대값은 %f\n", {{fabs(-12.0)}});
     printf("10의 3승은 %.0f.\n", {{pow(10.0, 3.0)}});
-    printf("64의 제곱근은 %.0f.\n", sqrt(64));
+    printf("64의 제곱근은 {{%.0f}}.\n", sqrt(64));
     return 0;
 }
 
@@ -4638,18 +4638,18 @@ int main(void)
 
 int main(void)
 {
-    double height, distance, tree_height, degrees, radians;
+    {{double}} height, distance, tree_height, degrees, radians;
 
-    printf("나무와의 길이(단위는 미터): ");
-    scanf("%lf", &distance);
+    {{printf}}("나무와의 길이(단위는 미터): ");
+    scanf("{{%lf}}", &distance);
     printf("측정자의 키(단위는 미터): ");
-    scanf("%lf", &height);
+    scanf("%lf", {{&height}});
     printf("각도(단위는 도): ");
-    scanf("%lf", &degrees);
+    scanf("{{%lf}}", &degrees);
 
     radians = {{degrees * (3.141592 / 180.0)}};
     tree_height = {{tan(radians) * distance + height}};
-    printf("나무의 높이(단위는 미터): %lf \n", tree_height);
+    printf("나무의 높이(단위는 미터): {{%lf}} \n", tree_height);
     return 0;
 }
 
@@ -4665,7 +4665,7 @@ get_integer(), get_double(), get_char()의 원형을 선언하고, 실수 두 �
 실수의 합=30.000000
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int get_integer();
 {{double get_double();}}
@@ -4675,8 +4675,8 @@ int main(void)
 {
     double f, g;
 
-    f = get_double();
-    g = get_double();
+    f = {{get_double()}};
+    g = {{get_double()}};
     printf("실수의 합=%lf\n", {{f + g}});
     return 0;
 }
@@ -4684,14 +4684,14 @@ int main(void)
 int get_integer() {
     int n;
     printf("정수를 입력하시오: ");
-    scanf("%d", &n);
+    scanf("{{%d}}", &n);
     return n;
 }
 
 double get_double()
 {
-    double n;
-    printf("실수를 입력하시오: ");
+    {{double}} n;
+    {{printf}}("실수를 입력하시오: ");
     scanf("{{%lf}}", &n);
     return n;
 }
@@ -4726,7 +4726,7 @@ char get_char()
 {{void AskBiman();}}
 
 int main() {
-    for (int i = 0; i < 2; ++i)
+    for (int i = 0; i < 2; {{++i}})
     {
         AskBiman();
     }
@@ -4736,18 +4736,18 @@ int main() {
 void AskBiman()
 {
     float height = 0;
-    float weight = 0;
+    float weight = {{0}};
 
     printf("키 : ");
-    scanf_s("%f", &height);
+    scanf_s("%f", {{&height}});
     printf("몸무게 : ");
-    scanf_s("%f", &weight);
+    scanf_s("{{%f}}", &weight);
 
     height /= 100;
     float res = {{weight / (height * height)}};
 
-    if (res < 18.5) { printf("저체중"); }
-    else if (res < 23) { printf("정상체중"); }
+    if ({{res < 18.5}}) { printf("저체중"); }
+    else if ({{res < 23}}) { printf("정상체중"); }
     else if (res < 25) { printf("과체중"); }
     else if (res < 30) { printf("경도비만"); }
     else { printf("고도비만"); }
@@ -4764,10 +4764,10 @@ Result: 375
 
 // 숫자를 역순으로 변환하는 함수
 int reverseNumber(int num) {
-    int reversed = 0;
+    int reversed = {{0}};
     while ({{num > 0}}) {
         reversed = {{reversed * 10 + num % 10}};
-        num /= 10;
+        num /= {{10}};
     }
     return reversed;
 }
@@ -4775,15 +4775,15 @@ int reverseNumber(int num) {
 // reversedSum 함수
 int reversedSum(int a, int b) {
     int reversedA = {{reverseNumber(a)}};
-    int reversedB = reverseNumber(b);
+    int reversedB = {{reverseNumber(b)}};
     return reversedA + reversedB;
 }
 
 int main() {
-    int a = 123;
-    int b = 45;
+    int a = {{123}};
+    int b = {{45}};
     int result = reversedSum(a, b);
-    printf("Result: %d\n", result);   // 출력: 375
+    printf("Result: {{%d}}\n", result);   // 출력: 375
     return 0;
 }
 
@@ -4797,7 +4797,7 @@ int main() {
 가장 작은 값은 3입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int min(int x, int y)
 {
@@ -4806,12 +4806,12 @@ int min(int x, int y)
 
 int main(void)
 {
-    int a, b, c;
+    {{int}} a, b, c;
 
-    printf("세 정수를 입력하시오: ");
-    scanf("%d %d %d", &a, &b, &c);
+    {{printf}}("세 정수를 입력하시오: ");
+    scanf("%d {{%d}} %d", &a, &b, &c);
     printf("가장 작은 값은 %d입니다.\n", {{min(min(a, b), c)}});
-    return 0;
+    {{return 0;}}
 }
 
 @@ v_iseven | 8 | is_even() 함수 | 변형
@@ -4824,19 +4824,19 @@ int main(void)
 4: 짝수
 5: 홀수
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int is_even(int n);
 
 int main(void)
 {
-    for (int i = 1; i <= 5; i++) {
+    for (int i = 1; {{i <= 5}}; i++) {
         if ({{is_even(i)}})
-            printf("%d: 짝수\n", i);
+            printf("{{%d}}: 짝수\n", i);
         else
-            printf("%d: 홀수\n", i);
+            printf("{{%d}}: 홀수\n", i);
     }
-    return 0;
+    {{return 0;}}
 }
 
 int is_even(int n)
@@ -4854,23 +4854,23 @@ pow()를 쓰지 않고 base를 n번 곱한 값을 반환하는 power(base, n) �
 2의 10승은 1024입니다.
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 {{int power(int base, int n);}}
 
 int main(void)
 {
-    int base, n;
+    {{int}} base, n;
 
-    printf("밑과 지수를 입력하시오: ");
-    scanf("%d %d", &base, &n);
-    printf("%d의 %d승은 %d입니다.\n", base, n, power(base, n));
+    {{printf}}("밑과 지수를 입력하시오: ");
+    scanf("%d %d", &base, {{&n}});
+    printf("{{%d}}의 %d승은 %d입니다.\n", base, n, power(base, n));
     return 0;
 }
 
 int power(int base, int n)
 {
-    int result = 1;
+    int result = {{1}};
 
     for (int i = 0; {{i < n}}; i++)
         result {{*=}} base;
@@ -4887,9 +4887,9 @@ int power(int base, int n)
 
 int is_prime(int n)
 {
-    if (n < 2)
+    if ({{n < 2}})
         return 0;
-    for (int i = 2; i < n; i++)
+    for (int i = 2; i < n; {{i++}})
         if ({{n % i == 0}})
             {{return 0;}}
     return 1;
@@ -4897,10 +4897,10 @@ int is_prime(int n)
 
 int main(void)
 {
-    for (int i = 1; i <= 30; i++)
-        if (is_prime(i))
-            printf("%d ", i);
-    printf("\n");
+    for (int i = 1; {{i <= 30}}; i++)
+        if ({{is_prime(i)}})
+            printf("{{%d}} ", i);
+    {{printf}}("\n");
     return 0;
 }
 
@@ -4915,19 +4915,19 @@ int main(void)
 둘레: 18.849556
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#define PI 3.1415926535
+#include <{{stdio.h}}>
+#define PI {{3.1415926535}}
 
 double circle_area(double r);
 {{double circle_round(double r);}}
 
 int main(void)
 {
-    double r;
+    {{double}} r;
 
-    printf("반지름을 입력하시오: ");
-    scanf("%lf", &r);
-    printf("넓이: %lf\n", circle_area(r));
+    {{printf}}("반지름을 입력하시오: ");
+    scanf("%lf", {{&r}});
+    printf("넓이: {{%lf}}\n", circle_area(r));
     printf("둘레: %lf\n", {{circle_round(r)}});
     return 0;
 }
@@ -4956,18 +4956,18 @@ double circle_round(double r)
 
 int get_integer(void)
 {
-    int n;
+    {{int}} n;
     printf("정수를 입력하시오: ");
-    scanf("%d", &n);
+    scanf("{{%d}}", &n);
     return n;
 }
 
 int digit_sum(int n)
 {
-    int sum = 0;
-    while (n > 0) {
-        sum += n % 10;
-        n /= 10;
+    int sum = {{0}};
+    while ({{n > 0}}) {
+        sum += {{n % 10}};
+        n /= {{10}};
     }
     {{return sum;}}
 }
@@ -4995,20 +4995,20 @@ int main(void)
 int gcd(int x, int y)
 {
     int r;
-    while (y != 0) {
-        r = x % y;
-        x = y;
-        y = r;
+    while ({{y != 0}}) {
+        r = {{x % y}};
+        x = {{y}};
+        y = {{r}};
     }
     return {{x}};
 }
 
 int main(void)
 {
-    int a, b;
+    {{int}} a, b;
 
     printf("두 정수를 입력하시오: ");
-    scanf("%d %d", &a, &b);
+    scanf("%d {{%d}}", &a, &b);
     printf("최대 공약수: %d\n", {{gcd(a, b)}});
     printf("최소 공배수: %d\n", {{a * b / gcd(a, b)}});
     return 0;
@@ -5024,19 +5024,19 @@ temp = 1
 temp = 1
 temp = 1
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int main(void)
 {
-    int i;
+    {{int}} i;
 
-    for (i = 0; i < 5; i++)
+    for (i = 0; {{i < 5}}; i++)
     {
         {{int temp = 1;}}
-        printf("temp = %d\n", temp);
+        printf("temp = {{%d}}\n", temp);
         temp++;
     }
-    return 0;
+    {{return 0;}}
 }
 
 @@ callval | 9 | 매개 변수와 값에 의한 호출
@@ -5046,19 +5046,19 @@ int main(void)
 함수 호출전 i=10
 함수 호출후 i=10
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 void inc(int counter);
 
 int main(void)
 {
-    int i;
+    {{int}} i;
 
-    i = 10;
-    printf("함수 호출전 i=%d\n", i);
+    i = {{10}};
+    printf("함수 호출전 i={{%d}}\n", i);
     {{inc(i);}}
-    printf("함수 호출후 i=%d\n", i);
-    return 0;
+    printf("함수 호출후 i={{%d}}\n", i);
+    {{return 0;}}
 }
 
 void inc(int counter)
@@ -5072,7 +5072,7 @@ void inc(int counter)
 ## out
 5 + 7 = 12
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 {{int A;}}
 int B;
@@ -5084,12 +5084,12 @@ int add()
 
 int main()
 {
-    int answer;
+    {{int}} answer;
 
-    A = 5;
-    B = 7;
-    answer = add();
-    printf("%d + %d = %d\n", A, B, answer);
+    A = {{5}};
+    B = {{7}};
+    answer = {{add()}};
+    printf("%d + {{%d}} = %d\n", A, B, answer);
     return 0;
 }
 
@@ -5099,14 +5099,14 @@ int main()
 ## out
 counter = 0
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int {{counter}};
 
 int main(void)
 {
-    printf("counter = %d\n", counter);
-    return 0;
+    printf("counter = {{%d}}\n", counter);
+    {{return 0;}}
 }
 
 @@ globalx | 9 | 전역 변수를 같이 쓰면?
@@ -5115,22 +5115,22 @@ main과 sub가 전역 변수 x를 함께 반복 변수로 쓰므로, sub()가 �
 ## out
 **********
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
-int x;
+{{int}} x;
 void sub();
 
 int main(void)
 {
     for (x = 0; {{x < 10}}; x++)
-        sub();
-    printf("\n");
-    return 0;
+        {{sub}}();
+    {{printf}}("\n");
+    {{return 0;}}
 }
 
 void sub()
 {
-    for (x = 0; x < 10; x++)
+    for (x = 0; {{x < 10}}; x++)
         printf("*");
 }
 
@@ -5140,15 +5140,15 @@ void sub()
 ## out
 sum = 0
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
-int sum = 1;    // 전역 변수
+int sum = {{1}};    // 전역 변수
 
 int main(void)
 {
     int sum = {{0}};  // 지역 변수
-    printf("sum = %d\n", sum);
-    return 0;
+    printf("sum = {{%d}}\n", sum);
+    {{return 0;}}
 }
 
 @@ staticvar | 9 | static 지역 변수
@@ -5159,23 +5159,23 @@ scount = 0	acount = 0
 scount = 1	acount = 0
 scount = 2	acount = 0
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 void sub() {
     {{static}} int scount = 0;
-    int acount = 0;
+    int acount = {{0}};
 
-    printf("scount = %d\t", scount);
-    printf("acount = %d\n", acount);
+    printf("scount = {{%d}}\t", scount);
+    printf("acount = {{%d}}\n", acount);
     scount++;
     acount++;
 }
 
 int main(void) {
+    {{sub}}();
     sub();
     sub();
-    sub();
-    return 0;
+    {{return 0;}}
 }
 
 @@ bank9 | 9 | Lab: 은행 계좌 save()
@@ -5192,27 +5192,27 @@ int main(void) {
 ==============================
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 // amount가 양수이면 입금이고 음수이면 출금으로 생각한다.
 void save(int amount)
 {
     {{static long balance = 0;}}
 
-    if (amount >= 0)
-        printf("%d \t\t", amount);
+    if ({{amount >= 0}})
+        printf("{{%d}} \t\t", amount);
     else
         printf("\t %d \t", {{-amount}});
 
-    balance += amount;
-    printf("%ld \n", balance);
+    balance += {{amount}};
+    printf("{{%ld}} \n", balance);
 }
 
 int main(void) {
     printf("==============================\n");
     printf("입금 \t출금\t 잔고\n");
     printf("==============================\n");
-    save(10000);
+    {{save}}(10000);
     save(50000);
     save(-10000);
     save(30000);
@@ -5229,17 +5229,17 @@ init(): 이미 초기화되었으므로 초기화하지 않습니다.
 init(): 이미 초기화되었으므로 초기화하지 않습니다. 
 ## code
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
-#include <stdlib.h>
+#include <{{stdio.h}}>
+#include <{{stdlib.h}}>
 
 void init();
 
 int main(void)
 {
-    init();
-    init();
-    init();
-    return 0;
+    {{init}}();
+    {{init}}();
+    {{init}}();
+    {{return 0;}}
 }
 
 void init()
@@ -5261,25 +5261,25 @@ void init()
 ## out
 합은 10입니다.
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 #include <{{stdarg.h}}>
 
 int sum(int, ...);
 
 int main(void)
 {
-    int answer = sum(4, 4, 3, 2, 1);
-    printf("합은 %d입니다.\n", answer);
+    int answer = {{sum(4, 4, 3, 2, 1)}};
+    printf("합은 {{%d}}입니다.\n", answer);
     return 0;
 }
 
 int sum(int num, {{...}})
 {
-    int answer = 0;
+    int answer = {{0}};
     {{va_list}} argptr;
 
-    va_start(argptr, num);
-    for (; num > 0; num--)
+    {{va_start}}(argptr, num);
+    for (; {{num > 0}}; num--)
         answer += {{va_arg(argptr, int)}};
     va_end(argptr);
     return answer;
@@ -5301,22 +5301,22 @@ factorial(1)
 ## code
 // 재귀적인 팩토리얼 함수 계산
 #define _CRT_SECURE_NO_WARNINGS
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 long factorial(int n)
 {
-    printf("factorial(%d)\n", n);
+    printf("factorial({{%d}})\n", n);
     if ({{n <= 1}}) return 1;
     else return {{n * factorial(n - 1)}};
 }
 
 int main(void)
 {
-    int n;
+    {{int}} n;
 
-    printf("정수를 입력하시오:");
-    scanf("%d", &n);
-    printf("%d!은 %ld입니다. \n", n, factorial(n));
+    {{printf}}("정수를 입력하시오:");
+    scanf("%d", {{&n}});
+    printf("{{%d}}!은 %ld입니다. \n", n, factorial(n));
     return 0;
 }
 
@@ -5328,15 +5328,15 @@ x / 2 로 재귀 호출한 다음 x % 2 를 출력하면 앞자리부터 출력�
 ## code
 #define _CRT_SECURE_NO_WARNINGS
 // 2진수 형식으로 출력
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 void print_binary(int x);
 
 int main(void)
 {
-    print_binary(9);
-    printf("\n");
-    return 0;
+    {{print_binary}}(9);
+    {{printf}}("\n");
+    {{return 0;}}
 }
 
 void print_binary(int x)
@@ -5355,21 +5355,21 @@ gcd(x, y) = gcd(y, x % y), gcd(x, 0) = x (유클리드 호제법)
 10
 ## code
 // 최대 공약수 구하기
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int gcd(int x, int y);
 
 int main(void)
 {
-    printf("%d\n", gcd(30, 20));
-    return 0;
+    printf("{{%d}}\n", gcd(30, 20));
+    {{return 0;}}
 }
 
 // x는 y보다 커야 한다.
 int gcd(int x, int y)
 {
     if ({{y == 0}})
-        return x;
+        {{return x;}}
     else
         return {{gcd(y, x % y)}};
 }
@@ -5380,22 +5380,22 @@ int gcd(int x, int y)
 ## out
 54321
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int reverseInteger(int num) {
-    int reversed = 0;
-    while (num != 0) {
+    int reversed = {{0}};
+    while ({{num != 0}}) {
         int remainder = {{num % 10}};
         reversed = {{reversed * 10 + remainder}};
-        num /= 10;
+        num /= {{10}};
     }
     return reversed;
 }
 
 int main(void)
 {
-    printf("%d\n", reverseInteger(12345));
-    return 0;
+    printf("{{%d}}\n", reverseInteger(12345));
+    {{return 0;}}
 }
 
 @@ hanoi | 9 | 하노이 탑
@@ -5412,24 +5412,24 @@ n-1개를 from에서 tmp로, n번 원판을 from에서 to로, n-1개를 tmp에�
 ## code
 #define _CRT_SECURE_NO_WARNINGS
 // 하노이의 탑 문제
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 void hanoi_tower(int n, char from, char tmp, char to);
 
 int main(void)
 {
-    hanoi_tower(3, 'A', 'B', 'C');
-    return 0;
+    {{hanoi_tower}}(3, 'A', 'B', 'C');
+    {{return 0;}}
 }
 
 void hanoi_tower(int n, char from, char tmp, char to)
 {
     if ({{n == 1}})
-        printf("원판 1을 %c에서 %c으로 옮긴다.\n", from, to);
+        printf("원판 1을 {{%c}}에서 %c으로 옮긴다.\n", from, to);
     else
     {
         hanoi_tower(n - 1, {{from, to, tmp}});
-        printf("원판 %d을 %c에서 %c으로 옮긴다.\n", n, from, to);
+        printf("원판 {{%d}}을 %c에서 %c으로 옮긴다.\n", n, from, to);
         hanoi_tower(n - 1, {{tmp, from, to}});
     }
 }
@@ -5442,20 +5442,20 @@ void hanoi_tower(int n, char from, char tmp, char to)
 2번째 호출
 3번째 호출
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 void call_count(void)
 {
     {{static int count = 0;}}
     count++;
-    printf("%d번째 호출\n", count);
+    printf("{{%d}}번째 호출\n", count);
 }
 
 int main(void)
 {
-    for (int i = 0; i < 3; i++)
-        call_count();
-    return 0;
+    for (int i = 0; {{i < 3}}; i++)
+        {{call_count}}();
+    {{return 0;}}
 }
 
 @@ v_sum_r | 9 | 재귀로 1부터 n까지 합 | 변형
@@ -5464,19 +5464,19 @@ sum(n) = n + sum(n-1), sum(1) = 1
 ## out
 55
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 int sum(int n)
 {
-    if (n == 1)
+    if ({{n == 1}})
         return {{1}};
     return {{n + sum(n - 1)}};
 }
 
 int main(void)
 {
-    printf("%d\n", sum(10));
-    return 0;
+    printf("{{%d}}\n", sum(10));
+    {{return 0;}}
 }
 
 @@ v_countdown | 9 | 재귀 출력 순서 | 변형
@@ -5486,26 +5486,26 @@ int main(void)
 3 2 1 
 1 2 3 
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 void down(int n)
 {
-    if (n == 0) return;
-    printf("%d ", n);
+    if ({{n == 0}}) return;
+    printf("{{%d}} ", n);
     {{down(n - 1);}}
 }
 
 void up(int n)
 {
-    if (n == 0) return;
+    if ({{n == 0}}) return;
     {{up(n - 1);}}
-    printf("%d ", n);
+    printf("{{%d}} ", n);
 }
 
 int main(void)
 {
     down(3);
-    printf("\n");
+    {{printf}}("\n");
     up(3);
     printf("\n");
     return 0;
@@ -5517,7 +5517,7 @@ int main(void)
 ## out
 total = 60
 ## code
-#include <stdio.h>
+#include <{{stdio.h}}>
 
 {{int total = 0;}}
 
@@ -5528,11 +5528,11 @@ void add(int n)
 
 int main(void)
 {
-    add(10);
-    add(20);
-    add(30);
-    printf("total = %d\n", total);
-    return 0;
+    {{add}}(10);
+    {{add}}(20);
+    {{add}}(30);
+    printf("total = {{%d}}\n", total);
+    {{return 0;}}
 }
 </script>
 
