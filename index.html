@@ -47,7 +47,7 @@ body {
   background: var(--bg); color: var(--ink); font-family: var(--font-body);
   font-size: 15px; line-height: 1.6; padding-inline: 16px; padding-block: 0 48px;
 }
-.wrap { max-width: 1180px; margin: 0 auto; }
+.wrap { max-width: 1280px; margin: 0 auto; }
 header.top {
   display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between;
   gap: 12px; padding-block: 28px 18px; border-bottom: 2px solid var(--ink);
@@ -58,8 +58,8 @@ header.top {
 .stats { display: flex; gap: 18px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .stats b { color: var(--ink); font-size: 17px; display: block; line-height: 1.2; }
 .toolbar { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding-block: 14px; }
-.seg { display: inline-grid; grid-template-columns: repeat(6, auto); gap: 1px; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: var(--rule); }
-@media (max-width: 760px) { .seg { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; } }
+.seg { display: inline-grid; grid-template-columns: repeat(7, auto); gap: 1px; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: var(--rule); }
+@media (max-width: 860px) { .seg { display: flex; flex-wrap: wrap; width: 100%; } .seg button { flex: 1 1 auto; } }
 @media (max-width: 400px) { .seg button { padding: 8px 6px; font-size: 13px; } }
 .seg button { border: 0; background: var(--paper); color: var(--ink); font: inherit; font-size: 14px; padding: 8px 14px; cursor: pointer; }
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); font-weight: 700; }
@@ -182,6 +182,420 @@ details.ex .exbody { padding: 0 14px 14px; min-width: 0; }
 .subhead { font-size: 12px; letter-spacing: 0.06em; font-weight: 700; color: var(--muted); margin: 18px 0 6px; }
 .note { font-size: 13px; background: var(--part-soft); border-radius: 6px; padding: 8px 12px; margin-bottom: 14px; }
 @media (prefers-reduced-motion: no-preference) { .btn, .chip, .seg button { transition: background-color .15s, border-color .15s; } }
+.sig { white-space: pre; }
+/* VS Code 스타일 편집기: 테마와 상관없이 Dark+ 한 가지 모습 */
+:root {
+  --vs-bg: #1e1e1e; --vs-side: #252526; --vs-bar: #2d2d2d; --vs-tab: #1e1e1e; --vs-tab-off: #2d2d2d;
+  --vs-fg: #d4d4d4; --vs-dim: #858585; --vs-line: #2a2d2e; --vs-sel: #264f78; --vs-blue: #007acc;
+  --vs-term: #181818; --vs-border: #3c3c3c; --vs-ok: #89d185; --vs-err: #f48771; --vs-warn: #cca700;
+  --vs-kw: #569cd6; --vs-ctl: #c586c0; --vs-str: #ce9178; --vs-num: #b5cea8; --vs-com: #6a9955;
+  --vs-type: #4ec9b0; --vs-fn: #dcdcaa; --vs-var: #9cdcfe; --vs-pre: #c586c0;
+}
+.ide { border: 1px solid var(--vs-border); border-radius: 8px; overflow: hidden; background: var(--vs-bg); color: var(--vs-fg); min-width: 0; }
+.ide-top { display: flex; flex-wrap: wrap; align-items: stretch; justify-content: space-between; background: var(--vs-bar); border-bottom: 1px solid var(--vs-border); }
+.ide-tabs { display: flex; min-width: 0; }
+.ide-tab { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; background: var(--vs-tab); color: #ffffff; font-family: var(--font-mono); font-size: 12.5px; border-top: 2px solid var(--vs-blue); white-space: nowrap; }
+.ide-tab .ic { color: #519aba; font-weight: 700; font-size: 11px; }
+.ide-tab .dot { width: 8px; height: 8px; border-radius: 50%; background: transparent; }
+.ide-tab.dirty .dot { background: #ffffff; opacity: .8; }
+.ide-actions { display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 6px; align-items: center; }
+.vbtn { font: inherit; font-size: 12.5px; border: 1px solid transparent; background: transparent; color: var(--vs-fg); padding: 4px 10px; border-radius: 4px; cursor: pointer; white-space: nowrap; }
+.vbtn:hover { background: #3a3d41; }
+.vbtn.run { background: #0e639c; color: #ffffff; font-weight: 700; }
+.vbtn.run:hover { background: #1177bb; }
+.vbtn.grade { background: #2ea043; color: #ffffff; font-weight: 700; }
+.vbtn.grade:hover { background: #3fb950; }
+.vbtn:disabled { opacity: .5; cursor: progress; }
+.vbtn:focus-visible { outline: 1px solid var(--vs-blue); outline-offset: 1px; }
+.ide-ed { position: relative; }
+.ide-ed .CodeMirror { height: 400px; font-family: var(--font-mono); font-size: 13.5px; line-height: 1.6; }
+.ide-ed.tall .CodeMirror { height: 480px; }
+@media (max-width: 600px) { .ide-ed .CodeMirror, .ide-ed.tall .CodeMirror { height: 340px; font-size: 13px; } }
+.ide-ed textarea.fallback { width: 100%; height: 400px; border: 0; background: var(--vs-bg); color: var(--vs-fg); padding: 10px 14px; font-family: var(--font-mono); font-size: 13.5px; line-height: 1.6; resize: vertical; white-space: pre; tab-size: 4; }
+.ide-status { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 14px; background: var(--vs-blue); color: #ffffff; font-size: 11.5px; padding: 2px 10px; font-family: var(--font-body); }
+.ide-status span { white-space: nowrap; }
+.ide-panel { border-top: 1px solid var(--vs-border); background: var(--vs-term); }
+.ide-ptabs { display: flex; flex-wrap: wrap; gap: 2px 16px; padding: 0 12px; border-bottom: 1px solid var(--vs-border); font-size: 11.5px; letter-spacing: .04em; }
+.ide-ptabs button { background: none; border: 0; border-bottom: 1px solid transparent; color: var(--vs-dim); font: inherit; padding: 7px 0 6px; cursor: pointer; text-transform: uppercase; }
+.ide-ptabs button[aria-selected="true"] { color: #e7e7e7; border-bottom-color: #e7e7e7; }
+.ide-pbody { display: grid; grid-template-columns: minmax(0, 220px) minmax(0, 1fr); min-height: 150px; }
+@media (max-width: 700px) { .ide-pbody { grid-template-columns: minmax(0, 1fr); } }
+.ide-stdin { border-right: 1px solid var(--vs-border); display: flex; flex-direction: column; min-width: 0; }
+@media (max-width: 700px) { .ide-stdin { border-right: 0; border-bottom: 1px solid var(--vs-border); } }
+.ide-stdin label { font-size: 11px; color: var(--vs-dim); padding: 6px 10px 2px; letter-spacing: .04em; }
+.ide-stdin textarea { flex: 1; min-height: 70px; resize: vertical; background: transparent; color: var(--vs-fg); border: 0; padding: 4px 10px 8px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.5; }
+.ide-stdin textarea:focus-visible { outline: 1px solid var(--vs-blue); outline-offset: -1px; }
+.ide-out { min-width: 0; max-height: 320px; overflow: auto; }
+.ide-term { margin: 0; padding: 8px 12px 10px; font-family: var(--font-mono); font-size: 12.5px; line-height: 1.55; color: #cccccc; white-space: pre-wrap; word-break: break-word; }
+.ide-term .cmd { color: var(--vs-dim); }
+.ide-term .err { color: var(--vs-err); }
+.ide-term .ok { color: var(--vs-ok); }
+.ide-term .warn { color: var(--vs-warn); }
+.ide-term .tnote { color: var(--vs-dim); }
+@media (max-width: 700px) { .ide-status .keys { display: none; } }
+.ttable { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.ttable th, .ttable td { border-bottom: 1px solid var(--vs-border); padding: 6px 10px; text-align: left; vertical-align: top; }
+.ttable th { color: var(--vs-dim); font-weight: 500; font-size: 11px; letter-spacing: .04em; }
+.ttable pre { margin: 0; font-family: var(--font-mono); white-space: pre-wrap; word-break: break-word; color: #cccccc; }
+.ttable .pass { color: var(--vs-ok); font-weight: 700; }
+.ttable .fail { color: var(--vs-err); font-weight: 700; }
+.ttable td.mark { width: 3em; text-align: center; }
+.ttable td:nth-child(2) { width: 16%; min-width: 7em; }
+.lockbar { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; font-size: 12.5px; color: var(--muted); margin: 6px 0 8px; }
+.cm-s-vscode-dark.CodeMirror { background: var(--vs-bg); color: var(--vs-fg); }
+.cm-s-vscode-dark .CodeMirror-gutters { background: var(--vs-bg); border-right: 0; }
+.cm-s-vscode-dark .CodeMirror-linenumber { color: var(--vs-dim); padding: 0 12px 0 8px; }
+.cm-s-vscode-dark .CodeMirror-activeline-background { background: var(--vs-line); }
+.cm-s-vscode-dark .CodeMirror-activeline .CodeMirror-linenumber { color: #c6c6c6; }
+.cm-s-vscode-dark .CodeMirror-cursor { border-left: 2px solid #aeafad; }
+.cm-s-vscode-dark div.CodeMirror-selected, .cm-s-vscode-dark.CodeMirror-focused div.CodeMirror-selected { background: var(--vs-sel); }
+.cm-s-vscode-dark .CodeMirror-line::selection, .cm-s-vscode-dark .CodeMirror-line > span::selection, .cm-s-vscode-dark .CodeMirror-line > span > span::selection { background: var(--vs-sel); }
+.cm-s-vscode-dark span.cm-keyword { color: var(--vs-ctl); }
+.cm-s-vscode-dark span.cm-type { color: var(--vs-kw); }
+.cm-s-vscode-dark span.cm-builtin { color: var(--vs-type); }
+.cm-s-vscode-dark span.cm-atom { color: var(--vs-kw); }
+.cm-s-vscode-dark span.cm-number { color: var(--vs-num); }
+.cm-s-vscode-dark span.cm-string { color: var(--vs-str); }
+.cm-s-vscode-dark span.cm-string-2 { color: var(--vs-str); }
+.cm-s-vscode-dark span.cm-comment { color: var(--vs-com); }
+.cm-s-vscode-dark span.cm-meta { color: var(--vs-pre); }
+.cm-s-vscode-dark span.cm-def { color: var(--vs-fn); }
+.cm-s-vscode-dark span.cm-variable { color: var(--vs-var); }
+.cm-s-vscode-dark span.cm-variable-2 { color: var(--vs-var); }
+.cm-s-vscode-dark span.cm-variable-3 { color: var(--vs-type); }
+.cm-s-vscode-dark span.cm-operator { color: var(--vs-fg); }
+.cm-s-vscode-dark span.cm-punctuation { color: var(--vs-fg); }
+.cm-s-vscode-dark span.cm-fncall { color: var(--vs-fn); }
+.cm-s-vscode-dark span.cm-ctl { color: var(--vs-ctl); }
+.cm-s-vscode-dark span.CodeMirror-matchingbracket { color: inherit !important; outline: 1px solid #888888; background: rgba(0, 100, 0, .25); }
+.cm-s-vscode-dark .cm-locked { background: rgba(255, 255, 255, .035); }
+.cm-s-vscode-dark .CodeMirror-placeholder { color: #6b6b6b; }
+.CodeMirror-hints { background: var(--vs-side); border: 1px solid #454545; box-shadow: 0 4px 12px rgba(0, 0, 0, .4); font-family: var(--font-mono); font-size: 12.5px; padding: 2px 0; z-index: 50; }
+.CodeMirror-hint { color: var(--vs-fg); padding: 2px 10px; border-radius: 0; }
+li.CodeMirror-hint-active { background: #04395e; color: #ffffff; }
+.CodeMirror-hint .hk { color: var(--vs-dim); margin-left: 10px; font-size: 11px; }
+
+/* 함수 퀴즈 */
+.kind { font-size: 11px; font-weight: 700; border-radius: 3px; padding: 0 5px; white-space: nowrap; }
+.kind.past { color: var(--pen); border: 1px solid var(--pen); }
+.kind.exp { color: var(--muted); border: 1px solid var(--rule); }
+.cond { margin: 0 0 12px; padding-left: 1.2em; font-size: 14px; }
+.cond li { margin: 2px 0; }
+.sig { font-family: var(--font-mono); font-size: 13px; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 6px; padding: 6px 10px; display: inline-block; margin-bottom: 12px; overflow-x: auto; max-width: 100%; }
+.qsec { margin-top: 14px; }
+
+/* CodeMirror 5.65.16 (MIT) 기본 스타일 */
+.CodeMirror {
+font-family: monospace;
+height: 300px;
+color: black;
+direction: ltr;
+}
+.CodeMirror-lines {
+padding: 4px 0;
+}
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like {
+padding: 0 4px;
+}
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+background-color: white;
+}
+.CodeMirror-gutters {
+border-right: 1px solid #ddd;
+background-color: #f7f7f7;
+white-space: nowrap;
+}
+.CodeMirror-linenumbers {}
+.CodeMirror-linenumber {
+padding: 0 3px 0 5px;
+min-width: 20px;
+text-align: right;
+color: #999;
+white-space: nowrap;
+}
+.CodeMirror-guttermarker { color: black; }
+.CodeMirror-guttermarker-subtle { color: #999; }
+.CodeMirror-cursor {
+border-left: 1px solid black;
+border-right: none;
+width: 0;
+}
+.CodeMirror div.CodeMirror-secondarycursor {
+border-left: 1px solid silver;
+}
+.cm-fat-cursor .CodeMirror-cursor {
+width: auto;
+border: 0 !important;
+background: #7e7;
+}
+.cm-fat-cursor div.CodeMirror-cursors {
+z-index: 1;
+}
+.cm-fat-cursor .CodeMirror-line::selection,
+.cm-fat-cursor .CodeMirror-line > span::selection,
+.cm-fat-cursor .CodeMirror-line > span > span::selection { background: transparent; }
+.cm-fat-cursor .CodeMirror-line::-moz-selection,
+.cm-fat-cursor .CodeMirror-line > span::-moz-selection,
+.cm-fat-cursor .CodeMirror-line > span > span::-moz-selection { background: transparent; }
+.cm-fat-cursor { caret-color: transparent; }
+@-moz-keyframes blink {
+0% {}
+50% { background-color: transparent; }
+100% {}
+}
+@-webkit-keyframes blink {
+0% {}
+50% { background-color: transparent; }
+100% {}
+}
+@keyframes blink {
+0% {}
+50% { background-color: transparent; }
+100% {}
+}
+.CodeMirror-overwrite .CodeMirror-cursor {}
+.cm-tab { display: inline-block; text-decoration: inherit; }
+.CodeMirror-rulers {
+position: absolute;
+left: 0; right: 0; top: -50px; bottom: 0;
+overflow: hidden;
+}
+.CodeMirror-ruler {
+border-left: 1px solid #ccc;
+top: 0; bottom: 0;
+position: absolute;
+}
+.cm-s-default .cm-header {color: blue;}
+.cm-s-default .cm-quote {color: #090;}
+.cm-negative {color: #d44;}
+.cm-positive {color: #292;}
+.cm-header, .cm-strong {font-weight: bold;}
+.cm-em {font-style: italic;}
+.cm-link {text-decoration: underline;}
+.cm-strikethrough {text-decoration: line-through;}
+.cm-s-default .cm-keyword {color: #708;}
+.cm-s-default .cm-atom {color: #219;}
+.cm-s-default .cm-number {color: #164;}
+.cm-s-default .cm-def {color: #00f;}
+.cm-s-default .cm-variable,
+.cm-s-default .cm-punctuation,
+.cm-s-default .cm-property,
+.cm-s-default .cm-operator {}
+.cm-s-default .cm-variable-2 {color: #05a;}
+.cm-s-default .cm-variable-3, .cm-s-default .cm-type {color: #085;}
+.cm-s-default .cm-comment {color: #a50;}
+.cm-s-default .cm-string {color: #a11;}
+.cm-s-default .cm-string-2 {color: #f50;}
+.cm-s-default .cm-meta {color: #555;}
+.cm-s-default .cm-qualifier {color: #555;}
+.cm-s-default .cm-builtin {color: #30a;}
+.cm-s-default .cm-bracket {color: #997;}
+.cm-s-default .cm-tag {color: #170;}
+.cm-s-default .cm-attribute {color: #00c;}
+.cm-s-default .cm-hr {color: #999;}
+.cm-s-default .cm-link {color: #00c;}
+.cm-s-default .cm-error {color: #f00;}
+.cm-invalidchar {color: #f00;}
+.CodeMirror-composing { border-bottom: 2px solid; }
+div.CodeMirror span.CodeMirror-matchingbracket {color: #0b0;}
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
+.CodeMirror-matchingtag { background: rgba(255, 150, 0, .3); }
+.CodeMirror-activeline-background {background: #e8f2ff;}
+.CodeMirror {
+position: relative;
+overflow: hidden;
+background: white;
+}
+.CodeMirror-scroll {
+overflow: scroll !important;
+margin-bottom: -50px; margin-right: -50px;
+padding-bottom: 50px;
+height: 100%;
+outline: none;
+position: relative;
+z-index: 0;
+}
+.CodeMirror-sizer {
+position: relative;
+border-right: 50px solid transparent;
+}
+.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+position: absolute;
+z-index: 6;
+display: none;
+outline: none;
+}
+.CodeMirror-vscrollbar {
+right: 0; top: 0;
+overflow-x: hidden;
+overflow-y: scroll;
+}
+.CodeMirror-hscrollbar {
+bottom: 0; left: 0;
+overflow-y: hidden;
+overflow-x: scroll;
+}
+.CodeMirror-scrollbar-filler {
+right: 0; bottom: 0;
+}
+.CodeMirror-gutter-filler {
+left: 0; bottom: 0;
+}
+.CodeMirror-gutters {
+position: absolute; left: 0; top: 0;
+min-height: 100%;
+z-index: 3;
+}
+.CodeMirror-gutter {
+white-space: normal;
+height: 100%;
+display: inline-block;
+vertical-align: top;
+margin-bottom: -50px;
+}
+.CodeMirror-gutter-wrapper {
+position: absolute;
+z-index: 4;
+background: none !important;
+border: none !important;
+}
+.CodeMirror-gutter-background {
+position: absolute;
+top: 0; bottom: 0;
+z-index: 4;
+}
+.CodeMirror-gutter-elt {
+position: absolute;
+cursor: default;
+z-index: 4;
+}
+.CodeMirror-gutter-wrapper ::selection { background-color: transparent }
+.CodeMirror-gutter-wrapper ::-moz-selection { background-color: transparent }
+.CodeMirror-lines {
+cursor: text;
+min-height: 1px;
+}
+.CodeMirror pre.CodeMirror-line,
+.CodeMirror pre.CodeMirror-line-like {
+-moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0;
+border-width: 0;
+background: transparent;
+font-family: inherit;
+font-size: inherit;
+margin: 0;
+white-space: pre;
+word-wrap: normal;
+line-height: inherit;
+color: inherit;
+z-index: 2;
+position: relative;
+overflow: visible;
+-webkit-tap-highlight-color: transparent;
+-webkit-font-variant-ligatures: contextual;
+font-variant-ligatures: contextual;
+}
+.CodeMirror-wrap pre.CodeMirror-line,
+.CodeMirror-wrap pre.CodeMirror-line-like {
+word-wrap: break-word;
+white-space: pre-wrap;
+word-break: normal;
+}
+.CodeMirror-linebackground {
+position: absolute;
+left: 0; right: 0; top: 0; bottom: 0;
+z-index: 0;
+}
+.CodeMirror-linewidget {
+position: relative;
+z-index: 2;
+padding: 0.1px;
+}
+.CodeMirror-widget {}
+.CodeMirror-rtl pre { direction: rtl; }
+.CodeMirror-code {
+outline: none;
+}
+.CodeMirror-scroll,
+.CodeMirror-sizer,
+.CodeMirror-gutter,
+.CodeMirror-gutters,
+.CodeMirror-linenumber {
+-moz-box-sizing: content-box;
+box-sizing: content-box;
+}
+.CodeMirror-measure {
+position: absolute;
+width: 100%;
+height: 0;
+overflow: hidden;
+visibility: hidden;
+}
+.CodeMirror-cursor {
+position: absolute;
+pointer-events: none;
+}
+.CodeMirror-measure pre { position: static; }
+div.CodeMirror-cursors {
+visibility: hidden;
+position: relative;
+z-index: 3;
+}
+div.CodeMirror-dragcursors {
+visibility: visible;
+}
+.CodeMirror-focused div.CodeMirror-cursors {
+visibility: visible;
+}
+.CodeMirror-selected { background: #d9d9d9; }
+.CodeMirror-focused .CodeMirror-selected { background: #d7d4f0; }
+.CodeMirror-crosshair { cursor: crosshair; }
+.CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection { background: #d7d4f0; }
+.CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: #d7d4f0; }
+.cm-searching {
+background-color: #ffa;
+background-color: rgba(255, 255, 0, .4);
+}
+.cm-force-border { padding-right: .1px; }
+@media print {
+.CodeMirror div.CodeMirror-cursors {
+visibility: hidden;
+}
+}
+.cm-tab-wrap-hack:after { content: ''; }
+span.CodeMirror-selectedtext { background: none; }
+.CodeMirror-hints {
+position: absolute;
+z-index: 10;
+overflow: hidden;
+list-style: none;
+margin: 0;
+padding: 2px;
+-webkit-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+-moz-box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+box-shadow: 2px 3px 5px rgba(0,0,0,.2);
+border-radius: 3px;
+border: 1px solid silver;
+background: white;
+font-size: 90%;
+font-family: monospace;
+max-height: 20em;
+overflow-y: auto;
+box-sizing: border-box;
+}
+.CodeMirror-hint {
+margin: 0;
+padding: 0 4px;
+border-radius: 2px;
+white-space: pre;
+color: black;
+cursor: pointer;
+}
+li.CodeMirror-hint-active {
+background: #08f;
+color: white;
+}
+
 </style>
 </head>
 <body>
@@ -189,7 +603,7 @@ details.ex .exbody { padding: 0 14px 14px; min-width: 0; }
   <header class="top">
     <div class="brand">
       <h1>C 백지 연습장 <span class="mono">_</span></h1>
-      <p>프로그래밍 및 실습2 · 1~8장 (C언어 소개 → 함수)</p>
+      <p>프로그래밍 및 실습2 · 1~9장 (C언어 소개 → 함수와 변수)</p>
     </div>
     <div class="stats" id="stats"></div>
   </header>
@@ -198,6 +612,7 @@ details.ex .exbody { padding: 0 14px 14px; min-width: 0; }
     <div class="seg" id="modes" role="group" aria-label="공부 방식">
       <button data-mode="theory">이론 정리</button>
       <button data-mode="codes">코드 정리</button>
+      <button data-mode="quiz">함수 퀴즈</button>
       <button data-mode="concept">개념 빈칸</button>
       <button data-mode="code">코드 빈칸</button>
       <button data-mode="blank">백지 테스트</button>
@@ -364,6 +779,32 @@ details.ex .exbody { padding: 0 14px 14px; min-width: 0; }
 8 | getchar()로 문자를 받은 뒤 남은 {{엔터§줄바꿈}} 문자를 지우기 위해 getchar()를 한 번 더 호출한다.
 8 | system("cls")는 화면을 지우고, _getch()는 {{conio.h}}에 있으며 엔터 없이 문자 하나를 받는다.
 8 | 모듈 내에서는 최대의 상호 작용, 모듈 사이에는 {{최소}}의 상호 작용만 있어야 한다.
+9 | 변수의 속성: 이름, 타입, 크기, 값 + {{범위}}(scope), {{생존 시간§생존시간}}(lifetime), {{연결}}(linkage)
+9 | 블록 안에 선언되어 그 블록 안에서만 쓸 수 있는 변수는 {{지역}} 변수이다.
+9 | 함수 외부에서 선언되어 소스 파일 전체에서 쓸 수 있는 변수는 {{전역}} 변수이다.
+9 | 지역 변수를 초기화하지 않으면 {{쓰레기값§쓰레기 값}}을 가지고, 전역 변수는 {{0}}으로 자동 초기화된다.
+9 | 지역 변수는 블록이 끝나면 {{소멸§사라진다}}한다.
+9 | 함수의 매개 변수도 일종의 {{지역}} 변수이며, 인수 값으로 초기화된다.
+9 | 인수의 값을 복사해서 전달하는 방식을 {{값에 의한 호출§call by value}}이라고 한다.
+9 | 같은 이름의 전역 변수와 지역 변수가 있으면 {{지역}} 변수가 우선한다.
+9 | 전역 변수와 static 변수는 {{데이터}} 영역, 지역 변수와 매개 변수는 {{스택}} 영역에 저장된다.
+9 | 동적 할당 변수는 {{힙}} 영역에 저장된다.
+9 | 프로그램 실행 내내 유지되는 것은 {{정적}} 할당, 블록에 들어갈 때 생성되고 나올 때 소멸하는 것은 {{자동}} 할당이다.
+9 | 저장 유형 지정자 4가지: auto, {{static}}, {{register}}, {{extern}}
+9 | 지역 변수는 {{auto}}를 생략해도 자동 변수가 된다.
+9 | 지역 변수를 정적 변수로 만들려면 {{static}}을 붙인다. 정적 변수는 {{한§1}} 번만 초기화된다.
+9 | 변수를 CPU 내부의 레지스터에 저장하도록 요청하는 지정자는 {{register}}이다.
+9 | 다른 곳에 선언된 전역 변수를 쓰겠다고 컴파일러에게 알리는 지정자는 {{extern}}이다.
+9 | {{전역}} 변수만이 연결(linkage)을 가질 수 있다.
+9 | 함수 앞에 static을 붙이면 그 함수는 다른 소스 파일에서 사용할 수 {{없다§없음}}.
+9 | 함수 호출이 끝나도 값을 유지해야 하면 지역 {{static}} 변수, 많은 함수가 공유해야 하면 {{extern}} 전역 변수를 쓴다.
+9 | 가변 매개 변수 함수는 int sum(int num, {{...}}) 처럼 선언하고 {{stdarg.h}}를 포함한다.
+9 | 함수가 자기 자신을 호출하는 것을 {{순환§재귀}}(recursion)이라고 한다.
+9 | 재귀 함수에는 반드시 {{종료 조건§종료조건§기저 사례}}이 있어야 한다.
+9 | 재귀 팩토리얼: if (n <= 1) return 1; else return n * {{factorial(n - 1)§factorial(n-1)}};
+9 | 재귀 최대공약수: if (y == 0) return x; else return gcd({{y}}, {{x % y}});
+9 | 2진수 출력: print_binary({{x / 2}}); 를 먼저 호출하고 printf("%d", {{x % 2}}); 를 한다.
+9 | 하노이 탑 원판 3개의 이동 횟수는 {{7}}번, n개는 2ⁿ - {{1}}번이다.
 </script>
 
 <!-- ───────── 프로그램 데이터: 코드 빈칸 + 백지 테스트 공용 ───────── -->
@@ -4572,6 +5013,527 @@ int main(void)
     printf("최소 공배수: %d\n", {{a * b / gcd(a, b)}});
     return 0;
 }
+
+@@ localvar | 9 | 지역 변수의 생존 기간
+## desc
+블록에 들어갈 때마다 temp가 새로 만들어지고 1로 초기화된다.
+## out
+temp = 1
+temp = 1
+temp = 1
+temp = 1
+temp = 1
+## code
+#include <stdio.h>
+
+int main(void)
+{
+    int i;
+
+    for (i = 0; i < 5; i++)
+    {
+        {{int temp = 1;}}
+        printf("temp = %d\n", temp);
+        temp++;
+    }
+    return 0;
+}
+
+@@ callval | 9 | 매개 변수와 값에 의한 호출
+## desc
+매개 변수 counter는 i의 값을 복사받은 지역 변수이므로, 함수 안에서 증가해도 i는 그대로다.
+## out
+함수 호출전 i=10
+함수 호출후 i=10
+## code
+#include <stdio.h>
+
+void inc(int counter);
+
+int main(void)
+{
+    int i;
+
+    i = 10;
+    printf("함수 호출전 i=%d\n", i);
+    {{inc(i);}}
+    printf("함수 호출후 i=%d\n", i);
+    return 0;
+}
+
+void inc(int counter)
+{
+    {{counter++;}}
+}
+
+@@ globalvar | 9 | 전역 변수 A, B
+## desc
+함수 밖에 선언한 전역 변수는 모든 함수에서 쓸 수 있다.
+## out
+5 + 7 = 12
+## code
+#include <stdio.h>
+
+{{int A;}}
+int B;
+
+int add()
+{
+    return {{A + B}};
+}
+
+int main()
+{
+    int answer;
+
+    A = 5;
+    B = 7;
+    answer = add();
+    printf("%d + %d = %d\n", A, B, answer);
+    return 0;
+}
+
+@@ globalinit | 9 | 전역 변수의 초기값
+## desc
+전역 변수는 실행 시 0으로 초기화된다.
+## out
+counter = 0
+## code
+#include <stdio.h>
+
+int {{counter}};
+
+int main(void)
+{
+    printf("counter = %d\n", counter);
+    return 0;
+}
+
+@@ globalx | 9 | 전역 변수를 같이 쓰면?
+## desc
+main과 sub가 전역 변수 x를 함께 반복 변수로 쓰므로, sub()가 끝나면 x가 10이 되어 main의 반복이 한 번에 끝난다.
+## out
+**********
+## code
+#include <stdio.h>
+
+int x;
+void sub();
+
+int main(void)
+{
+    for (x = 0; {{x < 10}}; x++)
+        sub();
+    printf("\n");
+    return 0;
+}
+
+void sub()
+{
+    for (x = 0; x < 10; x++)
+        printf("*");
+}
+
+@@ samename | 9 | 같은 이름의 전역·지역 변수
+## desc
+이름이 같으면 지역 변수가 우선한다.
+## out
+sum = 0
+## code
+#include <stdio.h>
+
+int sum = 1;    // 전역 변수
+
+int main(void)
+{
+    int sum = {{0}};  // 지역 변수
+    printf("sum = %d\n", sum);
+    return 0;
+}
+
+@@ staticvar | 9 | static 지역 변수
+## desc
+scount는 정적 변수라 값이 유지되고, acount는 자동 변수라 호출마다 0이 된다.
+## out
+scount = 0	acount = 0
+scount = 1	acount = 0
+scount = 2	acount = 0
+## code
+#include <stdio.h>
+
+void sub() {
+    {{static}} int scount = 0;
+    int acount = 0;
+
+    printf("scount = %d\t", scount);
+    printf("acount = %d\n", acount);
+    scount++;
+    acount++;
+}
+
+int main(void) {
+    sub();
+    sub();
+    sub();
+    return 0;
+}
+
+@@ bank9 | 9 | Lab: 은행 계좌 save()
+## desc
+정적 변수 balance로 저축 총액을 기억한다. 양수는 입금, 음수는 출금.
+## out
+==============================
+입금	출금	 잔고
+==============================
+10000 		10000 
+50000 		60000 
+	 10000 	50000 
+30000 		80000 
+==============================
+## code
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+
+// amount가 양수이면 입금이고 음수이면 출금으로 생각한다.
+void save(int amount)
+{
+    {{static long balance = 0;}}
+
+    if (amount >= 0)
+        printf("%d \t\t", amount);
+    else
+        printf("\t %d \t", {{-amount}});
+
+    balance += amount;
+    printf("%ld \n", balance);
+}
+
+int main(void) {
+    printf("==============================\n");
+    printf("입금 \t출금\t 잔고\n");
+    printf("==============================\n");
+    save(10000);
+    save(50000);
+    save(-10000);
+    save(30000);
+    printf("==============================\n");
+    return 0;
+}
+
+@@ initonce | 9 | Lab: 한 번만 초기화하기
+## desc
+정적 변수 inited를 플래그로 써서 처음 한 번만 초기화한다.
+## out
+init(): 네트워크 장치를 초기화합니다. 
+init(): 이미 초기화되었으므로 초기화하지 않습니다. 
+init(): 이미 초기화되었으므로 초기화하지 않습니다. 
+## code
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+void init();
+
+int main(void)
+{
+    init();
+    init();
+    init();
+    return 0;
+}
+
+void init()
+{
+    static int inited = {{0}};
+
+    if ({{inited == 0}}) {
+        printf("init(): 네트워크 장치를 초기화합니다. \n");
+        {{inited = 1;}}
+    }
+    else {
+        printf("init(): 이미 초기화되었으므로 초기화하지 않습니다. \n");
+    }
+}
+
+@@ varargs | 9 | 가변 매개 변수 sum()
+## desc
+매개 변수 개수가 바뀌는 함수. stdarg.h의 va_list, va_start, va_arg, va_end를 쓴다. (사이트 실행기는 stdarg.h를 지원하지 않습니다)
+## out
+합은 10입니다.
+## code
+#include <stdio.h>
+#include <{{stdarg.h}}>
+
+int sum(int, ...);
+
+int main(void)
+{
+    int answer = sum(4, 4, 3, 2, 1);
+    printf("합은 %d입니다.\n", answer);
+    return 0;
+}
+
+int sum(int num, {{...}})
+{
+    int answer = 0;
+    {{va_list}} argptr;
+
+    va_start(argptr, num);
+    for (; num > 0; num--)
+        answer += {{va_arg(argptr, int)}};
+    va_end(argptr);
+    return answer;
+}
+
+@@ fact_r | 9 | 재귀 팩토리얼 (호출 과정 출력)
+## desc
+factorial(n)은 factorial(n-1)을 호출한다. n <= 1 이면 1을 반환하며 멈춘다.
+## in
+5
+## out
+정수를 입력하시오:5
+factorial(5)
+factorial(4)
+factorial(3)
+factorial(2)
+factorial(1)
+5!은 120입니다.
+## code
+// 재귀적인 팩토리얼 함수 계산
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+
+long factorial(int n)
+{
+    printf("factorial(%d)\n", n);
+    if ({{n <= 1}}) return 1;
+    else return {{n * factorial(n - 1)}};
+}
+
+int main(void)
+{
+    int n;
+
+    printf("정수를 입력하시오:");
+    scanf("%d", &n);
+    printf("%d!은 %ld입니다. \n", n, factorial(n));
+    return 0;
+}
+
+@@ binary_r | 9 | 재귀: 2진수 출력
+## desc
+x / 2 로 재귀 호출한 다음 x % 2 를 출력하면 앞자리부터 출력된다.
+## out
+1001
+## code
+#define _CRT_SECURE_NO_WARNINGS
+// 2진수 형식으로 출력
+#include <stdio.h>
+
+void print_binary(int x);
+
+int main(void)
+{
+    print_binary(9);
+    printf("\n");
+    return 0;
+}
+
+void print_binary(int x)
+{
+    if ({{x > 0}})
+    {
+        {{print_binary(x / 2);}}    // 재귀 호출
+        printf("%d", {{x % 2}});    // 나머지를 출력
+    }
+}
+
+@@ gcd_r | 9 | 재귀: 최대 공약수
+## desc
+gcd(x, y) = gcd(y, x % y), gcd(x, 0) = x (유클리드 호제법)
+## out
+10
+## code
+// 최대 공약수 구하기
+#include <stdio.h>
+
+int gcd(int x, int y);
+
+int main(void)
+{
+    printf("%d\n", gcd(30, 20));
+    return 0;
+}
+
+// x는 y보다 커야 한다.
+int gcd(int x, int y)
+{
+    if ({{y == 0}})
+        return x;
+    else
+        return {{gcd(y, x % y)}};
+}
+
+@@ revint | 9 | Lab 연습: 정수 reverse
+## desc
+나머지(% 10)를 꺼내 reversed에 붙여 나간다.
+## out
+54321
+## code
+#include <stdio.h>
+
+int reverseInteger(int num) {
+    int reversed = 0;
+    while (num != 0) {
+        int remainder = {{num % 10}};
+        reversed = {{reversed * 10 + remainder}};
+        num /= 10;
+    }
+    return reversed;
+}
+
+int main(void)
+{
+    printf("%d\n", reverseInteger(12345));
+    return 0;
+}
+
+@@ hanoi | 9 | 하노이 탑
+## desc
+n-1개를 from에서 tmp로, n번 원판을 from에서 to로, n-1개를 tmp에서 to로 옮긴다.
+## out
+원판 1을 A에서 C으로 옮긴다.
+원판 2을 A에서 B으로 옮긴다.
+원판 1을 C에서 B으로 옮긴다.
+원판 3을 A에서 C으로 옮긴다.
+원판 1을 B에서 A으로 옮긴다.
+원판 2을 B에서 C으로 옮긴다.
+원판 1을 A에서 C으로 옮긴다.
+## code
+#define _CRT_SECURE_NO_WARNINGS
+// 하노이의 탑 문제
+#include <stdio.h>
+
+void hanoi_tower(int n, char from, char tmp, char to);
+
+int main(void)
+{
+    hanoi_tower(3, 'A', 'B', 'C');
+    return 0;
+}
+
+void hanoi_tower(int n, char from, char tmp, char to)
+{
+    if ({{n == 1}})
+        printf("원판 1을 %c에서 %c으로 옮긴다.\n", from, to);
+    else
+    {
+        hanoi_tower(n - 1, {{from, to, tmp}});
+        printf("원판 %d을 %c에서 %c으로 옮긴다.\n", n, from, to);
+        hanoi_tower(n - 1, {{tmp, from, to}});
+    }
+}
+
+@@ v_counter | 9 | 호출 횟수 세기 (static) | 변형
+## desc
+함수가 몇 번째 호출인지 정적 변수로 세어 출력한다.
+## out
+1번째 호출
+2번째 호출
+3번째 호출
+## code
+#include <stdio.h>
+
+void call_count(void)
+{
+    {{static int count = 0;}}
+    count++;
+    printf("%d번째 호출\n", count);
+}
+
+int main(void)
+{
+    for (int i = 0; i < 3; i++)
+        call_count();
+    return 0;
+}
+
+@@ v_sum_r | 9 | 재귀로 1부터 n까지 합 | 변형
+## desc
+sum(n) = n + sum(n-1), sum(1) = 1
+## out
+55
+## code
+#include <stdio.h>
+
+int sum(int n)
+{
+    if (n == 1)
+        return {{1}};
+    return {{n + sum(n - 1)}};
+}
+
+int main(void)
+{
+    printf("%d\n", sum(10));
+    return 0;
+}
+
+@@ v_countdown | 9 | 재귀 출력 순서 | 변형
+## desc
+재귀 호출 앞에서 출력하면 n부터, 뒤에서 출력하면 1부터 출력된다.
+## out
+3 2 1 
+1 2 3 
+## code
+#include <stdio.h>
+
+void down(int n)
+{
+    if (n == 0) return;
+    printf("%d ", n);
+    {{down(n - 1);}}
+}
+
+void up(int n)
+{
+    if (n == 0) return;
+    {{up(n - 1);}}
+    printf("%d ", n);
+}
+
+int main(void)
+{
+    down(3);
+    printf("\n");
+    up(3);
+    printf("\n");
+    return 0;
+}
+
+@@ v_global_cnt | 9 | 전역 변수로 함수 호출 기록 | 변형
+## desc
+전역 변수 total은 모든 함수가 공유한다.
+## out
+total = 60
+## code
+#include <stdio.h>
+
+{{int total = 0;}}
+
+void add(int n)
+{
+    {{total += n;}}
+}
+
+int main(void)
+{
+    add(10);
+    add(20);
+    add(30);
+    printf("total = %d\n", total);
+    return 0;
+}
 </script>
 
 <!-- ───────── 출력 예측 데이터 ───────── -->
@@ -4833,10 +5795,12 @@ printf("\n");
 CAB
 
 @@ o6b | 6 | switch에서 break 생략 (fruit = 1, 2, 5)
+## full
 ## code
-int fruit;
-for (fruit = 1; fruit <= 5; fruit++) {
-    if (fruit == 3 || fruit == 4) continue;
+#include <stdio.h>
+
+void show(int fruit)
+{
     switch (fruit) {
     case 1:
         printf("사과");
@@ -4851,6 +5815,14 @@ for (fruit = 1; fruit <= 5; fruit++) {
         break;
     }
     printf("\n");
+}
+
+int main(void)
+{
+    show(1);
+    show(2);
+    show(5);
+    return 0;
 }
 ## out
 사과
@@ -5327,6 +6299,271 @@ int main(void)
 }
 ## out
 6 20
+
+@@ o9a | 9 | static과 auto
+## full
+## code
+#include <stdio.h>
+
+void f(void)
+{
+    static int s = 0;
+    int a = 0;
+    s += 2;
+    a += 2;
+    printf("%d %d\n", s, a);
+}
+
+int main(void)
+{
+    f();
+    f();
+    f();
+    return 0;
+}
+## out
+2 2
+4 2
+6 2
+
+@@ o9b | 9 | 값에 의한 호출
+## full
+## code
+#include <stdio.h>
+
+int inc(int counter)
+{
+    counter++;
+    return counter;
+}
+
+int main(void)
+{
+    int i = 10;
+    int j = inc(i);
+    printf("%d %d\n", i, j);
+    return 0;
+}
+## out
+10 11
+
+@@ o9c | 9 | 전역 변수 공유
+## full
+## code
+#include <stdio.h>
+
+int x;
+void sub(void);
+
+int main(void)
+{
+    for (x = 0; x < 10; x++)
+        sub();
+    printf("\nx = %d\n", x);
+    return 0;
+}
+
+void sub(void)
+{
+    for (x = 0; x < 10; x++)
+        printf("*");
+}
+## out
+**********
+x = 11
+
+@@ o9d | 9 | 블록 안의 지역 변수
+## full
+## code
+#include <stdio.h>
+
+int main(void)
+{
+    int x = 1;
+    {
+        int x = 2;
+        printf("%d ", x);
+    }
+    printf("%d\n", x);
+    return 0;
+}
+## out
+2 1
+
+@@ o9e | 9 | 재귀 팩토리얼
+## full
+## code
+#include <stdio.h>
+
+int f(int n)
+{
+    if (n <= 1)
+        return 1;
+    return n * f(n - 1);
+}
+
+int main(void)
+{
+    printf("%d %d\n", f(4), f(1));
+    return 0;
+}
+## out
+24 1
+
+@@ o9f | 9 | 재귀 출력 순서
+## full
+## code
+#include <stdio.h>
+
+void p(int n)
+{
+    if (n > 0) {
+        printf("%d", n);
+        p(n - 1);
+        printf("%d", n);
+    }
+}
+
+int main(void)
+{
+    p(3);
+    printf("\n");
+    return 0;
+}
+## out
+321123
+
+@@ o9g | 9 | 재귀 2진수
+## full
+## code
+#include <stdio.h>
+
+void pb(int x)
+{
+    if (x > 0) {
+        pb(x / 2);
+        printf("%d", x % 2);
+    }
+}
+
+int main(void)
+{
+    pb(13);
+    printf(" ");
+    pb(6);
+    printf("\n");
+    return 0;
+}
+## out
+1101 110
+
+@@ o9h | 9 | 재귀 gcd 호출 횟수
+## full
+## code
+#include <stdio.h>
+
+int calls = 0;
+
+int gcd(int x, int y)
+{
+    calls++;
+    if (y == 0)
+        return x;
+    return gcd(y, x % y);
+}
+
+int main(void)
+{
+    int g = gcd(48, 18);
+    printf("%d %d\n", g, calls);
+    return 0;
+}
+## out
+6 4
+
+@@ o9i | 9 | 전역 변수 초기값과 지역 우선
+## full
+## code
+#include <stdio.h>
+
+int a;
+int b = 5;
+
+int main(void)
+{
+    int b = 7;
+    printf("%d %d\n", a, b);
+    return 0;
+}
+## out
+0 7
+
+@@ o9j | 9 | static 누적 합
+## full
+## code
+#include <stdio.h>
+
+int acc(int n)
+{
+    static int sum = 0;
+    sum += n;
+    return sum;
+}
+
+int main(void)
+{
+    acc(1);
+    acc(2);
+    printf("%d\n", acc(3));
+    return 0;
+}
+## out
+6
+
+@@ o9k | 9 | 하노이 2개
+## full
+## code
+#include <stdio.h>
+
+void h(int n, char a, char b, char c)
+{
+    if (n == 1) {
+        printf("%c->%c ", a, c);
+        return;
+    }
+    h(n - 1, a, c, b);
+    printf("%c->%c ", a, c);
+    h(n - 1, b, a, c);
+}
+
+int main(void)
+{
+    h(2, 'A', 'B', 'C');
+    printf("\n");
+    return 0;
+}
+## out
+A->B A->C B->C
+
+@@ o9l | 9 | 재귀 합
+## full
+## code
+#include <stdio.h>
+
+int s(int n)
+{
+    if (n == 0)
+        return 0;
+    return n % 10 + s(n / 10);
+}
+
+int main(void)
+{
+    printf("%d\n", s(2024));
+    return 0;
+}
+## out
+8
 </script>
 
 <!-- ───────── 이론 정리: ### 소제목, - 목록, | 표 |, ! 주의, `코드` ───────── -->
@@ -5568,6 +6805,75 @@ int main(void)
 ### 모듈화
 - 복잡한 프로그램은 `read_list(); sort_list(); print_list();` 처럼 함수로 나눈다.
 - 모듈 안에서는 최대의 상호 작용, 모듈 사이에는 최소의 상호 작용.
+
+@@ t9 | 9 | 함수와 변수
+### 변수의 속성
+- 이름, 타입, 크기, 값 + **범위(scope)**, **생존 시간(lifetime)**, **연결(linkage)**
+- 범위: 변수를 사용할 수 있는 영역 / 생존 시간: 메모리에 존재하는 시간 / 연결: 다른 영역의 변수와의 연결
+### 지역 변수와 전역 변수
+| 구분 | 지역 변수 | 전역 변수 |
+| 선언 위치 | 블록 `{ }` 안 | 함수 밖 |
+| 범위 | 선언된 블록 안 | 소스 파일 전체 |
+| 생존 시간 | 블록에 들어갈 때 생성, 나올 때 소멸 | 프로그램 실행 내내 |
+| 초기값 | 쓰레기값 (초기화 필수) | 0으로 자동 초기화 |
+| 메모리 | 스택 | 데이터 영역 |
+- 블록 안 어디서든 선언 가능(최신 C). 블록에 들어갈 때마다 새로 만들어지고 초기화된다.
+- 매개 변수도 지역 변수이다. 인수의 **값이 복사**되므로(call by value) 함수 안에서 바꿔도 원래 변수는 그대로.
+- 같은 이름의 전역 변수와 지역 변수가 있으면 **지역 변수가 우선**한다.
+- 많은 함수가 쓰는 공통 데이터만 전역으로, 일부 함수만 쓰는 데이터는 인수로 전달한다.
+! 전역 변수 x를 main의 for와 sub()의 for가 같이 쓰면, sub()가 끝날 때 x가 10이 되어 main의 반복이 1번만 돈다.
+### 메모리 영역
+| 영역 | 저장되는 것 |
+| 데이터 영역 | 전역 변수, static 변수 |
+| 힙 | 동적 할당 변수 (malloc) |
+| 스택 | 지역 변수, 매개 변수 |
+### 저장 유형 지정자
+| 지정자 | 의미 |
+| auto | 자동 변수 (지역 변수의 기본값, 생략 가능) |
+| static | 정적 변수: 프로그램 끝까지 유지, **한 번만 초기화** |
+| register | CPU 레지스터에 저장 요청 (빠른 접근) |
+| extern | 다른 곳(파일)에 선언된 전역 변수를 쓰겠다고 알림 |
+- 정적 지역 변수: 범위는 지역(그 함수 안), 생존은 전역(값이 유지). 초기값을 안 주면 0.
+- `static int scount = 0;` 은 처음 한 번만 실행된다. 호출마다 0이 되지 않는다.
+- 함수 앞의 static: 그 함수를 다른 소스 파일에서 쓸 수 없게 한다 (내부 연결).
+- 저장 유형 선택: 보통은 auto, 호출이 끝나도 값을 유지해야 하면 static, 여러 함수(파일)가 공유하면 extern 전역.
+### 연결 (linkage)
+- 외부 연결, 내부 연결, 무연결. **전역 변수만** 연결을 가질 수 있다.
+- 다른 파일의 전역 변수는 `extern int x;` 로 선언해서 연결한다.
+### 가변 매개 변수
+- `int sum(int num, ...)` 처럼 개수가 바뀌는 인수. `stdarg.h` 의 `va_list`, `va_start`, `va_arg`, `va_end` 사용.
+### 순환 (재귀, recursion)
+- 함수가 자기 자신을 호출하는 것. **종료 조건(기저 사례)** 과 **문제를 줄이는 재귀 호출** 두 부분이 필요하다.
+- 종료 조건이 없으면 무한 호출 → 스택 오버플로우.
+| 문제 | 종료 조건 | 재귀 호출 |
+| 팩토리얼 | n <= 1 → 1 | n * factorial(n - 1) |
+| 최대공약수 | y == 0 → x | gcd(y, x % y) |
+| 2진수 출력 | x > 0 일 때만 | print_binary(x / 2) 후 x % 2 출력 |
+| 하노이 탑 | n == 1 → 바로 이동 | (n-1, from→tmp), n 이동, (n-1, tmp→to) |
+- 하노이 탑 원판 n개의 이동 횟수는 2ⁿ - 1 (3개 → 7번, 4개 → 15번)
+- 재귀 호출 뒤에 출력하면 순서가 거꾸로 나온다 (2진수 출력이 앞자리부터 나오는 이유).
+
+@@ tq | 9 | 함수 퀴즈 대비 체크리스트
+### 퀴즈 형식 (작년 기준)
+- main 함수와 코드 조각이 주어지고, 핵심 함수 하나(또는 몇 개)를 직접 작성한다.
+- 빈칸: 반환형, 매개변수, 함수 호출, 입력 검증 조건, `break`, `fabs` 등
+- 채점: 함수 구현이 가장 크고(40점), 입력 검증, 주석 3줄 이상, 실행 결과 캡처, 가독성
+### 함수 작성 순서
+- ① 함수 원형 확인: 반환형 / 이름 / 매개변수 자료형을 main의 호출 모양에서 읽는다.
+- ② 출력이 함수 안이면 `void`, main에서 `printf("%f", f(x))` 처럼 쓰이면 값을 `return`.
+- ③ 누적 변수 초기화: 합 `sum = 0.0`, 곱 `fact = 1`, 개수 `count = 0`
+- ④ 반복문 작성 → ⑤ 반환/출력 → ⑥ main에 호출 넣기 → ⑦ 주석 3줄 이상
+### 수열 문제 공식
+- 부호 교대: `if (i % 2 == 1) sum += 항; else sum -= 항;`
+- 실수 나눗셈: `1.0 / i` (정수 `1 / i` 는 0)
+- 다음 항을 이전 항으로 만들기: `term *= (x - 1);`, `term = term * x / n;`
+- 수렴 판정: `if (fabs(sum - prev) < EPSILON) break;` 다음 줄에 `prev = sum;`
+- 최대 반복 제한: `for (i = 1; i <= MAX_ITER; i++)`
+### 입력 검증 패턴
+- 다시 입력받기: `do { scanf(...); } while (x < 0.5 || x > 2);`
+- 범위 밖이면 종료: `if (N < 1 || N > 100) { printf("잘못된 입력입니다.\n"); return 0; }`
+! scanf_s는 Visual Studio 전용이다. 시험 환경이 VS면 scanf_s 또는 `#define _CRT_SECURE_NO_WARNINGS` + scanf.
+! 출력 형식(소수점 자리 `%.3f`, `%.6f`)과 문구를 예시와 똑같이 맞춘다.
 </script>
 
 <!-- ───────── 코드 정리: 장별 핵심 문법 패턴 ───────── -->
@@ -5847,14 +7153,2609 @@ fabs(-12.0)     // 12.0 절대값
 pow(10.0, 3.0)  // 1000.0 거듭제곱
 sqrt(64.0)      // 8.0 제곱근
 tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
+
+@@ k9a | 9 | 지역 / 전역 / static 비교
+## desc
+같은 함수를 세 번 호출했을 때 차이. static은 값이 유지된다.
+## code
+int g = 0;                  // 전역: 0으로 자동 초기화
+
+void sub(void)
+{
+    int a = 0;              // 지역(auto): 호출마다 새로 0
+    static int s = 0;       // 정적: 처음 한 번만 0
+    a++; s++; g++;
+    printf("a=%d s=%d g=%d\n", a, s, g);
+}
+// sub(); sub(); sub();
+// a=1 s=1 g=1
+// a=1 s=2 g=2
+// a=1 s=3 g=3
+
+@@ k9b | 9 | 재귀 함수의 기본 틀
+## desc
+종료 조건을 먼저, 그다음 문제를 줄이는 재귀 호출.
+## code
+long factorial(int n)
+{
+    if (n <= 1)                     // 1. 종료 조건
+        return 1;
+    return n * factorial(n - 1);    // 2. 재귀 호출
+}
+
+int gcd(int x, int y)
+{
+    if (y == 0)
+        return x;
+    return gcd(y, x % y);
+}
+
+void print_binary(int x)
+{
+    if (x > 0) {
+        print_binary(x / 2);    // 먼저 호출
+        printf("%d", x % 2);    // 나중에 출력 → 앞자리부터
+    }
+}
+
+@@ k9c | 9 | 하노이 탑
+## desc
+n-1개를 임시 막대로, 가장 큰 원판을 목적지로, n-1개를 다시 목적지로.
+## code
+void hanoi_tower(int n, char from, char tmp, char to)
+{
+    if (n == 1)
+        printf("원판 1을 %c에서 %c으로 옮긴다.\n", from, to);
+    else {
+        hanoi_tower(n - 1, from, to, tmp);
+        printf("원판 %d을 %c에서 %c으로 옮긴다.\n", n, from, to);
+        hanoi_tower(n - 1, tmp, from, to);
+    }
+}
+
+@@ k9d | 9 | 함수 퀴즈 답안 틀 (수열 + 입력 검증)
+## desc
+작년 기출 유형을 합친 틀. 주석 3줄 이상을 꼭 넣는다.
+## code
+/* 학번 이름
+   수열 1 - 1/2 + 1/3 - ... 의 합을 구하는 프로그램
+   calc() 함수가 for문 1개로 합을 계산한다 */
+#include <stdio.h>
+#include <math.h>
+#define EPSILON 0.0001
+
+double calc(int n)
+{
+    double sum = 0.0;
+    for (int i = 1; i <= n; i++) {
+        if (i % 2 == 1)         // 홀수 번째 항은 더하고
+            sum += 1.0 / i;
+        else                    // 짝수 번째 항은 뺀다
+            sum -= 1.0 / i;
+    }
+    return sum;
+}
+
+int main(void)
+{
+    int n;
+    do {                        // 범위를 벗어나면 다시 입력
+        printf("n 입력(1~100): ");
+        scanf("%d", &n);
+    } while (n < 1 || n > 100);
+    printf("합 : %.3f\n", calc(n));
+    return 0;
+}
 </script>
 
+<!-- ───────── 함수 퀴즈: main이 주어지고 함수를 작성. head + stub(편집 시작) / sol(정답) + main, tests는 --- 로 구분, expect는 ~~~~~ 로 구분 ───────── -->
+<script type="text/plain" id="data-quiz">
+@@ q_series | 7 | 수열의 합 calc_series() | 기출
+## desc
+정수 N을 입력받아 수열 1 - 1/2 + 1/3 - 1/4 + 1/5 - … 의 N번째 항까지의 합을 계산하는 함수 calc_series()를 작성하시오. 함수 호출 부분 (1)도 작성한다. (작년 Quiz 01)
+## cond
+- N은 1 이상 100 이하이며, 범위를 벗어나면 "잘못된 입력입니다."를 출력한다. (main에 이미 있음)
+- 수열의 합은 for문 1개만 사용하여 계산한다.
+- 결과는 소수점 셋째 자리까지 출력한다.
+## head
+#include <stdio.h>
+## stub
+void calc_series(int n)
+{
+    double sum = 0.0;
+    // 여기에 수열의 합을 계산하는 내용을 작성
+    // for문 1개만 사용하여 반복 처리
+
+    printf("수열의 합 : %.3f\n", sum);
+}
+## sol
+void calc_series(int n)
+{
+    double sum = 0.0;
+    // 홀수 번째 항은 더하고, 짝수 번째 항은 뺀다
+    for (int i = 1; i <= n; i++) {
+        if (i % 2 == 1)
+            sum += 1.0 / i;
+        else
+            sum -= 1.0 / i;
+    }
+    printf("수열의 합 : %.3f\n", sum);
+}
+## main
+int main(void)
+{
+    int N;
+    scanf_s("%d", &N);
+    if (N < 1 || N > 100) {
+        printf("잘못된 입력입니다.\n");
+        return 0;
+    }
+    // (1) 함수 호출부분 작성
+
+    return 0;
+}
+## solmain
+int main(void)
+{
+    int N;
+    scanf_s("%d", &N);
+    if (N < 1 || N > 100) {
+        printf("잘못된 입력입니다.\n");
+        return 0;
+    }
+    // (1) 함수 호출부분 작성
+    calc_series(N);
+    return 0;
+}
+## tests
+6
+---
+1
+---
+100
+---
+0
+## hint
+- 반환형은 void(함수 안에서 출력), 매개변수는 int n.
+- 홀수 번째 항(i % 2 == 1)은 더하고 짝수 번째 항은 뺀다.
+- 1 / i 는 정수 나눗셈이라 0이 된다. 반드시 1.0 / i 로 쓴다.
+- main의 (1) 자리에 calc_series(N); 을 쓴다.
+## expect
+수열의 합 : 0.617
+~~~~~
+수열의 합 : 1.000
+~~~~~
+수열의 합 : 0.688
+~~~~~
+잘못된 입력입니다.
+
+@@ q_ln | 8 | 자연로그 근사 ln() | 기출
+## desc
+자연로그는 ln(x) = (x-1) - (x-1)²/2 + (x-1)³/3 - (x-1)⁴/4 + … 로 근사할 수 있다. double형 매개변수 x를 받아 연속된 두 항까지의 합의 차이가 0.0001보다 작아질 때까지 계산해 반환하는 함수 ln()을 작성하고, main의 빈칸(입력 검증, 함수 호출)도 채우시오. (작년 중간고사)
+## cond
+- 함수 이름은 ln, 매개변수는 double x, 반환형은 double.
+- 반복은 최대 MAX_ITER(1000)번까지만 한다.
+- x는 0.5 이상 2 이하만 입력받고, 벗어나면 다시 입력받는다. (do-while)
+- 수렴 확인은 fabs(sum - prev) < EPSILON 으로 한다.
+## head
+#include <stdio.h>
+#include <math.h>
+#define EPSILON 0.0001
+#define MAX_ITER 1000
+## stub
+double ln(double x)
+{
+    double term = x - 1;    // 첫 항
+    double sum = 0.0;
+    double prev = 0.0;
+    int n = 1;
+
+    for (int i = 1; i <= MAX_ITER; i++) {
+        // 홀수항은 +, 짝수항은 - 로 교대로 해서 sum에 저장하는 내용 추가하기
+
+
+        // 수렴 확인 (fabs 사용)
+
+        prev = sum;
+        // 다음 항 계산
+
+        n++;
+    }
+    return sum;
+}
+## sol
+double ln(double x)
+{
+    double term = x - 1;    // 첫 항
+    double sum = 0.0;
+    double prev = 0.0;
+    int n = 1;
+
+    for (int i = 1; i <= MAX_ITER; i++) {
+        // 홀수항은 +, 짝수항은 - 로 교대로 해서 sum에 저장
+        if (n % 2 == 1)
+            sum += term / n;
+        else
+            sum -= term / n;
+
+        if (fabs(sum - prev) < EPSILON)     // 수렴 확인
+            break;
+        prev = sum;
+        term *= (x - 1);    // 다음 항 계산: (x-1)의 거듭제곱
+        n++;
+    }
+    return sum;
+}
+## main
+int main(void)
+{
+    double x;
+    do {
+        printf("x값 입력(0.5 <= x <= 2): ");
+        scanf("%lf", &x);
+    } while ( /* 입력 값 x에 대한 검증 */ );
+    printf("ln(%.6f)은 %.6f로 근사화합니다.\n", x, /* 함수 호출 */);
+    return 0;
+}
+## solmain
+int main(void)
+{
+    double x;
+    do {
+        printf("x값 입력(0.5 <= x <= 2): ");
+        scanf("%lf", &x);
+    } while (x < 0.5 || x > 2);     // 입력 값 x에 대한 검증
+    printf("ln(%.6f)은 %.6f로 근사화합니다.\n", x, ln(x));     // 함수 호출
+    return 0;
+}
+## tests
+0.3
+0.6
+---
+1.5
+---
+3
+2
+---
+1
+## hint
+- 반환형 double, 매개변수 double x → double ln(double x)
+- n이 홀수면 sum += term / n, 짝수면 sum -= term / n
+- 다음 항: term *= (x - 1); (거듭제곱을 누적)
+- 수렴: if (fabs(sum - prev) < EPSILON) break;
+- 입력 검증: while (x < 0.5 || x > 2)
+## expect
+x값 입력(0.5 <= x <= 2): x값 입력(0.5 <= x <= 2): ln(0.600000)은 -0.510780로 근사화합니다.
+~~~~~
+x값 입력(0.5 <= x <= 2): ln(1.500000)은 0.405435로 근사화합니다.
+~~~~~
+x값 입력(0.5 <= x <= 2): x값 입력(0.5 <= x <= 2): ln(2.000000)은 0.692647로 근사화합니다.
+~~~~~
+x값 입력(0.5 <= x <= 2): ln(1.000000)은 0.000000로 근사화합니다.
+
+@@ q_exp | 8 | 지수함수 근사 my_exp() | 예상
+## desc
+e^x = 1 + x + x²/2! + x³/3! + … 를 이용해 e^x를 근사하는 함수 my_exp()를 작성하시오. 새로 더하는 항의 절댓값이 EPSILON보다 작아지면 멈춘다.
+## cond
+- double my_exp(double x)
+- 항은 이전 항에 x / n 을 곱해서 만든다. (팩토리얼을 따로 구하지 않는다)
+- fabs(term) < EPSILON 이면 반복을 끝낸다.
+## head
+#include <stdio.h>
+#include <math.h>
+#define EPSILON 0.000001
+## stub
+double my_exp(double x)
+{
+    // 여기에 작성
+
+}
+## sol
+double my_exp(double x)
+{
+    double sum = 1.0;   // 첫 항 1
+    double term = 1.0;
+    int n = 1;
+
+    while (1) {
+        term = term * x / n;    // x^n / n!
+        if (fabs(term) < EPSILON)
+            break;
+        sum += term;
+        n++;
+    }
+    return sum;
+}
+## main
+int main(void)
+{
+    double x;
+    printf("x 입력: ");
+    scanf("%lf", &x);
+    printf("my_exp(%.2f) = %.5f\n", x, my_exp(x));
+    printf("exp(%.2f)    = %.5f\n", x, exp(x));
+    return 0;
+}
+## tests
+1
+---
+2.5
+---
+-1
+---
+0
+## hint
+- 첫 항 1에서 시작해서 term = term * x / n 으로 다음 항을 만든다.
+- 음수 x에서도 멈추도록 fabs(term)으로 비교한다.
+## expect
+x 입력: my_exp(1.00) = 2.71828
+exp(1.00)    = 2.71828
+~~~~~
+x 입력: my_exp(2.50) = 12.18249
+exp(2.50)    = 12.18249
+~~~~~
+x 입력: my_exp(-1.00) = 0.36788
+exp(-1.00)    = 0.36788
+~~~~~
+x 입력: my_exp(0.00) = 1.00000
+exp(0.00)    = 1.00000
+
+@@ q_sin | 8 | 사인 함수 근사 my_sin() | 예상
+## desc
+sin(x) = x - x³/3! + x⁵/5! - x⁷/7! + … 를 이용해 sin(x)를 근사하는 함수 my_sin()을 작성하시오. 항의 절댓값이 0.000001보다 작아지면 멈춘다.
+## cond
+- double my_sin(double x)
+- 다음 항 = 이전 항 × (-x²) / ((2n)(2n+1))
+- 결과는 main에서 소수점 여섯째 자리까지 출력한다.
+## head
+#include <stdio.h>
+#include <math.h>
+## stub
+double my_sin(double x)
+{
+    // 여기에 작성
+
+}
+## sol
+double my_sin(double x)
+{
+    double term = x;    // 첫 항
+    double sum = x;
+    int n = 1;
+
+    while (fabs(term) >= 0.000001) {
+        term = term * (-x * x) / ((2 * n) * (2 * n + 1));
+        sum += term;
+        n++;
+    }
+    return sum;
+}
+## main
+int main(void)
+{
+    double x;
+    printf("라디안 값 입력: ");
+    scanf("%lf", &x);
+    printf("my_sin(%.4f) = %.6f\n", x, my_sin(x));
+    printf("sin(%.4f)    = %.6f\n", x, sin(x));
+    return 0;
+}
+## tests
+0.5
+---
+1.5708
+---
+3
+## hint
+- 부호가 번갈아 바뀌므로 -x * x 를 곱한다.
+- n번째에서 분모는 (2n) × (2n+1): 2×3, 4×5, 6×7 …
+## expect
+라디안 값 입력: my_sin(0.5000) = 0.479426
+sin(0.5000)    = 0.479426
+~~~~~
+라디안 값 입력: my_sin(1.5708) = 1.000000
+sin(1.5708)    = 1.000000
+~~~~~
+라디안 값 입력: my_sin(3.0000) = 0.141120
+sin(3.0000)    = 0.141120
+
+@@ q_pi | 7 | 라이프니츠 π calc_pi() | 예상
+## desc
+π/4 = 1 - 1/3 + 1/5 - 1/7 + … 이다. 정수 n을 받아 n개의 항까지 더한 값에 4를 곱해 π의 근삿값을 반환하는 함수 calc_pi()를 작성하시오.
+## cond
+- double calc_pi(int n)
+- for문 1개만 사용한다.
+- n이 1 미만이면 main에서 다시 입력받는다.
+## head
+#include <stdio.h>
+## stub
+double calc_pi(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+double calc_pi(int n)
+{
+    double sum = 0.0;
+    for (int i = 0; i < n; i++) {
+        if (i % 2 == 0)
+            sum += 1.0 / (2 * i + 1);
+        else
+            sum -= 1.0 / (2 * i + 1);
+    }
+    return 4 * sum;
+}
+## main
+int main(void)
+{
+    int n;
+    do {
+        printf("항의 개수 입력: ");
+        scanf("%d", &n);
+    } while (n < 1);
+    printf("pi ≈ %.6f\n", calc_pi(n));
+    return 0;
+}
+## tests
+1
+---
+10
+---
+0
+1000
+## hint
+- i번째(0부터) 항의 분모는 2 * i + 1
+- 짝수 번째는 더하고 홀수 번째는 뺀다.
+## expect
+항의 개수 입력: pi ≈ 4.000000
+~~~~~
+항의 개수 입력: pi ≈ 3.041840
+~~~~~
+항의 개수 입력: 항의 개수 입력: pi ≈ 3.140593
+
+@@ q_e | 7 | 자연상수 e calc_e() | 예상
+## desc
+e = 1 + 1/1! + 1/2! + 1/3! + … + 1/n! 이다. 정수 n을 받아 n번째 항까지 더한 값을 반환하는 함수 calc_e()를 작성하시오.
+## cond
+- double calc_e(int n)
+- 팩토리얼 함수를 따로 만들지 말고 반복문 안에서 곱을 누적한다.
+## head
+#include <stdio.h>
+## stub
+double calc_e(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+double calc_e(int n)
+{
+    double sum = 1.0;
+    double fact = 1.0;
+    for (int i = 1; i <= n; i++) {
+        fact *= i;          // i!
+        sum += 1.0 / fact;
+    }
+    return sum;
+}
+## main
+int main(void)
+{
+    int n;
+    printf("n 입력: ");
+    scanf("%d", &n);
+    printf("e ≈ %.8f\n", calc_e(n));
+    return 0;
+}
+## tests
+0
+---
+5
+---
+12
+## hint
+- fact는 1.0으로 시작해서 fact *= i
+- n = 0이면 1만 반환한다.
+## expect
+n 입력: e ≈ 1.00000000
+~~~~~
+n 입력: e ≈ 2.71666667
+~~~~~
+n 입력: e ≈ 2.71828183
+
+@@ q_harmonic | 7 | 조화수 harmonic() | 예상
+## desc
+H(n) = 1 + 1/2 + 1/3 + … + 1/n 을 반환하는 함수 harmonic()을 작성하시오. main은 1~1000 범위의 n만 받는다.
+## cond
+- double harmonic(int n)
+- 결과는 소수점 넷째 자리까지 출력한다. (main)
+## head
+#include <stdio.h>
+## stub
+double harmonic(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+double harmonic(int n)
+{
+    double sum = 0.0;
+    for (int i = 1; i <= n; i++)
+        sum += 1.0 / i;
+    return sum;
+}
+## main
+int main(void)
+{
+    int n;
+    do {
+        printf("n 입력(1~1000): ");
+        scanf("%d", &n);
+    } while (n < 1 || n > 1000);
+    printf("H(%d) = %.4f\n", n, harmonic(n));
+    return 0;
+}
+## tests
+1
+---
+10
+---
+2000
+100
+## hint
+- 1.0 / i 로 실수 나눗셈을 한다.
+## expect
+n 입력(1~1000): H(1) = 1.0000
+~~~~~
+n 입력(1~1000): H(10) = 2.9290
+~~~~~
+n 입력(1~1000): n 입력(1~1000): H(100) = 5.1874
+
+@@ q_sqrt | 8 | 뉴턴 방법 제곱근 my_sqrt() | 예상
+## desc
+양수 a의 제곱근은 x = (x + a / x) / 2 를 반복하면 구할 수 있다(뉴턴 방법). 이전 값과의 차이가 0.0000001보다 작아질 때까지 반복해 반환하는 함수 my_sqrt()를 작성하시오. a가 0이면 0을 반환한다.
+## cond
+- double my_sqrt(double a)
+- 시작값은 x = a (a가 0이면 바로 0 반환)
+- 차이 비교는 fabs() 사용
+## head
+#include <stdio.h>
+#include <math.h>
+## stub
+double my_sqrt(double a)
+{
+    // 여기에 작성
+
+}
+## sol
+double my_sqrt(double a)
+{
+    double x, prev;
+
+    if (a == 0)
+        return 0;
+    x = a;
+    do {
+        prev = x;
+        x = (x + a / x) / 2;
+    } while (fabs(x - prev) >= 0.0000001);
+    return x;
+}
+## main
+int main(void)
+{
+    double a;
+    do {
+        printf("양수 입력: ");
+        scanf("%lf", &a);
+    } while (a < 0);
+    printf("my_sqrt(%.2f) = %.6f\n", a, my_sqrt(a));
+    printf("sqrt(%.2f)    = %.6f\n", a, sqrt(a));
+    return 0;
+}
+## tests
+2
+---
+9
+---
+-4
+0.25
+---
+0
+## hint
+- do-while로 prev = x; x = (x + a / x) / 2; 를 반복한다.
+## expect
+양수 입력: my_sqrt(2.00) = 1.414214
+sqrt(2.00)    = 1.414214
+~~~~~
+양수 입력: my_sqrt(9.00) = 3.000000
+sqrt(9.00)    = 3.000000
+~~~~~
+양수 입력: 양수 입력: my_sqrt(0.25) = 0.500000
+sqrt(0.25)    = 0.500000
+~~~~~
+양수 입력: my_sqrt(0.00) = 0.000000
+sqrt(0.00)    = 0.000000
+
+@@ q_altsum | 7 | 부호가 바뀌는 합 alt_sum() | 예상
+## desc
+1 - 2 + 3 - 4 + 5 - … ± n 의 값을 반환하는 함수 alt_sum()을 작성하시오.
+## cond
+- int alt_sum(int n)
+- for문 1개만 사용한다.
+## head
+#include <stdio.h>
+## stub
+int alt_sum(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+int alt_sum(int n)
+{
+    int sum = 0;
+    for (int i = 1; i <= n; i++) {
+        if (i % 2 == 1)
+            sum += i;
+        else
+            sum -= i;
+    }
+    return sum;
+}
+## main
+int main(void)
+{
+    int n;
+    printf("n 입력: ");
+    scanf("%d", &n);
+    printf("1 - 2 + 3 - ... (%d까지) = %d\n", n, alt_sum(n));
+    return 0;
+}
+## tests
+5
+---
+10
+---
+1
+## hint
+- 홀수는 더하고 짝수는 뺀다.
+## expect
+n 입력: 1 - 2 + 3 - ... (5까지) = 3
+~~~~~
+n 입력: 1 - 2 + 3 - ... (10까지) = -5
+~~~~~
+n 입력: 1 - 2 + 3 - ... (1까지) = 1
+
+@@ q_basel | 8 | 제곱의 역수 합 basel() | 예상
+## desc
+1/1² + 1/2² + 1/3² + … + 1/n² 을 반환하는 함수 basel()을 작성하시오. main은 이 값으로 π ≈ √(6 × 합)을 함께 출력한다.
+## cond
+- double basel(int n)
+- i * i 가 아닌 (double)i * i 처럼 실수로 계산한다.
+## head
+#include <stdio.h>
+#include <math.h>
+## stub
+double basel(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+double basel(int n)
+{
+    double sum = 0.0;
+    for (int i = 1; i <= n; i++)
+        sum += 1.0 / ((double)i * i);
+    return sum;
+}
+## main
+int main(void)
+{
+    int n;
+    double s;
+    printf("n 입력: ");
+    scanf("%d", &n);
+    s = basel(n);
+    printf("합 = %.6f, pi ≈ %.6f\n", s, sqrt(6 * s));
+    return 0;
+}
+## tests
+1
+---
+10
+---
+1000
+## hint
+- 1.0 / (i * i) 도 되지만 i가 크면 int 범위를 넘을 수 있어 (double)i * i 가 안전하다.
+## expect
+n 입력: 합 = 1.000000, pi ≈ 2.449490
+~~~~~
+n 입력: 합 = 1.549768, pi ≈ 3.049362
+~~~~~
+n 입력: 합 = 1.643935, pi ≈ 3.140638
+
+@@ q_grade | 6 | 학점 변환 get_grade() | 예상
+## desc
+0~100 사이의 점수를 받아 학점 문자를 반환하는 함수 get_grade()를 작성하시오. 90 이상 A, 80 이상 B, 70 이상 C, 60 이상 D, 나머지 F.
+## cond
+- char get_grade(int score)
+- switch 문을 사용한다. (score / 10)
+## head
+#include <stdio.h>
+## stub
+char get_grade(int score)
+{
+    // 여기에 작성 (switch 사용)
+
+}
+## sol
+char get_grade(int score)
+{
+    switch (score / 10) {
+    case 10:
+    case 9:
+        return 'A';
+    case 8:
+        return 'B';
+    case 7:
+        return 'C';
+    case 6:
+        return 'D';
+    default:
+        return 'F';
+    }
+}
+## main
+int main(void)
+{
+    int score;
+    do {
+        printf("점수 입력(0~100): ");
+        scanf("%d", &score);
+    } while (score < 0 || score > 100);
+    printf("%d점의 학점은 %c입니다.\n", score, get_grade(score));
+    return 0;
+}
+## tests
+95
+---
+80
+---
+59
+---
+120
+100
+## hint
+- case 10: 과 case 9: 를 붙여 쓰면 100점도 A가 된다.
+- return 으로 바로 끝내면 break가 필요 없다.
+## expect
+점수 입력(0~100): 95점의 학점은 A입니다.
+~~~~~
+점수 입력(0~100): 80점의 학점은 B입니다.
+~~~~~
+점수 입력(0~100): 59점의 학점은 F입니다.
+~~~~~
+점수 입력(0~100): 점수 입력(0~100): 100점의 학점은 A입니다.
+
+@@ q_leap | 6 | 윤년 판별 is_leap() | 예상
+## desc
+연도를 받아 윤년이면 1, 아니면 0을 반환하는 함수 is_leap()을 작성하시오.
+## cond
+- int is_leap(int year)
+- 4로 나누어 떨어지고 100으로 나누어 떨어지지 않거나, 400으로 나누어 떨어지면 윤년
+## head
+#include <stdio.h>
+## stub
+int is_leap(int year)
+{
+    // 여기에 작성
+
+}
+## sol
+int is_leap(int year)
+{
+    if ((year % 4 == 0 && year % 100 != 0) || year % 400 == 0)
+        return 1;
+    else
+        return 0;
+}
+## main
+int main(void)
+{
+    int year;
+    printf("연도 입력: ");
+    scanf("%d", &year);
+    if (is_leap(year))
+        printf("%d년은 윤년입니다.\n", year);
+    else
+        printf("%d년은 평년입니다.\n", year);
+    return 0;
+}
+## tests
+2024
+---
+1900
+---
+2000
+---
+2023
+## hint
+- 관계식 자체가 1 또는 0이므로 return (조건식); 으로 써도 된다.
+## expect
+연도 입력: 2024년은 윤년입니다.
+~~~~~
+연도 입력: 1900년은 평년입니다.
+~~~~~
+연도 입력: 2000년은 윤년입니다.
+~~~~~
+연도 입력: 2023년은 평년입니다.
+
+@@ q_days | 6 | 달의 일수 days_in_month() | 예상
+## desc
+연도와 월을 받아 그 달의 일수를 반환하는 함수 days_in_month()를 작성하시오. 2월은 윤년이면 29일이다. 이미 만들어진 is_leap()을 호출해서 사용한다.
+## cond
+- int days_in_month(int year, int month)
+- switch 문에서 case를 묶어서 사용한다.
+## head
+#include <stdio.h>
+
+int is_leap(int year)
+{
+    return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+}
+## stub
+int days_in_month(int year, int month)
+{
+    // 여기에 작성 (is_leap 호출)
+
+}
+## sol
+int days_in_month(int year, int month)
+{
+    switch (month) {
+    case 2:
+        if (is_leap(year))
+            return 29;
+        return 28;
+    case 4:
+    case 6:
+    case 9:
+    case 11:
+        return 30;
+    default:
+        return 31;
+    }
+}
+## main
+int main(void)
+{
+    int year, month;
+    printf("연도와 월 입력: ");
+    scanf("%d %d", &year, &month);
+    printf("%d년 %d월은 %d일까지 있습니다.\n", year, month, days_in_month(year, month));
+    return 0;
+}
+## tests
+2024 2
+---
+2023 2
+---
+2025 11
+---
+2025 7
+## hint
+- 4, 6, 9, 11월은 case를 붙여 써서 30을 반환한다.
+## expect
+연도와 월 입력: 2024년 2월은 29일까지 있습니다.
+~~~~~
+연도와 월 입력: 2023년 2월은 28일까지 있습니다.
+~~~~~
+연도와 월 입력: 2025년 11월은 30일까지 있습니다.
+~~~~~
+연도와 월 입력: 2025년 7월은 31일까지 있습니다.
+
+@@ q_calc | 6 | 계산기 calc() | 예상
+## desc
+두 정수와 연산자(+, -, *, /, %)를 받아 계산 결과를 반환하는 함수 calc()를 작성하시오. 지원하지 않는 연산자면 0을 반환한다. 0으로 나누는 경우는 main이 미리 막는다.
+## cond
+- int calc(int x, char op, int y)
+- switch 문을 사용한다.
+## head
+#include <stdio.h>
+## stub
+int calc(int x, char op, int y)
+{
+    // 여기에 작성 (switch 사용)
+
+}
+## sol
+int calc(int x, char op, int y)
+{
+    switch (op) {
+    case '+': return x + y;
+    case '-': return x - y;
+    case '*': return x * y;
+    case '/': return x / y;
+    case '%': return x % y;
+    default:  return 0;
+    }
+}
+## main
+int main(void)
+{
+    int x, y;
+    char op;
+    printf("수식 입력(예: 7 + 3): ");
+    scanf("%d %c %d", &x, &op, &y);
+    if ((op == '/' || op == '%') && y == 0) {
+        printf("0으로 나눌 수 없습니다.\n");
+        return 0;
+    }
+    printf("%d %c %d = %d\n", x, op, y, calc(x, op, y));
+    return 0;
+}
+## tests
+7 + 3
+---
+7 % 3
+---
+9 / 2
+---
+4 * 5
+---
+8 / 0
+## hint
+- case '+': 처럼 문자 상수를 case에 쓸 수 있다.
+## expect
+수식 입력(예: 7 + 3): 7 + 3 = 10
+~~~~~
+수식 입력(예: 7 + 3): 7 % 3 = 1
+~~~~~
+수식 입력(예: 7 + 3): 9 / 2 = 4
+~~~~~
+수식 입력(예: 7 + 3): 4 * 5 = 20
+~~~~~
+수식 입력(예: 7 + 3): 0으로 나눌 수 없습니다.
+
+@@ q_triangle | 6 | 삼각형 판별 triangle_type() | 예상
+## desc
+세 변의 길이를 받아 삼각형의 종류를 출력하는 함수 triangle_type()을 작성하시오. 삼각형이 안 되면 "삼각형이 아닙니다", 그 외에는 정삼각형 → 이등변삼각형 → 직각삼각형 → 일반 삼각형 순서로 판별한다.
+## cond
+- void triangle_type(int a, int b, int c)
+- 두 변의 합이 나머지 한 변보다 커야 삼각형이다.
+## head
+#include <stdio.h>
+## stub
+void triangle_type(int a, int b, int c)
+{
+    // 여기에 작성
+
+}
+## sol
+void triangle_type(int a, int b, int c)
+{
+    if (a + b <= c || a + c <= b || b + c <= a)
+        printf("삼각형이 아닙니다\n");
+    else if (a == b && b == c)
+        printf("정삼각형\n");
+    else if (a == b || b == c || a == c)
+        printf("이등변삼각형\n");
+    else if (a * a + b * b == c * c || a * a + c * c == b * b || b * b + c * c == a * a)
+        printf("직각삼각형\n");
+    else
+        printf("일반 삼각형\n");
+}
+## main
+int main(void)
+{
+    int a, b, c;
+    printf("세 변 입력: ");
+    scanf("%d %d %d", &a, &b, &c);
+    triangle_type(a, b, c);
+    return 0;
+}
+## tests
+3 4 5
+---
+5 5 5
+---
+5 5 8
+---
+1 2 3
+---
+4 5 6
+## hint
+- 판별 순서가 중요하다. 정삼각형을 먼저 검사해야 이등변으로 잘못 판별되지 않는다.
+## expect
+세 변 입력: 직각삼각형
+~~~~~
+세 변 입력: 정삼각형
+~~~~~
+세 변 입력: 이등변삼각형
+~~~~~
+세 변 입력: 삼각형이 아닙니다
+~~~~~
+세 변 입력: 일반 삼각형
+
+@@ q_max3 | 6 | 세 수의 최댓값 max3() | 예상
+## desc
+세 정수 중 가장 큰 값을 반환하는 함수 max3()를 작성하시오.
+## cond
+- int max3(int a, int b, int c)
+- if 문을 사용한다.
+## head
+#include <stdio.h>
+## stub
+int max3(int a, int b, int c)
+{
+    // 여기에 작성
+
+}
+## sol
+int max3(int a, int b, int c)
+{
+    int max = a;
+    if (b > max)
+        max = b;
+    if (c > max)
+        max = c;
+    return max;
+}
+## main
+int main(void)
+{
+    int a, b, c;
+    printf("세 정수 입력: ");
+    scanf("%d %d %d", &a, &b, &c);
+    printf("가장 큰 수: %d\n", max3(a, b, c));
+    return 0;
+}
+## tests
+4 9 7
+---
+-3 -8 -1
+---
+5 5 2
+## hint
+- 첫 번째 값을 max로 두고 나머지와 차례로 비교한다.
+## expect
+세 정수 입력: 가장 큰 수: 9
+~~~~~
+세 정수 입력: 가장 큰 수: -1
+~~~~~
+세 정수 입력: 가장 큰 수: 5
+
+@@ q_bmi | 6 | BMI 판정 bmi_status() | 예상
+## desc
+키(cm)와 몸무게(kg)를 받아 BMI를 소수점 첫째 자리까지 출력하고 판정 결과를 출력하는 함수 bmi_status()를 작성하시오. 18.5 미만 저체중, 23 미만 정상, 25 미만 과체중, 30 미만 경도비만, 그 이상 고도비만.
+## cond
+- void bmi_status(double height, double weight)
+- BMI = 몸무게 / (키(m) × 키(m))
+## head
+#include <stdio.h>
+## stub
+void bmi_status(double height, double weight)
+{
+    // 여기에 작성
+
+}
+## sol
+void bmi_status(double height, double weight)
+{
+    double h = height / 100;    // cm → m
+    double bmi = weight / (h * h);
+
+    printf("BMI: %.1f\n", bmi);
+    if (bmi < 18.5)
+        printf("저체중\n");
+    else if (bmi < 23)
+        printf("정상\n");
+    else if (bmi < 25)
+        printf("과체중\n");
+    else if (bmi < 30)
+        printf("경도비만\n");
+    else
+        printf("고도비만\n");
+}
+## main
+int main(void)
+{
+    double height, weight;
+    printf("키(cm) 몸무게(kg): ");
+    scanf("%lf %lf", &height, &weight);
+    bmi_status(height, weight);
+    return 0;
+}
+## tests
+170 65
+---
+160 80
+---
+180 55
+## hint
+- 키를 100으로 나눠 m로 바꾼 뒤 제곱한다.
+## expect
+키(cm) 몸무게(kg): BMI: 22.5
+정상
+~~~~~
+키(cm) 몸무게(kg): BMI: 31.2
+고도비만
+~~~~~
+키(cm) 몸무게(kg): BMI: 17.0
+저체중
+
+@@ q_upper | 6 | 대문자 변환 to_upper() | 예상
+## desc
+문자 하나를 받아 소문자면 대문자로 바꿔 반환하고, 소문자가 아니면 그대로 반환하는 함수 to_upper()를 작성하시오. main은 '#'이 입력될 때까지 문자를 바꿔 출력한다.
+## cond
+- char to_upper(char c)
+- 아스키 코드 차이 32를 이용한다. (라이브러리 toupper 사용 금지)
+## head
+#include <stdio.h>
+## stub
+char to_upper(char c)
+{
+    // 여기에 작성
+
+}
+## sol
+char to_upper(char c)
+{
+    if (c >= 'a' && c <= 'z')
+        return c - 32;
+    return c;
+}
+## main
+int main(void)
+{
+    char c;
+    while (1) {
+        scanf(" %c", &c);
+        if (c == '#')
+            break;
+        printf("%c", to_upper(c));
+    }
+    printf("\n");
+    return 0;
+}
+## tests
+h e l l o #
+---
+C 9 x Z #
+## hint
+- 'a' ~ 'z' 범위인지 && 로 검사한다.
+- 'a' - 'A' 는 32이다.
+## expect
+HELLO
+~~~~~
+C9XZ
+
+@@ q_prime | 7 | 소수 판별 is_prime() | 예상
+## desc
+정수 n이 소수이면 1, 아니면 0을 반환하는 함수 is_prime()을 작성하시오. main은 2부터 N까지의 소수와 개수를 출력한다.
+## cond
+- int is_prime(int n)
+- 2 미만은 소수가 아니다.
+- 나누어 떨어지는 수를 찾으면 바로 0을 반환한다.
+## head
+#include <stdio.h>
+## stub
+int is_prime(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+int is_prime(int n)
+{
+    if (n < 2)
+        return 0;
+    for (int i = 2; i * i <= n; i++) {
+        if (n % i == 0)
+            return 0;
+    }
+    return 1;
+}
+## main
+int main(void)
+{
+    int N, count = 0;
+    printf("N 입력: ");
+    scanf("%d", &N);
+    for (int i = 2; i <= N; i++) {
+        if (is_prime(i)) {
+            printf("%d ", i);
+            count++;
+        }
+    }
+    printf("\n소수의 개수: %d\n", count);
+    return 0;
+}
+## tests
+10
+---
+30
+---
+2
+---
+1
+## hint
+- i * i <= n 까지만 검사해도 된다. (i < n 도 정답)
+## expect
+N 입력: 2 3 5 7 
+소수의 개수: 4
+~~~~~
+N 입력: 2 3 5 7 11 13 17 19 23 29 
+소수의 개수: 10
+~~~~~
+N 입력: 2 
+소수의 개수: 1
+~~~~~
+N 입력: 
+소수의 개수: 0
+
+@@ q_gcd | 7 | 최대공약수 gcd() | 예상
+## desc
+두 양의 정수의 최대공약수를 반환하는 함수 gcd()를 유클리드 알고리즘으로 작성하시오. main은 최소공배수도 함께 출력한다.
+## cond
+- int gcd(int a, int b)
+- while 문을 사용한다. (재귀 사용 금지)
+## head
+#include <stdio.h>
+## stub
+int gcd(int a, int b)
+{
+    // 여기에 작성
+
+}
+## sol
+int gcd(int a, int b)
+{
+    int r;
+    while (b != 0) {
+        r = a % b;
+        a = b;
+        b = r;
+    }
+    return a;
+}
+## main
+int main(void)
+{
+    int a, b, g;
+    printf("두 정수 입력: ");
+    scanf("%d %d", &a, &b);
+    g = gcd(a, b);
+    printf("최대공약수: %d\n", g);
+    printf("최소공배수: %d\n", a / g * b);
+    return 0;
+}
+## tests
+12 8
+---
+8 12
+---
+17 5
+---
+100 75
+## hint
+- r = a % b; a = b; b = r; 를 b가 0이 될 때까지 반복
+- a가 b보다 작아도 첫 반복에서 자리가 바뀐다.
+## expect
+두 정수 입력: 최대공약수: 4
+최소공배수: 24
+~~~~~
+두 정수 입력: 최대공약수: 4
+최소공배수: 24
+~~~~~
+두 정수 입력: 최대공약수: 1
+최소공배수: 85
+~~~~~
+두 정수 입력: 최대공약수: 25
+최소공배수: 300
+
+@@ q_reverse | 7 | 숫자 뒤집기 reverse() | 예상
+## desc
+양의 정수를 거꾸로 뒤집은 수를 반환하는 함수 reverse()를 작성하시오. main은 회문(앞뒤가 같은 수)인지도 출력한다.
+## cond
+- int reverse(int n)
+- % 10 과 / 10 을 사용한다.
+## head
+#include <stdio.h>
+## stub
+int reverse(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+int reverse(int n)
+{
+    int result = 0;
+    while (n > 0) {
+        result = result * 10 + n % 10;
+        n /= 10;
+    }
+    return result;
+}
+## main
+int main(void)
+{
+    int n, r;
+    printf("양의 정수 입력: ");
+    scanf("%d", &n);
+    r = reverse(n);
+    printf("뒤집은 수: %d\n", r);
+    if (n == r)
+        printf("회문입니다.\n");
+    else
+        printf("회문이 아닙니다.\n");
+    return 0;
+}
+## tests
+1234
+---
+12321
+---
+1200
+## hint
+- result = result * 10 + n % 10; n /= 10;
+## expect
+양의 정수 입력: 뒤집은 수: 4321
+회문이 아닙니다.
+~~~~~
+양의 정수 입력: 뒤집은 수: 12321
+회문입니다.
+~~~~~
+양의 정수 입력: 뒤집은 수: 21
+회문이 아닙니다.
+
+@@ q_droot | 7 | 자릿수 합 digit_sum() | 예상
+## desc
+양의 정수의 각 자릿수 합을 반환하는 함수 digit_sum()을 작성하시오. main은 한 자리 수가 될 때까지 digit_sum()을 반복 호출해 과정을 출력한다.
+## cond
+- int digit_sum(int n)
+## head
+#include <stdio.h>
+## stub
+int digit_sum(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+int digit_sum(int n)
+{
+    int sum = 0;
+    while (n > 0) {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
+}
+## main
+int main(void)
+{
+    int n;
+    printf("양의 정수 입력: ");
+    scanf("%d", &n);
+    printf("%d", n);
+    while (n >= 10) {
+        n = digit_sum(n);
+        printf(" -> %d", n);
+    }
+    printf("\n");
+    return 0;
+}
+## tests
+9875
+---
+5
+---
+123456789
+## hint
+- n % 10 이 마지막 자리, n / 10 은 마지막 자리를 지운 수
+## expect
+양의 정수 입력: 9875 -> 29 -> 11 -> 2
+~~~~~
+양의 정수 입력: 5
+~~~~~
+양의 정수 입력: 123456789 -> 45 -> 9
+
+@@ q_perfect | 7 | 완전수 찾기 sum_divisors() | 예상
+## desc
+n의 진약수(자기 자신을 제외한 약수)의 합을 반환하는 함수 sum_divisors()를 작성하시오. main은 N 이하의 완전수(진약수 합 = 자기 자신)를 출력한다.
+## cond
+- int sum_divisors(int n)
+- 1의 진약수 합은 0이다.
+## head
+#include <stdio.h>
+## stub
+int sum_divisors(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+int sum_divisors(int n)
+{
+    int sum = 0;
+    for (int i = 1; i < n; i++) {
+        if (n % i == 0)
+            sum += i;
+    }
+    return sum;
+}
+## main
+int main(void)
+{
+    int N;
+    printf("N 입력: ");
+    scanf("%d", &N);
+    printf("완전수: ");
+    for (int i = 2; i <= N; i++) {
+        if (sum_divisors(i) == i)
+            printf("%d ", i);
+    }
+    printf("\n");
+    return 0;
+}
+## tests
+30
+---
+500
+## hint
+- 1부터 n-1까지 나누어 떨어지는 수를 더한다.
+## expect
+N 입력: 완전수: 6 28 
+~~~~~
+N 입력: 완전수: 6 28 496 
+
+@@ q_pyramid | 7 | 별 피라미드 print_pyramid() | 예상
+## desc
+높이 n을 받아 가운데 정렬된 별 피라미드를 출력하는 함수 print_pyramid()를 작성하시오. i번째 줄(1부터)은 공백 n-i개와 별 2i-1개로 이루어진다.
+## cond
+- void print_pyramid(int n)
+- 중첩 for문을 사용한다.
+## head
+#include <stdio.h>
+## stub
+void print_pyramid(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+void print_pyramid(int n)
+{
+    for (int i = 1; i <= n; i++) {
+        for (int j = 0; j < n - i; j++)
+            printf(" ");
+        for (int j = 0; j < 2 * i - 1; j++)
+            printf("*");
+        printf("\n");
+    }
+}
+## main
+int main(void)
+{
+    int n;
+    printf("높이 입력: ");
+    scanf("%d", &n);
+    print_pyramid(n);
+    return 0;
+}
+## tests
+3
+---
+5
+## hint
+- 공백 루프, 별 루프, 줄바꿈 순서로 한 줄을 만든다.
+## expect
+높이 입력:   *
+ ***
+*****
+~~~~~
+높이 입력:     *
+   ***
+  *****
+ *******
+*********
+
+@@ q_power | 8 | 거듭제곱 power() | 예상
+## desc
+실수 base와 정수 exp를 받아 base의 exp 제곱을 반환하는 함수 power()를 작성하시오. exp가 음수면 1 / base^(-exp) 를 반환한다. pow() 사용 금지.
+## cond
+- double power(double base, int exp)
+- 반복문으로 곱한다.
+## head
+#include <stdio.h>
+## stub
+double power(double base, int exp)
+{
+    // 여기에 작성
+
+}
+## sol
+double power(double base, int exp)
+{
+    double result = 1.0;
+    int n = exp;
+
+    if (n < 0)
+        n = -n;
+    for (int i = 0; i < n; i++)
+        result *= base;
+    if (exp < 0)
+        return 1.0 / result;
+    return result;
+}
+## main
+int main(void)
+{
+    double base;
+    int exp;
+    printf("밑과 지수 입력: ");
+    scanf("%lf %d", &base, &exp);
+    printf("%.2f ^ %d = %.4f\n", base, exp, power(base, exp));
+    return 0;
+}
+## tests
+2 10
+---
+2 -2
+---
+5 0
+---
+1.5 3
+## hint
+- 지수의 절댓값만큼 곱한 뒤, 지수가 음수면 역수를 반환한다.
+## expect
+밑과 지수 입력: 2.00 ^ 10 = 1024.0000
+~~~~~
+밑과 지수 입력: 2.00 ^ -2 = 0.2500
+~~~~~
+밑과 지수 입력: 5.00 ^ 0 = 1.0000
+~~~~~
+밑과 지수 입력: 1.50 ^ 3 = 3.3750
+
+@@ q_fib | 7 | 피보나치 fib() | 예상
+## desc
+n번째 피보나치 수(fib(1) = 1, fib(2) = 1, fib(n) = fib(n-1) + fib(n-2))를 반복문으로 구해 반환하는 함수 fib()를 작성하시오.
+## cond
+- long fib(int n)
+- 재귀를 사용하지 않는다.
+## head
+#include <stdio.h>
+## stub
+long fib(int n)
+{
+    // 여기에 작성 (반복문)
+
+}
+## sol
+long fib(int n)
+{
+    long a = 1, b = 1, c;
+    if (n <= 2)
+        return 1;
+    for (int i = 3; i <= n; i++) {
+        c = a + b;
+        a = b;
+        b = c;
+    }
+    return b;
+}
+## main
+int main(void)
+{
+    int n;
+    printf("몇 개? ");
+    scanf("%d", &n);
+    for (int i = 1; i <= n; i++)
+        printf("%ld ", fib(i));
+    printf("\n");
+    return 0;
+}
+## tests
+10
+---
+1
+---
+20
+## hint
+- 앞의 두 수 a, b를 기억하면서 c = a + b; a = b; b = c;
+## expect
+몇 개? 1 1 2 3 5 8 13 21 34 55 
+~~~~~
+몇 개? 1 
+~~~~~
+몇 개? 1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597 2584 4181 6765 
+
+@@ q_sign | 7 | 양수·음수 개수 count_sign() | 예상
+## desc
+정수 n을 받아 함수 안에서 정수 n개를 입력받고, 양의 정수와 음의 정수의 개수를 각각 출력하는 함수 count_sign()을 작성하시오. 0은 세지 않는다. (작년 Quiz 01 출력형식 응용)
+## cond
+- void count_sign(int n)
+- for문 1개만 사용한다.
+## head
+#include <stdio.h>
+## stub
+void count_sign(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+void count_sign(int n)
+{
+    int x, pos = 0, neg = 0;
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &x);
+        if (x > 0)
+            pos++;
+        else if (x < 0)
+            neg++;
+    }
+    printf("양의 정수: %d개\n", pos);
+    printf("음의 정수: %d개\n", neg);
+}
+## main
+int main(void)
+{
+    int N;
+    scanf("%d", &N);
+    if (N < 1 || N > 100) {
+        printf("잘못된 입력입니다.\n");
+        return 0;
+    }
+    count_sign(N);
+    return 0;
+}
+## tests
+5
+3 -1 0 7 -2
+---
+3
+-5 -6 -7
+---
+101
+## hint
+- 개수를 세는 변수 두 개를 0으로 초기화한다.
+## expect
+양의 정수: 2개
+음의 정수: 2개
+~~~~~
+양의 정수: 0개
+음의 정수: 3개
+~~~~~
+잘못된 입력입니다.
+
+@@ q_avg | 7 | 센티널 평균 read_average() | 예상
+## desc
+음수가 입력될 때까지 점수를 입력받아 평균을 반환하는 함수 read_average()를 작성하시오. 점수가 하나도 없으면 0을 반환한다.
+## cond
+- double read_average(void)
+- 센티널(음수)은 평균에 넣지 않는다.
+## head
+#include <stdio.h>
+## stub
+double read_average(void)
+{
+    // 여기에 작성
+
+}
+## sol
+double read_average(void)
+{
+    int score, count = 0;
+    double sum = 0;
+
+    while (1) {
+        scanf("%d", &score);
+        if (score < 0)
+            break;
+        sum += score;
+        count++;
+    }
+    if (count == 0)
+        return 0;
+    return sum / count;
+}
+## main
+int main(void)
+{
+    printf("점수를 입력하세요(음수 입력 시 종료)\n");
+    printf("평균: %.2f\n", read_average());
+    return 0;
+}
+## tests
+80 90 70 -1
+---
+-1
+---
+100 95 -5
+## hint
+- while (1) 과 break 로 센티널을 처리한다.
+- sum을 double로 두면 정수 나눗셈 문제가 없다.
+## expect
+점수를 입력하세요(음수 입력 시 종료)
+평균: 80.00
+~~~~~
+점수를 입력하세요(음수 입력 시 종료)
+평균: 0.00
+~~~~~
+점수를 입력하세요(음수 입력 시 종료)
+평균: 97.50
+
+@@ q_collatz | 7 | 콜라츠 횟수 collatz_steps() | 예상
+## desc
+n이 짝수면 2로 나누고, 홀수면 3n+1로 바꾸는 과정을 n이 1이 될 때까지 반복한다. 반복 횟수를 반환하는 함수 collatz_steps()를 작성하시오.
+## cond
+- int collatz_steps(int n)
+## head
+#include <stdio.h>
+## stub
+int collatz_steps(int n)
+{
+    // 여기에 작성
+
+}
+## sol
+int collatz_steps(int n)
+{
+    int steps = 0;
+    while (n != 1) {
+        if (n % 2 == 0)
+            n = n / 2;
+        else
+            n = 3 * n + 1;
+        steps++;
+    }
+    return steps;
+}
+## main
+int main(void)
+{
+    int n;
+    printf("양의 정수 입력: ");
+    scanf("%d", &n);
+    printf("%d은 %d번 만에 1이 됩니다.\n", n, collatz_steps(n));
+    return 0;
+}
+## tests
+6
+---
+27
+---
+1
+## hint
+- while (n != 1) 안에서 짝수/홀수를 if-else로 나눈다.
+## expect
+양의 정수 입력: 6은 8번 만에 1이 됩니다.
+~~~~~
+양의 정수 입력: 27은 111번 만에 1이 됩니다.
+~~~~~
+양의 정수 입력: 1은 0번 만에 1이 됩니다.
+
+@@ q_comb | 8 | 조합 combination() | 예상
+## desc
+이미 작성된 factorial()을 호출해서 nCr = n! / (r! × (n-r)!) 을 반환하는 함수 combination()을 작성하시오.
+## cond
+- long combination(int n, int r)
+- 반드시 factorial()을 호출한다.
+## head
+#include <stdio.h>
+
+long factorial(int n)
+{
+    long result = 1;
+    for (int i = 1; i <= n; i++)
+        result *= i;
+    return result;
+}
+## stub
+long combination(int n, int r)
+{
+    // 여기에 작성 (factorial 호출)
+
+}
+## sol
+long combination(int n, int r)
+{
+    return factorial(n) / (factorial(r) * factorial(n - r));
+}
+## main
+int main(void)
+{
+    int n, r;
+    printf("n과 r 입력: ");
+    scanf("%d %d", &n, &r);
+    if (r < 0 || r > n) {
+        printf("잘못된 입력입니다.\n");
+        return 0;
+    }
+    printf("C(%d, %d) = %ld\n", n, r, combination(n, r));
+    return 0;
+}
+## tests
+5 2
+---
+10 3
+---
+6 6
+---
+3 5
+## hint
+- 분모 전체를 괄호로 묶어야 한다: n! / (r! * (n-r)!)
+## expect
+n과 r 입력: C(5, 2) = 10
+~~~~~
+n과 r 입력: C(10, 3) = 120
+~~~~~
+n과 r 입력: C(6, 6) = 1
+~~~~~
+n과 r 입력: 잘못된 입력입니다.
+
+@@ q_f2c | 8 | 온도 변환 f_to_c() | 예상
+## desc
+화씨온도를 받아 섭씨온도를 반환하는 함수 f_to_c()를 작성하시오. 섭씨 = (화씨 - 32) × 5 / 9. main은 화씨 0도부터 100도까지 20도 간격으로 표를 출력한다.
+## cond
+- double f_to_c(double f)
+- 정수 나눗셈이 일어나지 않도록 주의한다.
+## head
+#include <stdio.h>
+## stub
+double f_to_c(double f)
+{
+    // 여기에 작성
+
+}
+## sol
+double f_to_c(double f)
+{
+    return (f - 32) * 5.0 / 9.0;
+}
+## main
+int main(void)
+{
+    printf("화씨   섭씨\n");
+    for (int f = 0; f <= 100; f += 20)
+        printf("%4d %7.2f\n", f, f_to_c(f));
+    return 0;
+}
+## tests
+
+## hint
+- 5 / 9 는 0이다. 5.0 / 9.0 을 쓴다.
+## expect
+화씨   섭씨
+   0  -17.78
+  20   -6.67
+  40    4.44
+  60   15.56
+  80   26.67
+ 100   37.78
+
+@@ q_countdigit | 7 | 특정 숫자 세기 count_digit() | 예상
+## desc
+정수 n 안에 숫자 d가 몇 번 나오는지 반환하는 함수 count_digit()을 작성하시오. n이 0이고 d가 0이면 1을 반환한다.
+## cond
+- int count_digit(int n, int d)
+## head
+#include <stdio.h>
+## stub
+int count_digit(int n, int d)
+{
+    // 여기에 작성
+
+}
+## sol
+int count_digit(int n, int d)
+{
+    int count = 0;
+    if (n == 0 && d == 0)
+        return 1;
+    while (n > 0) {
+        if (n % 10 == d)
+            count++;
+        n /= 10;
+    }
+    return count;
+}
+## main
+int main(void)
+{
+    int n, d;
+    printf("정수와 찾을 숫자 입력: ");
+    scanf("%d %d", &n, &d);
+    printf("%d에는 %d이(가) %d번 있습니다.\n", n, d, count_digit(n, d));
+    return 0;
+}
+## tests
+1223 2
+---
+5050 0
+---
+7 7
+---
+0 0
+## hint
+- n % 10 이 d와 같은지 검사하고 n /= 10 으로 자리를 줄인다.
+## expect
+정수와 찾을 숫자 입력: 1223에는 2이(가) 2번 있습니다.
+~~~~~
+정수와 찾을 숫자 입력: 5050에는 0이(가) 2번 있습니다.
+~~~~~
+정수와 찾을 숫자 입력: 7에는 7이(가) 1번 있습니다.
+~~~~~
+정수와 찾을 숫자 입력: 0에는 0이(가) 1번 있습니다.
+
+@@ q_save | 9 | 은행 계좌 save() (static) | 예상
+## desc
+저금할 금액 amount를 받아 총 잔고를 기억하고 한 줄씩 출력하는 함수 save()를 작성하시오. amount가 양수면 입금 칸, 음수면 출금 칸에 출력한다. 잔고는 정적 변수로 기억한다. (9장 Lab)
+## cond
+- void save(int amount)
+- 잔고는 static long balance = 0; 으로 선언한다.
+- 입금: printf("%d\t\t", amount); / 출금: printf("\t%d\t", -amount); 다음에 잔고와 줄바꿈 출력
+## head
+#include <stdio.h>
+## stub
+void save(int amount)
+{
+    // 여기에 작성 (static 변수 사용)
+
+}
+## sol
+void save(int amount)
+{
+    static long balance = 0;    // 함수가 끝나도 값이 유지된다
+
+    if (amount >= 0)
+        printf("%d\t\t", amount);
+    else
+        printf("\t%d\t", -amount);
+    balance += amount;
+    printf("%ld\n", balance);
+}
+## main
+int main(void)
+{
+    printf("==============================\n");
+    printf("입금\t출금\t잔고\n");
+    printf("==============================\n");
+    save(10000);
+    save(50000);
+    save(-10000);
+    save(30000);
+    printf("==============================\n");
+    return 0;
+}
+## tests
+
+## hint
+- static을 빼면 매번 0으로 초기화되어 잔고가 누적되지 않는다.
+## expect
+==============================
+입금	출금	잔고
+==============================
+10000		10000
+50000		60000
+	10000	50000
+30000		80000
+==============================
+
+@@ q_ticket | 9 | 번호표 next_ticket() (static) | 예상
+## desc
+호출할 때마다 101, 102, 103 … 순서로 번호표를 반환하는 함수 next_ticket()을 작성하시오. 전역 변수를 쓰지 말고 정적 지역 변수를 사용한다.
+## cond
+- int next_ticket(void)
+- 첫 번호는 101이다.
+## head
+#include <stdio.h>
+## stub
+int next_ticket(void)
+{
+    // 여기에 작성 (static 지역 변수)
+
+}
+## sol
+int next_ticket(void)
+{
+    static int number = 100;    // 처음 한 번만 초기화
+    number++;
+    return number;
+}
+## main
+int main(void)
+{
+    int n;
+    printf("손님 수: ");
+    scanf("%d", &n);
+    for (int i = 1; i <= n; i++)
+        printf("%d번째 손님 번호표: %d\n", i, next_ticket());
+    return 0;
+}
+## tests
+3
+---
+1
+## hint
+- static int number = 100; 으로 두고 증가시킨 뒤 반환한다.
+## expect
+손님 수: 1번째 손님 번호표: 101
+2번째 손님 번호표: 102
+3번째 손님 번호표: 103
+~~~~~
+손님 수: 1번째 손님 번호표: 101
+
+@@ q_once | 9 | 한 번만 초기화 init() (static) | 예상
+## desc
+처음 호출될 때만 "init(): 네트워크 장치를 초기화합니다."를 출력하고, 그 다음부터는 "init(): 이미 초기화되었으므로 초기화하지 않습니다."를 출력하는 함수 init()을 작성하시오. (9장 Lab)
+## cond
+- void init(void)
+- static int inited = 0; 을 플래그로 사용한다.
+## head
+#include <stdio.h>
+## stub
+void init(void)
+{
+    // 여기에 작성
+
+}
+## sol
+void init(void)
+{
+    static int inited = 0;
+    if (inited == 0) {
+        printf("init(): 네트워크 장치를 초기화합니다.\n");
+        inited = 1;
+    }
+    else {
+        printf("init(): 이미 초기화되었으므로 초기화하지 않습니다.\n");
+    }
+}
+## main
+int main(void)
+{
+    init();
+    init();
+    init();
+    return 0;
+}
+## tests
+
+## hint
+- 정적 변수는 프로그램이 끝날 때까지 값을 유지한다.
+## expect
+init(): 네트워크 장치를 초기화합니다.
+init(): 이미 초기화되었으므로 초기화하지 않습니다.
+init(): 이미 초기화되었으므로 초기화하지 않습니다.
+
+@@ q_global | 9 | 전역 변수 성적 처리 add_score() | 예상
+## desc
+전역 변수 total(합계)과 count(개수)를 갱신하는 함수 add_score()와, 평균을 반환하는 함수 get_average()를 작성하시오.
+## cond
+- void add_score(int score): total과 count를 갱신
+- double get_average(void): count가 0이면 0을 반환
+## head
+#include <stdio.h>
+
+int total = 0;  // 전역 변수
+int count = 0;
+## stub
+void add_score(int score)
+{
+    // 여기에 작성
+
+}
+
+double get_average(void)
+{
+    // 여기에 작성
+
+}
+## sol
+void add_score(int score)
+{
+    total += score;
+    count++;
+}
+
+double get_average(void)
+{
+    if (count == 0)
+        return 0;
+    return (double)total / count;
+}
+## main
+int main(void)
+{
+    int score;
+    for (int i = 0; i < 5; i++) {
+        scanf("%d", &score);
+        add_score(score);
+    }
+    printf("합계: %d, 개수: %d\n", total, count);
+    printf("평균: %.2f\n", get_average());
+    return 0;
+}
+## tests
+80 90 70 60 100
+---
+1 2 3 4 4
+## hint
+- (double)total / count 로 실수 나눗셈을 한다.
+## expect
+합계: 400, 개수: 5
+평균: 80.00
+~~~~~
+합계: 14, 개수: 5
+평균: 2.80
+
+@@ q_fact_r | 9 | 재귀 팩토리얼 factorial() | 예상
+## desc
+순환(재귀) 호출로 n!을 반환하는 함수 factorial()을 작성하시오. 반복문을 사용하면 안 된다.
+## cond
+- long factorial(int n)
+- n <= 1 이면 1을 반환 (종료 조건)
+## head
+#include <stdio.h>
+## stub
+long factorial(int n)
+{
+    // 여기에 작성 (재귀, 반복문 금지)
+
+}
+## sol
+long factorial(int n)
+{
+    if (n <= 1)
+        return 1;                   // 종료 조건
+    return n * factorial(n - 1);    // 재귀 호출
+}
+## main
+int main(void)
+{
+    int n;
+    printf("정수 입력: ");
+    scanf("%d", &n);
+    printf("%d! = %ld\n", n, factorial(n));
+    return 0;
+}
+## tests
+5
+---
+1
+---
+10
+## hint
+- if (n <= 1) return 1; else return n * factorial(n - 1);
+## expect
+정수 입력: 5! = 120
+~~~~~
+정수 입력: 1! = 1
+~~~~~
+정수 입력: 10! = 3628800
+
+@@ q_binary | 9 | 2진수 출력 print_binary() | 예상
+## desc
+순환 호출을 이용해 양의 정수를 2진수로 출력하는 함수 print_binary()를 작성하시오. (9장 예제)
+## cond
+- void print_binary(int x)
+- 먼저 x / 2 로 재귀 호출한 뒤 x % 2 를 출력한다.
+## head
+#include <stdio.h>
+## stub
+void print_binary(int x)
+{
+    // 여기에 작성 (재귀)
+
+}
+## sol
+void print_binary(int x)
+{
+    if (x > 0) {
+        print_binary(x / 2);    // 재귀 호출
+        printf("%d", x % 2);    // 나머지를 출력
+    }
+}
+## main
+int main(void)
+{
+    int n;
+    printf("양의 정수 입력: ");
+    scanf("%d", &n);
+    printf("%d의 2진수: ", n);
+    print_binary(n);
+    printf("\n");
+    return 0;
+}
+## tests
+9
+---
+10
+---
+255
+## hint
+- 출력보다 재귀 호출을 먼저 해야 앞자리부터 출력된다.
+## expect
+양의 정수 입력: 9의 2진수: 1001
+~~~~~
+양의 정수 입력: 10의 2진수: 1010
+~~~~~
+양의 정수 입력: 255의 2진수: 11111111
+
+@@ q_gcd_r | 9 | 재귀 최대공약수 gcd() | 예상
+## desc
+gcd(x, y) = gcd(y, x % y), gcd(x, 0) = x 라는 성질을 이용해 재귀 함수 gcd()를 작성하시오.
+## cond
+- int gcd(int x, int y)
+- 반복문을 사용하지 않는다.
+## head
+#include <stdio.h>
+## stub
+int gcd(int x, int y)
+{
+    // 여기에 작성 (재귀)
+
+}
+## sol
+int gcd(int x, int y)
+{
+    if (y == 0)
+        return x;
+    return gcd(y, x % y);
+}
+## main
+int main(void)
+{
+    int a, b;
+    printf("두 정수 입력: ");
+    scanf("%d %d", &a, &b);
+    printf("gcd(%d, %d) = %d\n", a, b, gcd(a, b));
+    return 0;
+}
+## tests
+30 20
+---
+7 3
+---
+48 180
+## hint
+- 종료 조건 y == 0 → x 반환
+## expect
+두 정수 입력: gcd(30, 20) = 10
+~~~~~
+두 정수 입력: gcd(7, 3) = 1
+~~~~~
+두 정수 입력: gcd(48, 180) = 12
+
+@@ q_hanoi | 9 | 하노이 탑 hanoi_tower() | 예상
+## desc
+막대 from의 원판 n개를 tmp를 이용해 to로 옮기는 과정을 출력하는 재귀 함수 hanoi_tower()를 작성하시오. 이동할 때마다 전역 변수 moves를 1 증가시킨다.
+## cond
+- void hanoi_tower(int n, char from, char tmp, char to)
+- 출력 형식: "원판 %d을 %c에서 %c으로 옮긴다.\n"
+## head
+#include <stdio.h>
+
+int moves = 0;  // 이동 횟수
+## stub
+void hanoi_tower(int n, char from, char tmp, char to)
+{
+    // 여기에 작성 (재귀)
+
+}
+## sol
+void hanoi_tower(int n, char from, char tmp, char to)
+{
+    if (n == 1) {
+        printf("원판 1을 %c에서 %c으로 옮긴다.\n", from, to);
+        moves++;
+    }
+    else {
+        hanoi_tower(n - 1, from, to, tmp);  // n-1개를 tmp로
+        printf("원판 %d을 %c에서 %c으로 옮긴다.\n", n, from, to);
+        moves++;
+        hanoi_tower(n - 1, tmp, from, to);  // n-1개를 to로
+    }
+}
+## main
+int main(void)
+{
+    int n;
+    printf("원판 개수: ");
+    scanf("%d", &n);
+    hanoi_tower(n, 'A', 'B', 'C');
+    printf("총 이동 횟수: %d\n", moves);
+    return 0;
+}
+## tests
+2
+---
+3
+## hint
+- ① n-1개를 from → tmp (to를 임시로) ② n번 원판 from → to ③ n-1개를 tmp → to (from을 임시로)
+## expect
+원판 개수: 원판 1을 A에서 B으로 옮긴다.
+원판 2을 A에서 C으로 옮긴다.
+원판 1을 B에서 C으로 옮긴다.
+총 이동 횟수: 3
+~~~~~
+원판 개수: 원판 1을 A에서 C으로 옮긴다.
+원판 2을 A에서 B으로 옮긴다.
+원판 1을 C에서 B으로 옮긴다.
+원판 3을 A에서 C으로 옮긴다.
+원판 1을 B에서 A으로 옮긴다.
+원판 2을 B에서 C으로 옮긴다.
+원판 1을 A에서 C으로 옮긴다.
+총 이동 횟수: 7
+
+@@ q_sumdig_r | 9 | 재귀 자릿수 합 sum_digits() | 예상
+## desc
+양의 정수의 각 자릿수의 합을 재귀로 구하는 함수 sum_digits()를 작성하시오. sum_digits(1234) = 4 + sum_digits(123)
+## cond
+- int sum_digits(int n)
+- 반복문 사용 금지
+## head
+#include <stdio.h>
+## stub
+int sum_digits(int n)
+{
+    // 여기에 작성 (재귀)
+
+}
+## sol
+int sum_digits(int n)
+{
+    if (n < 10)
+        return n;
+    return n % 10 + sum_digits(n / 10);
+}
+## main
+int main(void)
+{
+    int n;
+    printf("양의 정수 입력: ");
+    scanf("%d", &n);
+    printf("자릿수의 합: %d\n", sum_digits(n));
+    return 0;
+}
+## tests
+1234
+---
+7
+---
+99999
+## hint
+- 한 자리 수면 자기 자신을 반환한다.
+## expect
+양의 정수 입력: 자릿수의 합: 10
+~~~~~
+양의 정수 입력: 자릿수의 합: 7
+~~~~~
+양의 정수 입력: 자릿수의 합: 45
+
+@@ q_power_r | 9 | 재귀 거듭제곱 power_r() | 예상
+## desc
+base의 n제곱(n ≥ 0)을 재귀로 구하는 함수 power_r()을 작성하시오. power_r(b, n) = b × power_r(b, n-1), power_r(b, 0) = 1
+## cond
+- long power_r(int base, int n)
+## head
+#include <stdio.h>
+## stub
+long power_r(int base, int n)
+{
+    // 여기에 작성 (재귀)
+
+}
+## sol
+long power_r(int base, int n)
+{
+    if (n == 0)
+        return 1;
+    return base * power_r(base, n - 1);
+}
+## main
+int main(void)
+{
+    int base, n;
+    printf("밑과 지수 입력: ");
+    scanf("%d %d", &base, &n);
+    printf("%d^%d = %ld\n", base, n, power_r(base, n));
+    return 0;
+}
+## tests
+2 10
+---
+3 0
+---
+7 3
+## hint
+- 종료 조건은 n == 0 일 때 1
+## expect
+밑과 지수 입력: 2^10 = 1024
+~~~~~
+밑과 지수 입력: 3^0 = 1
+~~~~~
+밑과 지수 입력: 7^3 = 343
+
+@@ q_fib_r | 9 | 재귀 피보나치 fib() | 예상
+## desc
+fib(0) = 0, fib(1) = 1, fib(n) = fib(n-1) + fib(n-2) 를 재귀 함수로 작성하시오. main은 0번째부터 n번째까지 출력한다.
+## cond
+- int fib(int n)
+## head
+#include <stdio.h>
+## stub
+int fib(int n)
+{
+    // 여기에 작성 (재귀)
+
+}
+## sol
+int fib(int n)
+{
+    if (n <= 1)
+        return n;
+    return fib(n - 1) + fib(n - 2);
+}
+## main
+int main(void)
+{
+    int n;
+    printf("n 입력: ");
+    scanf("%d", &n);
+    for (int i = 0; i <= n; i++)
+        printf("%d ", fib(i));
+    printf("\n");
+    return 0;
+}
+## tests
+10
+---
+0
+## hint
+- 종료 조건 두 개(0과 1)를 n <= 1 이면 n 반환으로 한 번에 처리할 수 있다.
+## expect
+n 입력: 0 1 1 2 3 5 8 13 21 34 55 
+~~~~~
+n 입력: 0 
+
+@@ q_bank | 9 | 은행 입출금 login/deposit/withdraw | 예상
+## desc
+PIN 번호로 로그인하고 입금·출금하는 은행 시스템이다. 전역 변수 balance(잔액)와 PIN을 사용하는 함수 login(), deposit(), withdraw()를 작성하시오. (9장 Quiz02 응용, 계좌는 하나)
+## cond
+- int login(int pin): PIN이 맞으면 1, 틀리면 0 반환
+- void deposit(int amount): 잔액에 더하고 "입금이 완료되었습니다. 현재 잔액: %d\n" 출력
+- void withdraw(int amount): 잔액이 부족하면 "잔액이 부족합니다.\n", 아니면 빼고 "출금이 완료되었습니다. 현재 잔액: %d\n"
+## head
+#include <stdio.h>
+
+#define PIN 1234
+int balance = 100000;   // 전역 변수: 잔액
+## stub
+int login(int pin)
+{
+    // 여기에 작성
+
+}
+
+void deposit(int amount)
+{
+    // 여기에 작성
+
+}
+
+void withdraw(int amount)
+{
+    // 여기에 작성
+
+}
+## sol
+int login(int pin)
+{
+    if (pin == PIN)
+        return 1;
+    return 0;
+}
+
+void deposit(int amount)
+{
+    balance += amount;
+    printf("입금이 완료되었습니다. 현재 잔액: %d\n", balance);
+}
+
+void withdraw(int amount)
+{
+    if (amount > balance) {
+        printf("잔액이 부족합니다.\n");
+        return;
+    }
+    balance -= amount;
+    printf("출금이 완료되었습니다. 현재 잔액: %d\n", balance);
+}
+## main
+int main(void)
+{
+    int pin, menu, amount;
+
+    printf("PIN 번호를 입력하세요: ");
+    scanf("%d", &pin);
+    if (!login(pin)) {
+        printf("로그인 실패!\n");
+        return 0;
+    }
+    printf("로그인 성공!\n");
+    printf("1. 입금\n2. 출금\n메뉴를 선택하세요: ");
+    scanf("%d", &menu);
+    printf("금액을 입력하세요: ");
+    scanf("%d", &amount);
+    if (menu == 1)
+        deposit(amount);
+    else if (menu == 2)
+        withdraw(amount);
+    else
+        printf("잘못된 메뉴입니다.\n");
+    return 0;
+}
+## tests
+1234
+1
+10000
+---
+1234
+2
+150000
+---
+1234
+2
+30000
+---
+1111
+## hint
+- 전역 변수 balance는 모든 함수에서 그대로 쓸 수 있다.
+- void 함수에서 중간에 끝내려면 return; 을 쓴다.
+## expect
+PIN 번호를 입력하세요: 로그인 성공!
+1. 입금
+2. 출금
+메뉴를 선택하세요: 금액을 입력하세요: 입금이 완료되었습니다. 현재 잔액: 110000
+~~~~~
+PIN 번호를 입력하세요: 로그인 성공!
+1. 입금
+2. 출금
+메뉴를 선택하세요: 금액을 입력하세요: 잔액이 부족합니다.
+~~~~~
+PIN 번호를 입력하세요: 로그인 성공!
+1. 입금
+2. 출금
+메뉴를 선택하세요: 금액을 입력하세요: 출금이 완료되었습니다. 현재 잔액: 70000
+~~~~~
+PIN 번호를 입력하세요: 로그인 실패!
+</script>
+
+<!-- VS Code 스타일 편집기: CodeMirror 5 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/search/searchcursor.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/keymap/sublime.min.js"></script>
 <script>
 (function () {
   "use strict";
-  const CH = { 1: "1장 C언어 소개", 2: "2장 프로그램 작성 과정", 3: "3장 C프로그램 구성요소", 4: "4장 변수와 자료형", 5: "5장 수식과 연산자", 6: "6장 조건문", 7: "7장 반복문", 8: "8장 함수" };
+  const CH = { 1: "1장 C언어 소개", 2: "2장 프로그램 작성 과정", 3: "3장 C프로그램 구성요소", 4: "4장 변수와 자료형", 5: "5장 수식과 연산자", 6: "6장 조건문", 7: "7장 반복문", 8: "8장 함수", 9: "9장 함수와 변수" };
   const MODES = {
-    theory: "이론 정리", codes: "코드 정리", concept: "개념 빈칸", code: "코드 빈칸", blank: "백지 테스트", output: "출력 예측"
+    theory: "이론 정리", codes: "코드 정리", quiz: "함수 퀴즈", concept: "개념 빈칸", code: "코드 빈칸", blank: "백지 테스트", output: "출력 예측"
   };
 
   // ── storage (실패해도 동작) ──
@@ -5869,7 +9770,7 @@ tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
     return text.split(/^@@ /m).filter(s => s.trim()).map(block => {
       const nl = block.indexOf("\n");
       const [id, ch, title, kind] = block.slice(0, nl).split("|").map(s => s.trim());
-      const obj = { id, ch: +ch, title, variant: kind === "변형", body: block.slice(nl + 1) };
+      const obj = { id, ch: +ch, title, kind, variant: kind === "변형", body: block.slice(nl + 1) };
       const parts = block.slice(nl + 1).split(/^## (\w+)\n/m);
       for (let i = 1; i < parts.length; i += 2) obj[parts[i]] = parts[i + 1].replace(/\s+$/, "");
       return obj;
@@ -5897,6 +9798,7 @@ tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
   const outputs = parseBlocks(raw("data-outputs"));
   const theory = parseBlocks(raw("data-theory"));
   const patterns = parseBlocks(raw("data-patterns"));
+  const quizzes = parseBlocks(raw("data-quiz")).map((q, i) => Object.assign(q, { order: i })).sort((a, b) => a.ch - b.ch || (a.kind === "기출" ? 0 : 1) - (b.kind === "기출" ? 0 : 1) || a.order - b.order);
 
   // ── 상태 ──
   let mode = store.get("mode", "theory");
@@ -5927,12 +9829,13 @@ tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
 
   // ── 헤더 통계 ──
   function renderStats() {
-    const all = [...concepts, ...progs.map(p => ({ id: "code:" + p.id })), ...progs.map(p => ({ id: "blank:" + p.id })), ...outputs.map(o => ({ id: "out:" + o.id }))];
+    const all = [...concepts, ...quizzes.map(q => ({ id: "quiz:" + q.id })), ...progs.map(p => ({ id: "code:" + p.id })), ...progs.map(p => ({ id: "blank:" + p.id })), ...outputs.map(o => ({ id: "out:" + o.id }))];
     const n = all.filter(x => (done[x.id] || 0) >= 100).length;
     const blanks = progs.filter(p => (done["blank:" + p.id] || 0) >= 100).length;
     $("#stats").replaceChildren(
       h("div", {}, h("b", { text: n + " / " + all.length }), "완벽히 맞힌 문제"),
-      h("div", {}, h("b", { text: blanks + " / " + progs.length }), "백지 통과 코드")
+      h("div", {}, h("b", { text: blanks + " / " + progs.length }), "백지 통과 코드"),
+      h("div", {}, h("b", { text: quizzes.filter(q => (done["quiz:" + q.id] || 0) >= 100).length + " / " + quizzes.length }), "함수 퀴즈 통과")
     );
   }
 
@@ -5940,7 +9843,7 @@ tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
   function renderControls() {
     document.querySelectorAll("#modes button").forEach(b => b.setAttribute("aria-pressed", b.dataset.mode === mode));
     const chips = $("#chapters");
-    chips.replaceChildren(...[0, 1, 2, 3, 4, 5, 6, 7, 8].map(c =>
+    chips.replaceChildren(...[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(c =>
       h("button", { class: "chip", "aria-pressed": String(chap === c), onclick: () => { chap = c; store.set("chap", c); render(); } }, c ? c + "장" : "전체")));
     if (mode === "code" || mode === "blank" || mode === "output")
       chips.append(h("span", { class: "chipsep", "aria-hidden": "true" }),
@@ -5948,7 +9851,7 @@ tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
   }
   document.querySelectorAll("#modes button").forEach(b => b.addEventListener("click", () => { mode = b.dataset.mode; store.set("mode", mode); render(); }));
 
-  const inChap = x => (!chap || x.ch === chap) && (!onlyVar || x.variant || mode === "concept");
+  const inChap = x => (!chap || x.ch === chap) && (!onlyVar || x.variant || !["code", "blank", "output"].includes(mode));
 
   // ── 빈칸 input 생성 ──
   function blankInput(answers, ci, mono) {
@@ -6143,6 +10046,356 @@ tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
     return { ma, mb };
   }
 
+  // ── C 실행기: picoc(WebAssembly)를 Web Worker에서 실행 ──
+  const RUNNER_URL = window.PICOC_WORKER_URL || "picoc-worker.js";
+  const LIMITS_H = ["#define CHAR_BIT 8", "#define CHAR_MIN -128", "#define CHAR_MAX 127", "#define UCHAR_MAX 255", "#define SHRT_MIN -32768", "#define SHRT_MAX 32767", "#define USHRT_MAX 65535", "#define INT_MIN (-2147483647 - 1)", "#define INT_MAX 2147483647", "#define UINT_MAX 4294967295", "#define LONG_MIN (-2147483647 - 1)", "#define LONG_MAX 2147483647"];
+  const FLOAT_H = ["#define DBL_EPSILON 2.220446049250313e-16", "#define FLT_EPSILON 1.192092896e-07", "#define DBL_MAX 1.7976931348623157e+308", "#define FLT_MAX 3.402823466e+38"];
+  let warmWorker = null;
+  function spawnWorker() {
+    let w;
+    try { w = new Worker(RUNNER_URL); } catch (e) { return { failed: true, waiters: [] }; }
+    const st = { w, ready: false, failed: false, waiters: [] };
+    const wake = () => { const ws = st.waiters; st.waiters = []; ws.forEach(f => f()); };
+    w.onmessage = e => { if (e.data && e.data.t === "ready") { st.ready = true; wake(); } };
+    w.onerror = () => { st.failed = true; wake(); };
+    return st;
+  }
+  function takeWorker() { const st = warmWorker || spawnWorker(); warmWorker = spawnWorker(); return st; }
+  function warmUp() { if (!warmWorker) warmWorker = spawnWorker(); }
+
+  function prepC(src) {
+    let s = String(src).replace(/\r/g, "");
+    const pre = [];
+    s = s.replace(/^[ \t]*#[ \t]*include[ \t]*[<"](limits|float|conio|windows|stdarg)\.h[>"].*$/gm, (m, hd) => {
+      if (hd === "limits") pre.push(...LIMITS_H);
+      if (hd === "float") pre.push(...FLOAT_H);
+      return "";
+    });
+    s = s.replace(/\bscanf_s\b/g, "scanf").replace(/\bprintf_s\b/g, "printf").replace(/\b_?getch\s*\(\s*\)/g, "getchar()");
+    s = s.replace(/\bconst\s+/g, "");
+    s = s.replace(/^[ \t]*extern\b[^;\n]*;/gm, "");
+    // picoc의 float는 double이라 scanf("%f")를 %lf로 바꾼다
+    s = s.replace(/\bscanf\s*\(\s*"((?:[^"\\\n]|\\.)*)"/g, (m, f) => m.replace(f, f.replace(/%(\d*)f/g, "%$1lf")));
+    // 함수 호출이 든 조건 연산자 문장 (a ? printf(..) : printf(..);) → if-else
+    s = s.replace(/^([ \t]*)([^;\n?{}]+?)\s*\?\s*([A-Za-z_]\w*\s*\([^;\n]*?\))\s*:\s*([A-Za-z_]\w*\s*\([^;\n]*\))\s*;[ \t]*$/gm,
+      (m, ind, cond, a, b) => /(^|[^=!<>])=(?!=)/.test(cond) || /^\s*(return|if|while|for)\b/.test(cond) ? m : ind + "if (" + cond.trim() + ") " + a + "; else " + b + ";");
+    // main을 감싸서 마지막 줄의 출력까지 모두 내보낸다
+    const mm = s.match(/\b(int|void)\s+main\s*\(\s*(void)?\s*\)\s*\{/);
+    if (mm) {
+      s = s.slice(0, mm.index) + mm[0].replace("main", "__user_main") + s.slice(mm.index + mm[0].length);
+      s += mm[1] === "void" ? "\nint main() { __user_main(); printf(\"\\n\"); return 0; }\n"
+        : "\nint main() { int __r = __user_main(); printf(\"\\n\"); return __r; }\n";
+    }
+    return { code: (pre.length ? pre.join("\n") + "\n" : "") + s, offset: pre.length };
+  }
+  const ERR_KO = [
+    [/identifier not expected here|expected|syntax error|unexpected/i, "문법 오류: 세미콜론(;), 괄호, 따옴표가 빠졌는지 확인하세요."],
+    [/'([^']+)' is undefined/, "선언되지 않은 이름입니다. 변수 선언이나 함수 이름의 철자를 확인하세요."],
+    [/already defined/, "같은 이름이 이미 선언되어 있습니다."],
+    [/can't read file/, "이 실행기는 해당 헤더 파일을 지원하지 않습니다."],
+    [/not enough arguments|too many arguments/, "함수에 넘기는 인수의 개수가 매개변수와 다릅니다."],
+    [/out of memory|stack/i, "재귀 호출이 너무 깊습니다. 종료 조건을 확인하세요."]
+  ];
+  function tidyOutput(out, offset, err) {
+    let text = out.replace(/\s+$/, "");
+    text = text.replace(/exception thrown:[\s\S]*$/m, "").replace(/__user_main/g, "main");
+    let compile = null;
+    const em = text.match(/file\.c:(\d+):(\d+)\s+(.*)/);
+    if (em) {
+      const ln = Math.max(1, +em[1] - offset);
+      const ko = (ERR_KO.find(([re]) => re.test(em[3])) || [, ""])[1];
+      compile = (ln) + "번째 줄 " + em[2] + "번째 칸: " + em[3] + (ko ? "\n→ " + ko : "");
+      text = text.slice(0, text.indexOf(em[0])).replace(/[^\n]*\n[ \t]*\^\s*$/, "").replace(/\s+$/, "");
+    }
+    let runtime = null;
+    if (err) runtime = /divide by zero/i.test(err) ? "실행 오류: 0으로 나누었습니다." : /memory|stack|recursion/i.test(err) ? "실행 오류: 재귀 호출이 너무 깊거나 메모리가 부족합니다." : "실행 오류: " + err;
+    return { text, compile, runtime };
+  }
+  function runC(src, input, timeout) {
+    const prep = prepC(src);
+    return new Promise(resolve => {
+      const st = takeWorker();
+      let out = "", fin = false, timer = null;
+      const t0 = performance.now();
+      const finish = r => {
+        if (fin) return; fin = true; clearTimeout(timer);
+        try { st.w && st.w.terminate(); } catch (e) {}
+        const t = tidyOutput(out, prep.offset, r.err);
+        resolve(Object.assign({ ms: Math.round(performance.now() - t0) }, r, t));
+      };
+      const go = () => {
+        if (st.failed) return finish({ unavailable: true });
+        st.w.onmessage = e => {
+          const m = e.data || {};
+          if (m.t === "out") { out += m.s; if (out.length > 100000) finish({ err: null, overflow: true }); }
+          else if (m.t === "done") finish({ err: m.err });
+        };
+        timer = setTimeout(() => finish({ timeout: true }), timeout || 4000);
+        st.w.postMessage({ code: prep.code, input: input || "" });
+      };
+      if (st.ready || st.failed) go();
+      else { st.waiters.push(go); setTimeout(() => { if (!st.ready && !fin) { st.failed = true; go(); } }, 20000); }
+    });
+  }
+  const normOut = s => String(s).replace(/\s+/g, "");
+  // 예시 출력에는 사용자가 입력한 값이 섞여 있으므로, 입력값을 빼고 비교한다
+  function sameWithEcho(exp, got, ins) {
+    const go = (pe, pg, k) => {
+      if (k === ins.length) return exp.slice(pe) === got.slice(pg);
+      for (let i = exp.indexOf(ins[k], pe); i >= 0; i = exp.indexOf(ins[k], i + 1)) {
+        const seg = exp.slice(pe, i);
+        if (got.startsWith(seg, pg) && go(i + ins[k].length, pg + seg.length, k + 1)) return true;
+      }
+      return false;
+    };
+    return go(0, 0, 0);
+  }
+
+  // ── VS Code 스타일 편집기 (CodeMirror 5, 없으면 textarea) ──
+  const C_WORDS = ["auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else", "enum", "extern", "float", "for", "goto", "if", "int", "long", "register", "return", "short", "signed", "sizeof", "static", "struct", "switch", "typedef", "unsigned", "void", "while",
+    "printf", "scanf", "scanf_s", "getchar", "putchar", "main", "include", "define", "stdio", "stdlib", "math", "time", "sqrt", "pow", "fabs", "floor", "ceil", "sin", "cos", "tan", "exp", "log", "rand", "srand", "abs", "EPSILON", "MAX_ITER", "_CRT_SECURE_NO_WARNINGS", "NULL"];
+  // clike(C) 모드를 감싸서 VS Code처럼 제어문은 보라색, 함수 이름은 노란색으로 칠한다
+  let cModeReady = false;
+  function defineCMode() {
+    if (cModeReady || !window.CodeMirror) return;
+    cModeReady = true;
+    const CTL = /^(if|else|for|while|do|switch|case|default|break|continue|return|goto)$/;
+    CodeMirror.defineMode("c-vscode", config => {
+      const base = CodeMirror.getMode(config, "text/x-csrc");
+      return Object.assign({}, base, {
+        token(stream, state) {
+          const style = base.token(stream, state);
+          if (style === "keyword" && CTL.test(stream.current())) return "keyword ctl";
+          if ((style === "variable" || style === "def") && /^\s*\(/.test(stream.string.slice(stream.pos))) return style + " fncall";
+          return style;
+        }
+      });
+    });
+  }
+  function cHint(cm) {
+    const cur = cm.getCursor(), tok = cm.getTokenAt(cur);
+    const word = tok.string.slice(0, cur.ch - tok.start);
+    if (!/^[A-Za-z_]\w*$/.test(word)) return null;
+    const seen = new Set();
+    const docWords = (cm.getValue().match(/[A-Za-z_]\w{2,}/g) || []);
+    const list = [];
+    [...C_WORDS, ...docWords].forEach(w => { if (w !== word && w.startsWith(word) && !seen.has(w)) { seen.add(w); list.push(w); } });
+    if (!list.length) return null;
+    return { list: list.slice(0, 12), from: CodeMirror.Pos(cur.line, tok.start), to: CodeMirror.Pos(cur.line, cur.ch) };
+  }
+  function makeEditor(host, opts) {
+    const o = Object.assign({ value: "", onChange: null, onRun: null, onCursor: null, tall: false }, opts);
+    host.classList.toggle("tall", !!o.tall);
+    if (window.CodeMirror) {
+      const cm = CodeMirror(host, {
+        value: o.value, mode: (defineCMode(), "c-vscode"), theme: "vscode-dark", lineNumbers: true,
+        indentUnit: 4, tabSize: 4, indentWithTabs: false, smartIndent: true, electricChars: true,
+        autoCloseBrackets: true, matchBrackets: true, styleActiveLine: true, keyMap: "sublime",
+        lineWiseCopyCut: true, spellcheck: false, autocorrect: false, autocapitalize: false,
+        extraKeys: {
+          "Ctrl-Enter": () => o.onRun && o.onRun(), "Cmd-Enter": () => o.onRun && o.onRun(),
+          "Ctrl-/": "toggleComment", "Cmd-/": "toggleComment",
+          "Alt-Up": "swapLineUp", "Alt-Down": "swapLineDown",
+          "Shift-Alt-Down": "duplicateLine", "Shift-Alt-Up": "duplicateLine",
+          "Ctrl-Space": c => c.showHint && c.showHint({ hint: cHint, completeSingle: false }),
+          "Tab": c => c.somethingSelected() ? c.indentSelection("add") : c.replaceSelection("    ", "end"),
+          "Shift-Tab": "indentLess"
+        }
+      });
+      cm.on("inputRead", (c, ch) => {
+        if (!c.showHint || c.state.completionActive) return;
+        if (ch.origin === "+input" && /^[A-Za-z_]$/.test(ch.text[0])) {
+          const tok = c.getTokenAt(c.getCursor());
+          if (tok.type !== "string" && tok.type !== "comment" && tok.string.length >= 2) c.showHint({ hint: cHint, completeSingle: false });
+        }
+      });
+      cm.on("change", () => o.onChange && o.onChange(cm.getValue()));
+      cm.on("cursorActivity", () => { const p = cm.getCursor(); o.onCursor && o.onCursor(p.line + 1, p.ch + 1); });
+      setTimeout(() => cm.refresh(), 0);
+      return {
+        cm, getValue: () => cm.getValue(),
+        setValue: v => { cm.setValue(v); cm.clearHistory(); },
+        focus: () => cm.focus(),
+        lock(text) {
+          const v = cm.getValue(), i = text ? v.lastIndexOf(text) : -1;
+          if (i < 0) return null;
+          return cm.markText(cm.posFromIndex(i), cm.posFromIndex(i + text.length), { readOnly: true, className: "cm-locked", inclusiveLeft: false, inclusiveRight: false });
+        }
+      };
+    }
+    const ta = h("textarea", { class: "fallback", spellcheck: "false", autocomplete: "off", autocapitalize: "off", "aria-label": "코드 편집기" });
+    ta.value = o.value;
+    ta.addEventListener("input", () => o.onChange && o.onChange(ta.value));
+    ta.addEventListener("keydown", e => {
+      const s = ta.selectionStart, en = ta.selectionEnd, v = ta.value;
+      if ((e.ctrlKey || e.metaKey) && e.key === "Enter") { e.preventDefault(); o.onRun && o.onRun(); }
+      else if (e.key === "Tab") { e.preventDefault(); ta.setRangeText("    ", s, en, "end"); o.onChange && o.onChange(ta.value); }
+      else if (e.key === "Enter" && !e.isComposing) {
+        const ls = v.lastIndexOf("\n", s - 1) + 1;
+        let ind = (v.slice(ls, s).match(/^[ \t]*/) || [""])[0];
+        if (/\{\s*$/.test(v.slice(ls, s))) ind += "    ";
+        e.preventDefault(); ta.setRangeText("\n" + ind, s, en, "end"); o.onChange && o.onChange(ta.value);
+      }
+    });
+    host.append(ta);
+    return { cm: null, getValue: () => ta.value, setValue: v => { ta.value = v; }, focus: () => ta.focus(), lock: () => null };
+  }
+
+  // IDE 묶음: 탭 + 편집기 + 상태 표시줄 + 터미널
+  function makeIDE(o) {
+    const tab = h("span", { class: "ide-tab" }, h("span", { class: "ic", text: "C" }), o.filename || "main.c", h("span", { class: "dot" }));
+    const runBtn = h("button", { class: "vbtn run", title: "실행 (Ctrl+Enter)" }, "▶ 실행");
+    const actions = h("div", { class: "ide-actions" }, runBtn, ...(o.buttons || []));
+    const edHost = h("div", { class: "ide-ed" });
+    const pos = h("span", { text: "줄 1, 열 1" });
+    const status = h("div", { class: "ide-status" }, h("span", {}, "C · UTF-8 · 공백: 4"), h("span", { class: "keys" }, "Ctrl+Enter 실행 · Ctrl+/ 주석 · Alt+↑↓ 줄 이동 · Ctrl+Space 자동완성"), pos);
+    const stdin = h("textarea", { id: "stdin-" + (o.id || "x"), spellcheck: "false", "aria-label": "프로그램 입력" });
+    stdin.value = o.input || "";
+    const term = h("pre", { class: "ide-term", "aria-live": "polite" });
+    const outBox = h("div", { class: "ide-out" }, term);
+    const tabs = {};
+    const ptabs = h("div", { class: "ide-ptabs", role: "tablist" });
+    const panes = {};
+    const show = k => { Object.keys(tabs).forEach(n => { tabs[n].setAttribute("aria-selected", String(n === k)); panes[n].hidden = n !== k; }); };
+    const addPane = (key, label, el) => {
+      tabs[key] = h("button", { role: "tab", "aria-selected": "false", onclick: () => show(key) }, label);
+      panes[key] = el; ptabs.append(tabs[key]); outBox.append(el);
+    };
+    addPane("term", "터미널", term);
+    const resultPane = h("div");
+    if (o.tests) addPane("tests", "테스트 결과", resultPane);
+    show("term");
+    term.append(h("span", { class: "tnote", text: "▶ 실행을 누르면 결과가 여기에 나옵니다. 입력이 필요하면 입력 (stdin) 칸에 한 줄씩 적으세요." }));
+    const panel = h("div", { class: "ide-panel" }, ptabs, h("div", { class: "ide-pbody" }, h("div", { class: "ide-stdin" }, h("label", { for: stdin.id, text: "입력 (stdin)" }), stdin), outBox));
+    const el = h("div", { class: "ide" }, h("div", { class: "ide-top" }, h("div", { class: "ide-tabs" }, tab), actions), edHost, status, panel);
+    let saved = o.value;
+    const ed = makeEditor(edHost, {
+      value: o.value, tall: o.tall,
+      onChange: v => { tab.classList.toggle("dirty", v !== saved); o.onChange && o.onChange(v); },
+      onRun: () => run(), onCursor: (l, c) => { pos.textContent = "줄 " + l + ", 열 " + c; }
+    });
+    const termLine = (cls, text) => term.append(h("span", { class: cls, text }));
+    async function run() {
+      runBtn.disabled = true; show("term");
+      term.replaceChildren(h("span", { class: "cmd", text: "> " + (o.filename || "main.c") + " 실행 중…\n" }));
+      const r = await runC(ed.getValue(), stdin.value);
+      runBtn.disabled = false;
+      term.replaceChildren(h("span", { class: "cmd", text: "> " + (o.filename || "main.c") + (stdin.value.trim() ? "  (입력: " + stdin.value.trim().replace(/\n/g, " ⏎ ") + ")" : "") + "\n" }));
+      renderRun(r);
+      saved = ed.getValue(); tab.classList.remove("dirty");
+      o.onRan && o.onRan(r, termLine);
+      return r;
+    }
+    function renderRun(r) {
+      if (r.unavailable) { termLine("err", "C 실행기를 불러오지 못했습니다.\n인터넷에 연결된 상태에서 웹 주소로 열어야 실행할 수 있어요. (파일을 직접 열면 실행이 막힙니다)\n구문 채점과 정답 보기는 그대로 쓸 수 있습니다."); return; }
+      if (r.text) termLine("", r.text + "\n");
+      if (r.compile) termLine("err", "\n[컴파일 오류] " + r.compile + "\n");
+      if (r.runtime) termLine("err", "\n[" + r.runtime + "]\n");
+      if (r.timeout) termLine("warn", "\n[4초 동안 끝나지 않아 중단했습니다. 무한 루프이거나 입력이 부족한지 확인하세요.]\n");
+      if (r.overflow) termLine("warn", "\n[출력이 너무 많아 중단했습니다.]\n");
+      if (!r.compile && !r.runtime && !r.timeout && !r.overflow) termLine("cmd", "\n[프로그램 종료 · " + (r.ms / 1000).toFixed(2) + "초]\n");
+    }
+    runBtn.addEventListener("click", run);
+    warmUp();
+    return { el, ed, run, stdin, term, termLine, resultPane, show, setSaved: v => { saved = v; tab.classList.remove("dirty"); } };
+  }
+
+  // ── 모드: 함수 퀴즈 ──
+  function quizTests(q) {
+    const ins = q.tests && q.tests.trim() ? q.tests.split(/^---$/m).map(t => t.replace(/^\n|\n$/g, "")) : [""];
+    const outs = (q.expect || "").split(/^~~~~~$/m).map(t => t.replace(/^\n|\n$/g, ""));
+    return ins.map((input, i) => ({ input, expect: outs[i] || "" }));
+  }
+  function renderQuiz(main) {
+    picker(main, quizzes.filter(inChap), "quiz", "quiz:", (sheet, q, next, rand) => {
+      const tests = quizTests(q);
+      sheet.append(h("div", { class: "qhead" }, h("span", { class: "tag", text: q.ch + "장" }), h("h2", { text: q.title }),
+        h("span", { class: "kind " + (q.kind === "기출" ? "past" : "exp"), text: q.kind === "기출" ? "작년 기출" : "예상 문제" })));
+      sheet.append(h("p", { class: "desc", text: q.desc }));
+      if (q.cond) sheet.append(h("ul", { class: "cond" }, q.cond.split("\n").filter(Boolean).map(l => h("li", {}, inline(l.replace(/^- /, ""))))));
+      const sigs = (q.sol.match(/^[A-Za-z_][\w \t*]*\([^)]*\)[ \t]*$/gm) || []).map(x => x.trim());
+      if (sigs.length) sheet.append(h("div", {}, h("div", { class: "label", text: "작성할 함수" }), h("code", { class: "sig", text: sigs.join("\n") })));
+      const ex = tests[0];
+      sheet.append(h("div", { class: "io" },
+        ex.input ? h("div", {}, h("div", { class: "label", text: "입력 예시" }), h("pre", { class: "box", text: ex.input })) : null,
+        h("div", {}, h("div", { class: "label", text: "실행 결과 예시 (입력값은 화면에 안 보임)" }), h("pre", { class: "box term", text: ex.expect || "(출력 없음)" }))));
+
+      const locked = !("solmain" in q);
+      const template = q.head + "\n\n" + q.stub + "\n\n" + q.main + "\n";
+      const draftKey = "qdraft:" + q.id;
+      const start = store.get(draftKey, null) || template;
+      const res = h("span", { class: "result" });
+      const extra = h("div", { class: "qsec" });
+      const gradeBtn = h("button", { class: "vbtn grade", title: "테스트 케이스 " + tests.length + "개로 채점" }, "✓ 채점");
+      const ide = makeIDE({
+        id: q.id, filename: q.id.replace(/^q_/, "") + ".c", value: start, input: ex.input, tall: true, tests: true,
+        buttons: [gradeBtn,
+          h("button", { class: "vbtn", onclick: () => showHint() }, "힌트"),
+          h("button", { class: "vbtn", onclick: () => showSol() }, "정답"),
+          h("button", { class: "vbtn", onclick: () => reset() }, "초기화")],
+        onChange: v => store.set(draftKey, v)
+      });
+      let lockMark = locked ? ide.ed.lock(q.main) : null;
+      const lockNote = h("div", { class: "lockbar" });
+      const drawLock = () => {
+        lockNote.replaceChildren(...[lockMark
+          ? h("span", {}, "main 함수는 시험처럼 주어진 그대로 잠겨 있어요 (어두운 배경). 위쪽에 함수를 작성하세요.")
+          : h("span", {}, locked ? "main 함수 잠금이 풀려 있어요." : "이 문제는 main의 빈칸(주석 자리)도 직접 채워야 합니다."),
+          locked && ide.ed.cm ? h("button", { class: "btn", style: "padding:2px 10px;font-size:12px", onclick: () => { if (lockMark) { lockMark.clear(); lockMark = null; } else lockMark = ide.ed.lock(q.main); drawLock(); } }, lockMark ? "잠금 풀기" : "다시 잠그기") : null].filter(Boolean));
+      };
+      drawLock();
+      async function grade() {
+        gradeBtn.disabled = true; ide.show("tests");
+        ide.resultPane.replaceChildren(h("pre", { class: "ide-term" }, h("span", { class: "cmd", text: "테스트 " + tests.length + "개 실행 중…" })));
+        const rows = [];
+        let pass = 0, unavailable = false;
+        for (let i = 0; i < tests.length; i++) {
+          const t = tests[i];
+          const r = await runC(ide.ed.getValue(), t.input);
+          if (r.unavailable) { unavailable = true; break; }
+          const ok = !r.compile && !r.timeout && normOut(r.text) === normOut(t.expect);
+          if (ok) pass++;
+          rows.push(h("tr", {},
+            h("td", { class: "mark " + (ok ? "pass" : "fail"), text: ok ? "○" : "✕" }),
+            h("td", {}, h("pre", { text: t.input || "(없음)" })),
+            h("td", {}, h("pre", { text: t.expect })),
+            h("td", {}, h("pre", { text: r.compile ? "[컴파일 오류] " + r.compile : r.timeout ? (r.text || "") + "\n[시간 초과]" : (r.text || "") + (r.runtime ? "\n[" + r.runtime + "]" : "") }))));
+          if (r.compile) break;
+        }
+        gradeBtn.disabled = false;
+        if (unavailable) { ide.resultPane.replaceChildren(h("pre", { class: "ide-term" }, h("span", { class: "err", text: "C 실행기를 불러오지 못했습니다. 인터넷에 연결된 웹 주소로 열어 주세요." }))); return; }
+        const all = pass === tests.length;
+        ide.resultPane.replaceChildren(
+          h("pre", { class: "ide-term" }, h("span", { class: all ? "ok" : "err", text: (all ? "○ 모든 테스트 통과 " : "✕ 통과 ") + pass + " / " + tests.length + (all ? "" : "  — 기대 출력과 내 출력을 비교해 보세요 (공백·줄바꿈 차이는 무시)") })),
+          h("table", { class: "ttable" }, h("thead", {}, h("tr", {}, ["", "입력", "기대 출력", "내 출력"].map(x => h("th", { text: x })))), h("tbody", {}, rows)));
+        res.textContent = (all ? "○ 통과 " : "✕ ") + pass + " / " + tests.length;
+        res.className = "result " + (all ? "ok" : "bad");
+        markDone("quiz:" + q.id, Math.round(pass / tests.length * 100));
+      }
+      gradeBtn.addEventListener("click", grade);
+      function showHint() {
+        extra.replaceChildren(h("div", { class: "label", text: "힌트" }), h("ul", { class: "cond" }, (q.hint || "힌트가 없습니다.").split("\n").filter(Boolean).map(l => h("li", {}, inline(l.replace(/^- /, ""))))));
+      }
+      function showSol() {
+        const full = q.head + "\n\n" + q.sol + "\n\n" + (q.solmain || q.main) + "\n";
+        extra.replaceChildren(h("div", { class: "label", text: "모범 답안" }), h("pre", { class: "code", text: full }),
+          h("div", { class: "actions" }, h("button", { class: "btn", onclick: () => { ide.ed.setValue(full); store.set(draftKey, full); lockMark = null; drawLock(); } }, "편집기에 불러오기")));
+      }
+      function reset() {
+        ide.ed.setValue(template); store.set(draftKey, null); ide.setSaved(template);
+        lockMark = locked ? ide.ed.lock(q.main) : null; drawLock();
+        extra.replaceChildren(); res.textContent = "";
+      }
+      sheet.append(lockNote, ide.el,
+        h("div", { class: "actions" },
+          h("button", { class: "btn primary", onclick: grade }, "테스트 채점"),
+          h("button", { class: "btn", onclick: next }, "다음 문제"),
+          h("button", { class: "btn", onclick: rand }, "랜덤"), res),
+        extra,
+        h("p", { class: "legend", text: "실행기는 브라우저 안의 간이 C 인터프리터(picoc)입니다. Visual Studio와 거의 같지만 콤마 연산자(for (i = 0, j = 0; …)), 블록 안에서 같은 이름의 변수 다시 선언, stdarg.h는 지원하지 않고 float가 double(8바이트)로 처리돼요. scanf_s, const, limits.h는 자동으로 맞춰 줍니다." }));
+    });
+  }
+
   // ── 모드: 백지 테스트 ──
   function renderBlank(main) {
     picker(main, progs.filter(inChap), "blank", "blank:", (sheet, p, next, rand) => {
@@ -6151,24 +10404,18 @@ tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
       if (p.given) sheet.append(h("div", { class: "given" }, h("div", { class: "label", text: "주어진 코드 (오류 있음)" }), h("pre", { class: "box", text: p.given })));
       const answer = solve(p.code);
       const draftKey = "draft:" + p.id;
-      const ta = h("textarea", { class: "code", id: "ta-" + p.id, spellcheck: "false", autocomplete: "off", autocapitalize: "off", placeholder: "#include <stdio.h>\n\nint main(void)\n{\n    ...\n}", "aria-label": "코드 작성" });
-      ta.value = store.get(draftKey, "");
-      ta.addEventListener("input", () => store.set(draftKey, ta.value));
-      ta.addEventListener("keydown", e => {
-        const s = ta.selectionStart, en = ta.selectionEnd, v = ta.value;
-        if (e.key === "Tab") {
-          e.preventDefault();
-          ta.setRangeText("    ", s, en, "end");
-          store.set(draftKey, ta.value);
-        } else if (e.key === "Enter" && !e.isComposing) {
-          const ls = v.lastIndexOf("\n", s - 1) + 1;
-          let ind = (v.slice(ls, s).match(/^[ \t]*/) || [""])[0];
-          if (/\{\s*$/.test(v.slice(ls, s))) ind += "    ";
-          e.preventDefault();
-          ta.setRangeText("\n" + ind, s, en, "end");
-          store.set(draftKey, ta.value);
+      const ide = makeIDE({
+        id: p.id, filename: p.id + ".c", value: store.get(draftKey, ""), input: p.in || "",
+        onChange: v => store.set(draftKey, v),
+        onRan: (r, line) => {
+          if (!p.out || "norun" in p || r.compile || r.runtime || r.timeout || r.unavailable) return;
+          if (/\.\.\.|…|난수/.test(p.out)) return;
+          const exp = normOut(p.out), got = normOut(r.text);
+          const same = got === exp || sameWithEcho(exp, got, (p.in || "").split("\n").map(normOut).filter(Boolean));
+          line(same ? "ok" : "warn", same ? "○ 실행 결과가 예시와 같습니다.\n" : "△ 실행 결과가 예시와 다릅니다. 위의 '실행 결과'와 비교해 보세요.\n");
         }
       });
+      const ta = { get value() { return ide.ed.getValue(); }, set value(v) { ide.ed.setValue(v); }, focus: () => ide.ed.focus() };
       const loose = h("input", { type: "checkbox", id: "loose" });
       loose.checked = store.get("loose", false);
       loose.addEventListener("change", () => store.set("loose", loose.checked));
@@ -6215,12 +10462,11 @@ tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
         hintBox.replaceChildren(h("div", { class: "label", text: "힌트: 각 줄의 첫 단어" }), h("pre", { class: "box", text: lines.join("\n") }));
       };
       sheet.append(
-        h("div", { class: "label", text: "백지에 전체 코드를 써 보세요" }), ta,
+        h("div", { class: "label", text: "백지에 전체 코드를 써 보세요 — ▶ 실행으로 직접 돌려 보고, 채점으로 정답 코드와 비교합니다" }), ide.el,
         h("div", { class: "opts" },
-          h("label", { for: "loose" }, loose, "printf 안내 문구는 무시하고 %d, \\n 같은 형식만 채점"),
-          h("span", {}, h("kbd", { text: "Tab" }), " 들여쓰기 · 자동 들여쓰기 지원")),
+          h("label", { for: "loose" }, loose, "printf 안내 문구는 무시하고 %d, \\n 같은 형식만 채점")),
         h("div", { class: "actions" },
-          h("button", { class: "btn primary", onclick: grade }, "채점"),
+          h("button", { class: "btn primary", onclick: grade }, "구문 채점"),
           h("button", { class: "btn", onclick: hint }, "힌트"),
           h("button", { class: "btn", onclick: () => { hintBox.replaceChildren(h("div", { class: "label", text: "정답 코드" }), h("pre", { class: "box", text: answer })); } }, "정답 보기"),
           h("button", { class: "btn", onclick: () => { ta.value = ""; store.set(draftKey, ""); out.replaceChildren(); hintBox.replaceChildren(); res.textContent = ""; ta.focus(); } }, "지우기"),
@@ -6250,6 +10496,12 @@ tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
         h("div", { class: "actions" },
           h("button", { class: "btn primary", onclick: grade }, "채점"),
           h("button", { class: "btn", onclick: () => ans.replaceChildren(h("div", { class: "label", style: "margin-top:12px", text: "정답" }), h("pre", { class: "box term", text: p.out.split("\n§\n")[0] })) }, "정답 보기"),
+          h("button", { class: "btn", onclick: async () => {
+            const src = "full" in p ? p.code : "#include <stdio.h>\n#include <math.h>\n\nint main(void)\n{\n" + p.code.split("\n").map(l => "    " + l).join("\n") + "\n    return 0;\n}\n";
+            ans.replaceChildren(h("div", { class: "label", style: "margin-top:12px", text: "실제 실행 결과" }), h("pre", { class: "box term", text: "실행 중…" }));
+            const r = await runC(src, "");
+            ans.lastChild.textContent = r.unavailable ? "C 실행기를 불러오지 못했습니다. 인터넷에 연결된 웹 주소로 열어 주세요." : (r.text || "") + (r.compile ? "\n[컴파일 오류] " + r.compile : "") + (r.runtime ? "\n[" + r.runtime + "]" : "") + (r.timeout ? "\n[시간 초과]" : "");
+          } }, "▶ 실행해 보기"),
           h("button", { class: "btn", onclick: next }, "다음 문제"),
           h("button", { class: "btn", onclick: rand }, "랜덤"), res), ans);
     });
@@ -6311,7 +10563,7 @@ tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
       store.set("codeq", q.value);
       const kw = q.value.trim().toLowerCase();
       const hit = p => !kw || (p.title + "\n" + (p.desc || "") + "\n" + solve(p.code || "")).toLowerCase().includes(kw);
-      const chs = (chap ? [chap] : [1, 2, 3, 4, 5, 6, 7, 8]);
+      const chs = (chap ? [chap] : [1, 2, 3, 4, 5, 6, 7, 8, 9]);
       const blocks = [];
       chs.forEach(c => {
         const pats = patterns.filter(p => p.ch === c && hit(p));
@@ -6356,7 +10608,7 @@ tan(degrees * 3.141592 / 180.0)   // 도 → 라디안
     renderControls();
     const main = $("#main");
     main.replaceChildren();
-    ({ theory: renderTheory, codes: renderCodes, concept: renderConcept, code: renderCode, blank: renderBlank, output: renderOutput })[mode](main);
+    ({ theory: renderTheory, codes: renderCodes, quiz: renderQuiz, concept: renderConcept, code: renderCode, blank: renderBlank, output: renderOutput })[mode](main);
   }
   renderStats();
   render();
