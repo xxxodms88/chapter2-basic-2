@@ -98,6 +98,7 @@ pre.code { margin: 0; background: var(--code-bg); border: 1px solid var(--rule);
   font: inherit; font-size: 13px; border: 0; border-bottom: 2px solid var(--accent); background: var(--accent-soft);
   color: var(--ink); padding: 0 3px; border-radius: 3px 3px 0 0; min-width: 3ch; text-align: center;
 }
+.blank.multi { display: block; width: calc(100% - 4px); max-width: 100%; text-align: left; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; padding: 4px 8px; margin: 2px 0; border: 1px dashed var(--accent); border-bottom-width: 2px; border-radius: 4px; resize: vertical; white-space: pre; tab-size: 4; box-sizing: border-box; }
 .blank.ok { border-color: var(--ok); background: var(--ok-soft); }
 .blank.bad { border-color: var(--pen); background: var(--bad-soft); }
 .blank.shown { border-color: var(--part); background: var(--part-soft); }
@@ -9926,7 +9927,7 @@ PIN 번호를 입력하세요: 로그인 실패!
   function gradeInputs(inputs) {
     let ok = 0;
     inputs.forEach(inp => {
-      const good = inp._answers.some(a => normBlank(a, inp._ci) === normBlank(inp.value, inp._ci) || declSame(a, inp.value));
+      const good = inp._check ? inp._check(inp.value) : inp._answers.some(a => normBlank(a, inp._ci) === normBlank(inp.value, inp._ci) || declSame(a, inp.value));
       inp.classList.toggle("ok", good); inp.classList.toggle("bad", !good); inp.classList.remove("shown");
       if (good) ok++;
     });
@@ -9937,6 +9938,11 @@ PIN 번호를 입력하세요: 로그인 실패!
   }
   function enterToNext(inputs, onLast) {
     inputs.forEach((inp, i) => inp.addEventListener("keydown", e => {
+      if (inp.tagName === "TEXTAREA") {
+        if (e.key === "Tab" && !e.shiftKey) { e.preventDefault(); inp.setRangeText("    ", inp.selectionStart, inp.selectionEnd, "end"); }
+        else if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); if (inputs[i + 1]) inputs[i + 1].focus(); else onLast(); }
+        return;
+      }
       if (e.key === "Enter" && !e.isComposing) { e.preventDefault(); if (inputs[i + 1]) inputs[i + 1].focus(); else onLast(); }
     }));
   }
@@ -10086,6 +10092,27 @@ PIN 번호를 입력하세요: 로그인 실패!
     return btn;
   }
 
+  // 코드 빈칸 안에 2~3줄짜리 통째 빈칸을 둘 자리: 계산·조건이 가장 많은 연속된 줄
+  function pickWindow(lines) {
+    const ok = l => {
+      const t = solve(l).trim();
+      return t && !/^[{}]$/.test(t) && !/^#/.test(t) && !/^\/[\/*]/.test(t) && !/^\*/.test(t) && !/\bmain\s*\(/.test(t)
+        && !/^(?:static\s+)?(?:void|int|long|double|float|char)\s+\w+\s*\([^)]*\)\s*[{;]?$/.test(t) && t !== "return 0;" && !/^(else|do)$/.test(t);
+    };
+    const score = l => (l.match(/\{\{/g) || []).length * 2 + (solve(l).replace(/"(?:[^"\\]|\\.)*"/g, "").match(/[=+\-*\/%<>!&|]/g) || []).length;
+    for (const n of [3, 2]) {
+      let best = null, bs = 0;
+      for (let i = 0; i + n <= lines.length; i++) {
+        const w = lines.slice(i, i + n);
+        if (!w.every(ok)) continue;
+        const sc = w.reduce((a, l) => a + score(l), 0);
+        if (sc > bs) { bs = sc; best = [i, i + n - 1]; }
+      }
+      if (best && bs >= 4) return best;
+    }
+    return null;
+  }
+
   // ── 모드: 코드 빈칸 ──
   function renderCode(main) {
     picker(main, progs.filter(inChap), "code", "code:", (sheet, p, next, rand) => {
@@ -10096,10 +10123,29 @@ PIN 번호를 입력하세요: 로그인 실패!
       if (nb) sheet.append(nb);
       const pre = h("pre", { class: "code" });
       const ins = [];
-      splitBlanks(p.code).forEach(part => {
+      const addParts = text => splitBlanks(text).forEach(part => {
         if (part.t != null) pre.append(part.t);
         else { const inp = blankInput(part.a, false, true); ins.push(inp); pre.append(inp); }
       });
+      const lines = p.code.split("\n");
+      const win = pickWindow(lines);
+      if (!win) addParts(p.code);
+      else {
+        const [a, b] = win;
+        addParts(lines.slice(0, a).join("\n"));
+        const blockLines = lines.slice(a, b + 1).map(solve);
+        const ind = Math.min(...blockLines.map(l => l.match(/^ */)[0].length));
+        const block = blockLines.map(l => l.slice(ind)).join("\n");
+        const ta = h("textarea", { class: "blank multi", rows: String(blockLines.length + 1), spellcheck: "false", autocomplete: "off", autocapitalize: "off", "aria-label": (b - a + 1) + "줄 빈칸",
+          placeholder: "// 여기에 " + (b - a + 1) + "줄을 직접 작성하세요 (Tab 들여쓰기, Ctrl+Enter 다음 칸)" });
+        ta.style.marginLeft = ind + "ch";
+        ta.style.width = "calc(100% - " + ind + "ch)";
+        ta._answers = [block];
+        const key = t => units(t, false).map(u => u.key).join("\n");
+        ta._check = v => key(v) === key(block);
+        ins.push(ta); pre.append(ta);
+        addParts(lines.slice(b + 1).join("\n"));
+      }
       const res = h("span", { class: "result" });
       const grade = () => {
         const ok = gradeInputs(ins);
