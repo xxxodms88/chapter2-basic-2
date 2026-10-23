@@ -10189,7 +10189,11 @@ PIN 번호를 입력하세요: 로그인 실패!
         if (!ansRun) ansRun = await runC(programFor(new Map()), p.in || "");
         if (ansRun.unavailable || ansRun.compile || ansRun.runtime || ansRun.timeout) return false;
         const r = await runC(programFor(override), p.in || "");
-        return !r.unavailable && !r.compile && !r.runtime && !r.timeout && normOut(r.text) === normOut(ansRun.text);
+        if (r.unavailable || r.compile || r.runtime || r.timeout) return false;
+        if (normOut(r.text) === normOut(ansRun.text)) return true;
+        // 안내 문구만 살짝 다르게 쓴 경우: 숫자는 모두 같고 문구가 80% 이상 같으면 인정
+        const c = looseCompare(ansRun.text, "", r.text);
+        return c.numOk && c.sim >= 0.8;
       };
       const show = ok => {
         res.textContent = ok === ins.length ? "○ 모두 정답 (" + ok + "/" + ins.length + ")" : "✕ " + ok + " / " + ins.length;
