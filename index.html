@@ -100,6 +100,8 @@ pre.code { margin: 0; background: var(--code-bg); border: 1px solid var(--rule);
 }
 .blank.multi { display: block; width: calc(100% - 4px); max-width: 100%; text-align: left; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; padding: 4px 8px; margin: 2px 0; border: 1px dashed var(--accent); border-bottom-width: 2px; border-radius: 4px; resize: vertical; white-space: pre; tab-size: 4; box-sizing: border-box; }
 .blank.ok { border-color: var(--ok); background: var(--ok-soft); }
+.blank.equiv { border-bottom-style: dashed; }
+.blank.multi.equiv { border-style: dashed; }
 .blank.bad { border-color: var(--pen); background: var(--bad-soft); }
 .blank.shown { border-color: var(--part); background: var(--part-soft); }
 .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; }
@@ -10148,9 +10150,10 @@ PIN 번호를 입력하세요: 로그인 실패!
       if (nb) sheet.append(nb);
       const pre = h("pre", { class: "code" });
       const ins = [];
+      const segs = [];   // 실행해서 확인할 때 프로그램을 다시 조립하기 위한 조각들
       const addParts = text => splitBlanks(text).forEach(part => {
-        if (part.t != null) pre.append(part.t);
-        else { const inp = blankInput(part.a, false, true); ins.push(inp); pre.append(inp); }
+        if (part.t != null) { pre.append(part.t); segs.push({ t: part.t }); }
+        else { const inp = blankInput(part.a, false, true); ins.push(inp); pre.append(inp); segs.push({ inp, ans: part.a[0] }); }
       });
       const lines = p.code.split("\n");
       const win = pickWindow(lines);
@@ -10169,13 +10172,48 @@ PIN 번호를 입력하세요: 로그인 실패!
         const key = t => units(t, false).map(u => u.key).join("\n");
         ta._check = v => key(v) === key(block);
         ins.push(ta); pre.append(ta);
+        segs.push({ inp: ta, ans: block, multi: ind });
         addParts(lines.slice(b + 1).join("\n"));
       }
       const res = h("span", { class: "result" });
-      const grade = () => {
-        const ok = gradeInputs(ins);
+      // 빈칸 값을 바꿔 끼운 프로그램 (override에 없는 빈칸은 정답으로 채움)
+      const programFor = override => segs.map(sg => {
+        if (sg.t != null) return sg.t;
+        const v = override.has(sg.inp) ? override.get(sg.inp) : sg.ans;
+        if (sg.multi == null) return v;
+        return "\n" + v.split("\n").map(l => " ".repeat(sg.multi) + l).join("\n") + "\n";
+      }).join("");
+      const runnable = !("norun" in p) && !/rand\s*\(|time\s*\(/.test(solve(p.code));
+      let ansRun = null;
+      const sameRun = async override => {
+        if (!ansRun) ansRun = await runC(programFor(new Map()), p.in || "");
+        if (ansRun.unavailable || ansRun.compile || ansRun.runtime || ansRun.timeout) return false;
+        const r = await runC(programFor(override), p.in || "");
+        return !r.unavailable && !r.compile && !r.runtime && !r.timeout && normOut(r.text) === normOut(ansRun.text);
+      };
+      const show = ok => {
         res.textContent = ok === ins.length ? "○ 모두 정답 (" + ok + "/" + ins.length + ")" : "✕ " + ok + " / " + ins.length;
         res.className = "result " + (ok === ins.length ? "ok" : "bad");
+      };
+      let grading = false;
+      const grade = async () => {
+        if (grading) return;
+        ins.forEach(i => { i.classList.remove("equiv"); i.removeAttribute("title"); });
+        let ok = gradeInputs(ins);
+        show(ok);
+        const wrong = ins.filter(i => i.classList.contains("bad") && i.value.trim());
+        if (wrong.length && runnable) {
+          grading = true;
+          res.textContent = "실행해서 결과가 같은지 확인 중…"; res.className = "result";
+          const accept = i => { i.classList.remove("bad"); i.classList.add("ok", "equiv"); i.title = "정답과 다르게 썼지만 실행 결과가 같아서 정답으로 처리했어요"; };
+          for (const i of wrong) if (await sameRun(new Map([[i, i.value]]))) accept(i);
+          const still = wrong.filter(i => i.classList.contains("bad"));
+          if (still.length > 1 && await sameRun(new Map(still.map(i => [i, i.value])))) still.forEach(accept);
+          ok = ins.filter(i => i.classList.contains("ok")).length;
+          grading = false;
+          show(ok);
+          if (ins.some(i => i.classList.contains("equiv"))) res.textContent += " · 점선 칸은 풀이가 달라도 실행 결과가 같아 정답";
+        }
         markDone("code:" + p.id, Math.round(ok / ins.length * 100));
       };
       enterToNext(ins, grade);
