@@ -296,6 +296,26 @@ li.CodeMirror-hint-active { background: #04395e; color: #ffffff; }
 .hint code.ans { color: var(--accent); font-weight: 600; }
 .hint pre { margin-top: 4px; }
 .names { margin: 0 0 14px; }
+.cmpwrap { min-width: 0; }
+.cmpwrap.open { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: 10px; align-items: start; }
+.anspane { min-width: 0; }
+.anspane pre.code { max-height: 640px; overflow: auto; margin: 0; }
+@media (max-width: 760px) {
+  .cmpwrap.open { display: block; }
+  .anspane { position: fixed; left: 8px; right: 8px; bottom: calc(8px + env(safe-area-inset-bottom, 0px)); max-height: 55vh; overflow: auto; z-index: 60; background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; padding: 10px; box-shadow: 0 8px 28px rgba(0, 0, 0, .25); }
+}
+.cmpsec { margin: 10px 0; padding: 10px 14px; border: 1px solid var(--rule); border-left: 3px solid var(--rule); border-radius: 0 8px 8px 0; background: var(--paper); }
+.cmpsec.bad { border-left-color: var(--pen); }
+.cmpsec.warn { border-left-color: var(--part); }
+.cmpsec.ok { border-left-color: var(--ok); }
+.cmpsec ul { margin: 2px 0 0; padding-left: 0; list-style: none; display: grid; gap: 6px; }
+.cmpsec code { font-family: var(--font-mono); font-size: 12.5px; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
+.cmpsec b { font-size: 12px; color: var(--muted); font-weight: 600; }
+.tylist li { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; font-size: 13.5px; }
+.tylist .mk { font-weight: 700; width: 1.2em; }
+.tylist li.ok .mk { color: var(--ok); }
+.tylist li.bad .mk { color: var(--pen); }
+.pairs li { font-size: 13.5px; }
 .names ul { margin: 0; padding: 8px 12px 8px 1.8em; background: var(--code-bg); border: 1px solid var(--rule); border-radius: 8px; font-size: 13.5px; }
 .names li { margin: 2px 0; }
 .names b { font-weight: 600; color: var(--muted); font-size: 12.5px; }
@@ -10748,6 +10768,75 @@ PIN 번호를 입력하세요: 로그인 실패!
     return b;
   }
 
+  // ── 정답 코드와 비교: 변수 이름·줄 순서는 무시하고 자료형, 빠진 줄, 틀린 줄을 본다 ──
+  const TYPE_RE = /^\s*((?:static\s+|register\s+|auto\s+|const\s+)*(?:unsigned\s+|signed\s+|long\s+)*(?:int|double|float|char|long|short|unsigned))\s+([^;]+);/;
+  function declVars(code) {
+    const out = [];
+    code.replace(/\/\*[\s\S]*?\*\//g, "").split("\n").forEach(raw => {
+      const line = raw.replace(/\/\/.*$/, "");
+      let m = line.match(TYPE_RE);
+      if (m && !/^\s*\w+\s*\([^)]*\)\s*$/.test(m[2])) {
+        const ty = m[1].replace(/\b(register|auto|const)\s+/g, "").replace(/\s+/g, " ").trim();
+        splitTop(m[2]).forEach(part => { const q = part.trim().match(/^\**\s*([A-Za-z_]\w*)/); if (q) out.push({ name: q[1], type: ty }); });
+      }
+      const f = line.match(/for\s*\(\s*((?:unsigned\s+|long\s+)*(?:int|double|float|char|long|short))\s+([A-Za-z_]\w*)/);
+      if (f) out.push({ name: f[2], type: f[1].replace(/\s+/g, " ") });
+    });
+    const seen = new Set();
+    return out.filter(v => !seen.has(v.name) && seen.add(v.name));
+  }
+  const famOf = t => /double|float/.test(t) ? "실수" : /char/.test(t) ? "문자" : "정수";
+  function renameOutsideStrings(key, map) {
+    if (!map.size) return key;
+    return key.split(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/).map((part, i) => i % 2 ? part
+      : part.replace(/[A-Za-z_]\w*/g, w => map.has(w) ? map.get(w) : w)).join("");
+  }
+  const isDeclKey = k => /;$/.test(k) && /^(?:static|register|auto|const)*(?:unsigned|signed|long)*(?:int|double|float|char|short|long|unsigned)(?=[A-Za-z_*])/.test(k) && !/^[a-z ]+\w+\([^)]*\);$/.test(k);
+  function smartCompare(answer, user, loose) {
+    const AV = declVars(answer), UV = declVars(user);
+    // 내 변수 → 정답 변수 짝짓기: 같은 이름 먼저, 남은 것은 선언 순서대로
+    const map = new Map(), usedA = new Set(), usedU = new Set();
+    UV.forEach(u => { if (AV.some(a => a.name === u.name)) { map.set(u.name, u.name); usedA.add(u.name); usedU.add(u.name); } });
+    const restA = AV.filter(a => !usedA.has(a.name)), restU = UV.filter(u => !usedU.has(u.name));
+    restU.forEach((u, i) => { if (restA[i]) { map.set(u.name, restA[i].name); usedA.add(restA[i].name); } });
+    const types = AV.map(a => {
+      const u = UV.find(x => map.get(x.name) === a.name);
+      return { a, u, ok: !!u && famOf(u.type) === famOf(a.type) && (u.type.includes("static") === a.type.includes("static")) };
+    });
+    const strip = arr => arr.filter(x => !isDeclKey(x.key) && !/^[{}]$/.test(x.key) && x.key !== "else");
+    const A = strip(units(answer, loose)).map(x => Object.assign(x, { text: answer.slice(x.start, x.end) }));
+    const U = strip(units(user, loose)).map(x => Object.assign(x, { text: user.slice(x.start, x.end), key: renameOutsideStrings(x.key, map) }));
+    const pool = new Map();
+    U.forEach((u, i) => { if (!pool.has(u.key)) pool.set(u.key, []); pool.get(u.key).push(i); });
+    const usedUi = new Set(), missing = [];
+    let okN = 0;
+    A.forEach(a => { const l = pool.get(a.key); if (l && l.length) { usedUi.add(l.shift()); okN++; } else missing.push(a); });
+    let extra = U.filter((u, i) => !usedUi.has(i));
+    const wrong = [];
+    const leftMissing = [];
+    missing.forEach(a => {
+      let best = -1, bs = 0.55;
+      extra.forEach((u, j) => { const sc = similarity(a.key, u.key); if (sc > bs) { bs = sc; best = j; } });
+      if (best >= 0) { wrong.push({ a, u: extra[best] }); extra = extra.filter((_, j) => j !== best); } else leftMissing.push(a);
+    });
+    const typeBad = types.filter(t => !t.ok);
+    return { okN, total: A.length, wrong, missing: leftMissing, extra, types, typeBad, map,
+      perfect: !wrong.length && !leftMissing.length && !extra.length && !typeBad.length };
+  }
+  function holdButton(label, onShow, onHide, cls) {
+    const b = h("button", { class: (cls || "btn") + " hold", title: "누르고 있는 동안만 보여요" }, label);
+    let on = false;
+    const show = () => { if (on) return; on = true; b.classList.add("active"); onShow(); };
+    const hide = () => { if (!on) return; on = false; b.classList.remove("active"); onHide(); };
+    b.addEventListener("pointerdown", e => { e.preventDefault(); try { b.setPointerCapture(e.pointerId); } catch (x) {} show(); });
+    ["pointerup", "pointercancel", "lostpointercapture"].forEach(ev => b.addEventListener(ev, hide));
+    b.addEventListener("keydown", e => { if ((e.key === " " || e.key === "Enter") && !e.repeat) { e.preventDefault(); show(); } });
+    b.addEventListener("keyup", e => { if (e.key === " " || e.key === "Enter") hide(); });
+    b.addEventListener("blur", hide);
+    b.addEventListener("contextmenu", e => e.preventDefault());
+    return b;
+  }
+
   // ── 모드: 직접 코딩 (백지 테스트) ──
   function renderBlank(main) {
     picker(main, progs.filter(inChap), "blank", "blank:", (sheet, p, next, rand) => {
@@ -10789,45 +10878,42 @@ PIN 번호를 입력하세요: 로그인 실패!
       const res = h("span", { class: "result" });
 
       const grade = () => {
-        const A = units(answer, loose.checked), U = units(ta.value, loose.checked);
-        const { ma, mb } = lcs(A, U);
-        const okN = ma.filter(Boolean).length;
-        const pct = A.length ? Math.round(okN / A.length * 100) : 0;
-        const perfect = okN === A.length && mb.every(Boolean);
-        res.textContent = (perfect ? "○ 통과 " : "✕ ") + okN + " / " + A.length + " 구문 (" + pct + "%)";
-        res.className = "result " + (perfect ? "ok" : "bad");
-        markDone("blank:" + p.id, perfect ? 100 : Math.min(pct, 99, done["blank:" + p.id] >= 100 ? 99 : pct));
-        // 정답 줄별 상태
-        const byLine = {};
-        A.forEach((u, k) => (byLine[u.line] = byLine[u.line] || []).push(ma[k]));
-        const pre = h("pre", { class: "code" });
-        answer.split("\n").forEach((ln, li) => {
-          const st = byLine[li];
-          let cls = "", m = "";
-          if (st) {
-            const c = st.filter(Boolean).length;
-            if (c === st.length) { cls = "ok"; m = "○"; } else if (c === 0) { cls = "miss"; m = "✕"; } else { cls = "part"; m = "△"; }
-          }
-          pre.append(h("div", { class: "line " + cls }, h("span", { class: "m", text: m }), h("span", { text: ln || " " })));
-        });
-        const extras = U.filter((u, k) => !mb[k]);
-        out.replaceChildren(
-          h("div", { class: "label", text: "채점 결과 (정답 코드 기준)" }), pre,
-          h("div", { class: "legend", text: "○ 맞음 · △ 일부 틀림 · ✕ 빠졌거나 틀림 — 공백·줄바꿈·주석, _CRT_SECURE_NO_WARNINGS, scanf_s/scanf, main()/main(void) 차이는 무시합니다." }),
-          extras.length ? h("div", { class: "extra" }, h("div", { class: "label", text: "정답에 없는 내 코드 (" + extras.length + "곳)" }),
-            h("pre", { class: "box", text: extras.map(u => ta.value.slice(u.start, u.end).replace(/\s*\n\s*/g, " ")).join("\n") })) : null
-        );
+        const c = smartCompare(answer, ta.value, loose.checked);
+        const pct = c.total ? Math.round(c.okN / c.total * 100) : 0;
+        res.textContent = c.perfect ? "○ 정답 코드와 같은 내용이에요" : "✕ 맞은 줄 " + c.okN + " / " + c.total + (c.typeBad.length ? " · 자료형 " + c.typeBad.length + "곳 다름" : "");
+        res.className = "result " + (c.perfect ? "ok" : "bad");
+        markDone("blank:" + p.id, c.perfect ? 100 : Math.min(pct, 99));
+        const sec = (title, cls, body) => h("div", { class: "cmpsec " + cls }, h("div", { class: "label", text: title }), body);
+        const codeLine = t => h("code", { text: t.replace(/\s*\n\s*/g, " ").trim() });
+        const parts = [];
+        // 자료형
+        const tyRows = c.types.map(t => h("li", { class: t.ok ? "ok" : "bad" },
+          h("span", { class: "mk", text: t.ok ? "○" : "✕" }),
+          h("span", {}, "정답 ", codeLine(t.a.type + " " + t.a.name)),
+          h("span", {}, " ↔ 내 코드 ", t.u ? codeLine(t.u.type + " " + t.u.name) : h("em", { text: "선언 없음" }))));
+        if (c.types.length) parts.push(sec("변수 자료형 (" + (c.types.length - c.typeBad.length) + " / " + c.types.length + " 일치 — 정수·실수·문자 계열이 같으면 맞음)", c.typeBad.length ? "bad" : "ok", h("ul", { class: "tylist" }, tyRows)));
+        if (c.wrong.length) parts.push(sec("틀린 줄 " + c.wrong.length + "곳 — 비슷한 줄이 있지만 내용이 달라요", "bad",
+          h("ul", { class: "pairs" }, c.wrong.map(w => h("li", {}, h("div", {}, h("b", { text: "정답 " }), codeLine(w.a.text)), h("div", {}, h("b", { text: "내 코드 " }), codeLine(w.u.text)))))));
+        if (c.missing.length) parts.push(sec("빠진 줄 " + c.missing.length + "곳 — 정답에는 있는데 내 코드에 없어요", "bad",
+          h("ul", { class: "pairs" }, c.missing.map(m => h("li", {}, codeLine(m.text))))));
+        if (c.extra.length) parts.push(sec("정답에 없는 줄 " + c.extra.length + "곳", "warn",
+          h("ul", { class: "pairs" }, c.extra.map(m => h("li", {}, codeLine(m.text))))));
+        if (c.perfect) parts.push(sec("○ 빠진 줄도 틀린 줄도 없어요", "ok", h("p", { class: "legend", text: "맞은 줄 " + c.okN + " / " + c.total }))); 
+        out.replaceChildren(h("div", { class: "label", text: "정답 코드와 비교 결과" }), ...parts,
+          h("div", { class: "legend", text: "변수 이름, 줄 순서, 공백·줄바꿈·중괄호 위치, 주석, scanf_s/scanf 차이는 보지 않아요. 같은 내용인지만 봅니다." }));
       };
       const hintArea = h("div");
       const hintBtn = hintStepper(hintArea, hintLevels(p));
+      const ansPane = h("div", { class: "anspane", hidden: "" }, h("div", { class: "label", text: "정답 코드 (버튼에서 손을 떼면 사라져요)" }), h("pre", { class: "code", text: answer }));
+      const cmpWrap = h("div", { class: "cmpwrap" }, ide.el, ansPane);
       sheet.append(
-        h("div", { class: "label", text: "처음부터 직접 코딩해 보세요 — ✓ 실행 채점은 출력의 숫자가 같고 문구가 비슷하면 통과입니다" }), ide.el,
+        h("div", { class: "label", text: "처음부터 직접 코딩해 보세요 — ✓ 실행 채점은 출력의 숫자가 같고 문구가 비슷하면 통과입니다" }), cmpWrap,
         h("div", { class: "opts" },
           h("label", { for: "loose" }, loose, "정답 코드와 비교할 때 printf 안내 문구는 무시하고 %d, \\n 같은 형식만 보기")),
         h("div", { class: "actions" },
           h("button", { class: "btn", onclick: grade }, "정답 코드와 비교"),
           hintBtn,
-          h("button", { class: "btn", onclick: () => { hintBox.replaceChildren(h("div", { class: "label", text: "정답 코드" }), h("pre", { class: "box", text: answer })); } }, "정답 보기"),
+          holdButton("정답 보기 (누르고 있기)", () => { cmpWrap.classList.add("open"); ansPane.hidden = false; ide.ed.cm && ide.ed.cm.refresh(); }, () => { cmpWrap.classList.remove("open"); ansPane.hidden = true; ide.ed.cm && ide.ed.cm.refresh(); }),
           h("button", { class: "btn", onclick: next }, "다음 문제"),
           h("button", { class: "btn", onclick: rand }, "랜덤"), res),
         hintArea, hintBox, out);
