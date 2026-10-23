@@ -9960,6 +9960,21 @@ PIN 번호를 입력하세요: 로그인 실패!
     b.addEventListener("contextmenu", e => e.preventDefault());
     return b;
   }
+  // 쓴 답을 브라우저에 저장해서, 다른 창을 보거나 나중에 다시 와도 남아 있게 한다
+  function keepInputs(key, inputs) {
+    const saved = store.get(key, null);
+    if (Array.isArray(saved)) inputs.forEach((inp, i) => { if (typeof saved[i] === "string") inp.value = saved[i]; });
+    let t = null;
+    const save = () => { clearTimeout(t); t = setTimeout(() => store.set(key, inputs.map(i => i.value)), 150); };
+    inputs.forEach(inp => inp.addEventListener("input", save));
+    const flush = () => { clearTimeout(t); store.set(key, inputs.map(i => i.value)); };
+    liveSavers.add(flush);
+    return { save: flush, clear: () => { clearTimeout(t); store.set(key, null); } };
+  }
+  const liveSavers = new Set();
+  const flushAll = () => liveSavers.forEach(f => f());
+  window.addEventListener("pagehide", flushAll);
+  document.addEventListener("visibilitychange", () => { if (document.hidden) flushAll(); });
   function revealInputs(inputs) {
     inputs.forEach(inp => { if (!inp.classList.contains("ok")) { inp.value = inp._answers[0]; inp.classList.remove("bad"); inp.classList.add("shown"); } });
   }
@@ -10010,10 +10025,11 @@ PIN 번호를 입력하세요: 로그인 실패!
       res.className = "result " + (perfect === rows.length ? "ok" : "bad");
     };
     enterToNext(allInputs, grade);
+    rows.forEach(r => keepInputs("cc:" + r._q.id, r._ins));
     const actions = () => h("div", { class: "actions" },
       h("button", { class: "btn primary", onclick: grade }, "전체 채점"),
       holdReveal("전체 정답 보기 (누르고 있기)", allInputs),
-      h("button", { class: "btn", onclick: () => render() }, "다시 풀기"), res);
+      twoStepButton("다시 풀기 (모두 지우기)", "btn", () => { liveSavers.clear(); rows.forEach(r => store.set("cc:" + r._q.id, null)); render(); }), res);
     main.append(h("div", { class: "sheet" },
       h("div", { class: "qhead" }, h("h2", { text: "개념 빈칸 채우기" }), h("span", { class: "tag", text: chap ? CH[chap] : "전체 " + list.length + "문항" })),
       h("p", { class: "tip" }, "띄어쓰기와 영문 대소문자는 무시하고 채점합니다. ", h("kbd", { text: "Enter" }), " 로 다음 빈칸으로 이동, 마지막 칸에서 Enter 하면 채점합니다."),
@@ -10221,6 +10237,7 @@ PIN 번호를 입력하세요: 로그인 실패!
         markDone("code:" + p.id, Math.round(ok / ins.length * 100));
       };
       enterToNext(ins, grade);
+      const kept = keepInputs("cb:" + p.id, ins);
       const hintArea = h("div");
       const hintBtn = hintStepper(hintArea, hintLevels(p));
       sheet.append(h("div", { class: "label", text: "빈칸 " + ins.length + "개 · 공백은 무시, 대소문자는 구분 · 변수 선언 칸은 int x, y; 처럼 한 줄 전체를 씁니다" }), pre,
@@ -10228,7 +10245,7 @@ PIN 번호를 입력하세요: 로그인 실패!
           h("button", { class: "btn primary", onclick: grade }, "채점"),
           holdReveal("정답 보기 (누르고 있기)", ins),
           hintBtn,
-          twoStepButton("빈칸 모두 지우기", "btn", () => { ins.forEach(i => { i.value = ""; i.classList.remove("ok", "bad", "shown"); }); res.textContent = ""; ins[0] && ins[0].focus(); }),
+          twoStepButton("빈칸 모두 지우기", "btn", () => { ins.forEach(i => { i.value = ""; i.classList.remove("ok", "bad", "shown"); }); kept.save(); res.textContent = ""; ins[0] && ins[0].focus(); }),
           h("button", { class: "btn", onclick: () => { mode = "blank"; cur.blank = p.id; store.set("cur", cur); store.set("mode", mode); render(); scrollTo(0, 0); } }, "직접 코딩으로 풀기 →"),
           h("button", { class: "btn", onclick: next }, "다음 문제"),
           h("button", { class: "btn", onclick: rand }, "랜덤"), res), hintArea);
@@ -10824,6 +10841,7 @@ PIN 번호를 입력하세요: 로그인 실패!
       sheet.append(h("p", { class: "desc", text: ("full" in p ? "전체 프로그램입니다." : "main 함수 안의 코드입니다.") + " 실행 결과를 그대로 적어 보세요. (공백 차이는 무시)" }));
       sheet.append(h("pre", { class: "code", text: p.code }));
       const ta = h("textarea", { class: "code out", id: "out-" + p.id, spellcheck: "false", "aria-label": "실행 결과 입력", style: "margin-top:12px" });
+      keepInputs("ob:" + p.id, [ta]);
       const res = h("span", { class: "result" });
       const ans = h("div");
       const norm = s => s.replace(/\s+/g, "");
@@ -10946,6 +10964,8 @@ PIN 번호를 입력하세요: 로그인 실패!
   }
 
   function render() {
+    flushAll();
+    liveSavers.clear();
     renderControls();
     const main = $("#main");
     main.replaceChildren();
