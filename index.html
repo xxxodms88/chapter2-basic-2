@@ -296,6 +296,11 @@ li.CodeMirror-hint-active { background: #04395e; color: #ffffff; }
 .hint code.ans { color: var(--accent); font-weight: 600; }
 .hint pre { margin-top: 4px; }
 .names { margin: 0 0 14px; }
+.outlinebox { margin: 0 0 14px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); }
+.outlinebox summary { cursor: pointer; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--accent); }
+.outline { margin: 0; padding: 4px 14px 12px 2.6em; font-size: 13.5px; line-height: 1.6; }
+.outline li { padding-left: 2px; overflow-wrap: anywhere; }
+.outline li::marker { color: var(--muted); font-size: 12px; }
 .explain { margin-top: 10px; border: 1px solid var(--rule); border-left: 3px solid var(--part); border-radius: 0 8px 8px 0; background: var(--paper); padding: 10px 14px; }
 .explain ul { margin: 2px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
 .explain li { font-size: 13.5px; line-height: 1.55; }
@@ -9974,6 +9979,107 @@ PIN 번호를 입력하세요: 로그인 실패!
     return ok;
   }
   // 누르고 있는 동안만 정답을 보여 주고, 떼면 내가 쓴 답으로 되돌린다
+  // ── 작성할 내용: 정답 코드를 문장 단위로 읽어 "무엇을 써야 하는지" 순서대로 풀어 쓴다 ──
+  function codeOutline(code) {
+    const src = code.replace(/\/\*[\s\S]*?\*\//g, m => m.replace(/[^\n]/g, " ")).replace(/\/\/[^\n]*/g, m => " ".repeat(m.length));
+    const steps = [];
+    let depth = 0;
+    let caseAt = -1;
+    const add = (d, t, label) => { if (!label && caseAt >= 0 && d === caseAt) d++; steps.push({ d: Math.max(0, d), t }); };
+    const closeParen = (t, i) => { let n = 0; for (let j = i; j < t.length; j++) { if (t[j] === "(") n++; else if (t[j] === ")" && --n === 0) return j; } return -1; };
+    const fam = t => /double|float/.test(t) ? "실수" : /char/.test(t) ? "문자" : "정수";
+    const words = { "+=": "더하기", "-=": "빼기", "*=": "곱하기", "/=": "나누기", "%=": "로 나눈 나머지로 바꾸기" };
+    function simple(t, d) {
+      t = t.replace(/\s+/g, " ").trim().replace(/;$/, "").trim();
+      if (!t) return;
+      let m;
+      if ((m = t.match(/^#\s*include\s*<(.+)>$/))) return add(d, "헤더 " + m[1] + " 포함");
+      if ((m = t.match(/^#\s*define\s+(\w+)\s*(.*)$/))) return add(d, m[1] === "_CRT_SECURE_NO_WARNINGS" ? "(Visual Studio용) #define _CRT_SECURE_NO_WARNINGS" : "기호 상수 " + m[1] + (m[2] ? " = " + m[2] : "") + " 정의");
+      if ((m = t.match(/^(?:case\s+(.+?)|default)\s*:\s*(.*)$/)) && !/^case.*\?/.test(t)) { caseAt = d; add(d, m[1] ? m[1] + " 일 때:" : "그 외 (default):", true); return m[2] ? simple(m[2], d) : null; }
+      if ((m = t.match(/^((?:static\s+|register\s+|auto\s+|const\s+)*(?:unsigned\s+|signed\s+|long\s+)*(?:int|double|float|char|long|short))\s+(.+)$/)) && !/^\w+\s*\(.*\)$/.test(m[2])) {
+        if (/\(.*\)$/.test(m[2]) && !/=/.test(m[2])) return add(d, "함수 원형 선언: " + t + ";");
+        const st = /static/.test(m[1]) ? "static " : "";
+        return add(d, st + fam(m[1]) + " 변수 선언: " + splitTop(m[2]).map(x => x.trim().replace(/\s*=\s*/, " = 초기값 ")).join(", "));
+      }
+      if ((m = t.match(/^((?:static\s+)?(?:void|int|long|double|float|char|short))\s+(\w+)\s*\((.*)\)$/))) return add(d, "함수 원형 선언: " + t + ";");
+      if ((m = t.match(/^printf\s*\(\s*("(?:[^"\\]|\\.)*")\s*(?:,\s*([\s\S]*))?\)$/))) return add(d, m[2] ? "출력: " + m[1] + "  ← " + m[2].trim() : "안내 문구 출력: " + m[1]);
+      if ((m = t.match(/^scanf(?:_s)?\s*\(\s*("(?:[^"\\]|\\.)*")\s*,\s*([\s\S]*)\)$/))) return add(d, "입력받기: " + m[2].replace(/&/g, "").trim() + "  (" + m[1] + ")");
+      if ((m = t.match(/^return\s*(.*)$/))) return add(d, m[1] === "0" ? "return 0; 으로 끝내기" : m[1] ? m[1] + " 반환" : "함수 끝내기 (return)");
+      if (t === "break") return add(d, "break (빠져나오기)");
+      if (t === "continue") return add(d, "continue (다음 반복으로)");
+      if ((m = t.match(/^(\w+)\s*(\+\+|--)$|^(\+\+|--)\s*(\w+)$/))) return add(d, (m[1] || m[4]) + " 1 " + ((m[2] || m[3]) === "++" ? "증가" : "감소"));
+      if ((m = t.match(/^([\w\[\]]+)\s*([+\-*\/%]=)\s*(.+)$/))) return add(d, m[1] + "에 " + m[3] + " " + words[m[2]]);
+      if ((m = t.match(/^([\w\[\]]+)\s*=\s*(.+)$/)) && !/^=/.test(m[2])) return add(d, m[1] + " ← " + m[2] + " 계산해서 저장");
+      if ((m = t.match(/^(\w+)\s*\((.*)\)$/))) return add(d, m[1] + "(" + m[2] + ") 호출");
+      add(d, t);
+    }
+    function stmt(t, d) {
+      t = t.trim();
+      let m;
+      while (t) {
+        if ((m = t.match(/^(else\s+if|if|while|for|switch)\s*\(/))) {
+          const open = t.indexOf("(", m[0].length - 1), close = closeParen(t, open);
+          const inside = t.slice(open + 1, close).replace(/\s+/g, " ").trim();
+          const kw = m[1].replace(/\s+/g, " ");
+          if (kw === "if") add(d, "만약 (" + inside + ") 이면:");
+          else if (kw === "else if") add(d, "아니고 (" + inside + ") 이면:");
+          else if (kw === "while") add(d, "(" + inside + ") 인 동안 반복:");
+          else if (kw === "switch") add(d, inside + " 값에 따라 나누기 (switch):");
+          else { const p = inside.split(";").map(x => x.trim()); add(d, "반복 (for): " + (p[0] ? p[0] + " 부터, " : "") + (p[1] ? p[1] + " 인 동안, " : "") + (p[2] ? "매번 " + p[2] : "")); }
+          t = t.slice(close + 1).trim(); d++;
+          continue;
+        }
+        if ((m = t.match(/^else\b/))) { add(d, "그렇지 않으면:"); t = t.slice(4).trim(); d++; continue; }
+        if ((m = t.match(/^do\b/))) { add(d, "먼저 한 번 실행하고 반복 (do):"); t = t.slice(2).trim(); d++; continue; }
+        break;
+      }
+      return { rest: t, d };
+    }
+    // 문장 단위로 쪼개기: ; { } 기준 (괄호와 문자열 안은 무시)
+    let buf = "", par = 0, str = null;
+    const pendingDepths = [];
+    const flush = (endCh) => {
+      const t = buf.trim(); buf = "";
+      if (endCh === "{") {
+        if (/^#/.test(t)) { simple(t, depth); return; }
+        const fm = t.match(/^((?:static\s+)?(?:void|int|long|double|float|char|short)(?:\s+\w+)*)\s+(\w+)\s*\(([^)]*)\)$/);
+        if (fm) { add(depth, fm[2] === "main" ? "main 함수 시작" : "함수 정의: " + fm[1] + " " + fm[2] + "(" + fm[3].trim() + ")"); pendingDepths.push(depth); depth++; return; }
+        const r = stmt(t, depth);
+        if (r.rest) simple(r.rest, r.d);
+        pendingDepths.push(depth); depth = r.d === depth ? depth + 1 : r.d;
+        return;
+      }
+      if (endCh === "}") { if (t) { const r = stmt(t, depth); if (r.rest) simple(r.rest, r.d); } depth = pendingDepths.length ? pendingDepths.pop() : 0; if (caseAt > depth) caseAt = -1; return; }
+      if (!t) return;
+      const wm = t.match(/^while\s*\((.*)\)$/);
+      if (wm && steps.length && /^먼저 한 번/.test((steps.filter(s => s.d === depth).pop() || {}).t || "")) return add(depth, "… (" + wm[1].replace(/\s+/g, " ") + ") 이면 다시 반복");
+      const r = stmt(t, depth);
+      if (r.rest) simple(r.rest, r.d);
+    };
+    const lines = src.split("\n");
+    for (const line of lines) {
+      if (/^\s*#/.test(line)) { if (buf.trim()) flush(";"); simple(line, depth); continue; }
+      for (const c of line + "\n") {
+        if (str) { buf += c; if (c === "\\") { str += "e"; continue; } if (c === str[0] && !str.endsWith("e")) str = null; else if (str.endsWith("e")) str = str.slice(0, -1); continue; }
+        if (c === '"' || c === "'") { str = c; buf += c; continue; }
+        if (c === "(") par++;
+        if (c === ")") par--;
+        if (par === 0 && (c === ";" || c === "{" || c === "}")) { flush(c); continue; }
+        if (par === 0 && c === ":" && /^\s*(case\b.*|default\s*)$/.test(buf)) { buf += c; flush(";"); continue; }
+        buf += c;
+      }
+    }
+    if (buf.trim()) flush(";");
+    return steps;
+  }
+  function outlineBox(code, open) {
+    const steps = codeOutline(code);
+    if (!steps.length) return null;
+    const ol = h("ol", { class: "outline" }, steps.map(s => h("li", { style: "margin-left:" + (s.d * 1.4) + "em" }, s.t)));
+    return h("details", Object.assign({ class: "outlinebox" }, open ? { open: "" } : {}),
+      h("summary", {}, "작성할 내용 (위에서부터 순서대로) — 어떤 문장을 써야 하는지 단계별 설명"), ol);
+  }
+
   // ── 어려운 부분 해설: 정답 코드에 나오는 문법을 찾아 설명한다 ──
   const EXPLAIN = [
     [/0x[0-9a-fA-F]+/, "16진수 상수 0x…", "0x로 시작하면 16진수다. 0xff = 15×16 + 15 = 255이고, 2진수로는 11111111(8비트가 모두 1)이다. 0x10 = 16."],
@@ -10267,6 +10373,8 @@ PIN 번호를 입력하세요: 로그인 실패!
       if (p.given) sheet.append(h("div", { class: "given" }, h("div", { class: "label", text: "주어진 코드 (오류 있음)" }), h("pre", { class: "box", text: p.given })));
       const nb = namesOnlyBox(solve(p.code));
       if (nb) sheet.append(nb);
+      const ob = outlineBox(solve(p.code), false);
+      if (ob) sheet.append(ob);
       const pre = h("pre", { class: "code" });
       const ins = [];
       const segs = [];   // 실행해서 확인할 때 프로그램을 다시 조립하기 위한 조각들
@@ -10933,6 +11041,8 @@ PIN 번호를 입력하세요: 로그인 실패!
       const answer = solve(p.code);
       const nb = namesBox(answer);
       if (nb) sheet.append(nb);
+      const ob = outlineBox(answer, true);
+      if (ob) sheet.append(ob);
       const draftKey = "draft:" + p.id;
       const canRun = p.out && !("norun" in p) && !("nograde" in p) && !/\.\.\.|…|난수/.test(p.out);
       const runGradeBtn = h("button", { class: "vbtn grade", title: "입력 예시로 실행해서 실행 결과와 비교" }, "✓ 실행 채점");
