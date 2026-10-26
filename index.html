@@ -42,6 +42,7 @@
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html, body { margin: 0; }
 body {
   background: var(--bg); color: var(--ink); font-family: var(--font-body);
@@ -58,7 +59,7 @@ header.top {
 .stats { display: flex; gap: 18px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .stats b { color: var(--ink); font-size: 17px; display: block; line-height: 1.2; }
 .toolbar { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding-block: 14px; }
-.seg { display: inline-grid; grid-template-columns: repeat(7, auto); gap: 1px; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: var(--rule); }
+.seg { display: inline-grid; grid-template-columns: repeat(8, auto); gap: 1px; border: 1px solid var(--rule); border-radius: 8px; overflow: hidden; background: var(--rule); }
 @media (max-width: 860px) { .seg { display: flex; flex-wrap: wrap; width: 100%; } .seg button { flex: 1 1 auto; } }
 @media (max-width: 400px) { .seg button { padding: 8px 6px; font-size: 13px; } }
 .seg button { border: 0; background: var(--paper); color: var(--ink); font: inherit; font-size: 14px; padding: 8px 14px; cursor: pointer; }
@@ -296,6 +297,12 @@ li.CodeMirror-hint-active { background: #04395e; color: #ffffff; }
 .hint code.ans { color: var(--accent); font-weight: 600; }
 .hint pre { margin-top: 4px; }
 .names { margin: 0 0 14px; }
+.cklist { margin: 6px 0 0; padding-left: 1.6em; display: grid; gap: 12px; }
+.cklist li { padding-left: 4px; }
+.ckq { font-weight: 600; margin-bottom: 4px; }
+.ckans { color: var(--ink); background: var(--ok-soft); border-radius: 6px; padding: 6px 10px; font-size: 14px; }
+pre.ckans { margin: 0; background: var(--code-bg); }
+.cklist .btn.peek { font-size: 12px; padding: 2px 10px; margin: 2px 0 4px; }
 .outlinebox { margin: 0 0 14px; border: 1px solid var(--rule); border-radius: 8px; background: var(--paper); }
 .outlinebox summary { cursor: pointer; padding: 8px 12px; font-size: 13px; font-weight: 600; color: var(--accent); }
 .outline { margin: 0; padding: 4px 14px 12px 2.6em; font-size: 13.5px; line-height: 1.6; }
@@ -667,6 +674,7 @@ color: white;
       <button data-mode="theory">이론 정리</button>
       <button data-mode="codes">코드 정리</button>
       <button data-mode="quiz">함수 퀴즈</button>
+      <button data-mode="checks">중간 점검</button>
       <button data-mode="concept">개념 빈칸</button>
       <button data-mode="code">코드 빈칸</button>
       <button data-mode="blank">직접 코딩</button>
@@ -9871,6 +9879,450 @@ PIN 번호를 입력하세요: 로그인 성공!
 PIN 번호를 입력하세요: 로그인 실패!
 </script>
 
+<!-- ───────── 강의안 중간 점검: Q/A, 문항은 --- 로 구분 ───────── -->
+<script type="text/plain" id="data-checks">
+@@ ck2a | 2 | 프로그램 개발 과정
+Q: 프로그램 개발 과정을 순서대로 정리하여 보자.
+A: 설계(알고리즘) → 소스 작성(편집) → 컴파일 → 링크 → 실행 및 디버깅 (→ 유지 보수)
+---
+Q: 소스 파일의 이름으로 test.txt는 올바른가?
+A: 올바르지 않다. C 소스 파일은 확장자가 .c 여야 한다 (예: test.c).
+---
+Q: 소스 파일, 오브젝트 파일, 실행 파일의 차이점을 설명하여 보자.
+A: 소스 파일(.c)은 사람이 C 언어로 작성한 텍스트, 오브젝트 파일(.obj)은 컴파일러가 소스를 기계어로 번역한 결과(아직 실행 불가), 실행 파일(.exe)은 링커가 오브젝트 파일과 라이브러리를 연결해 만든 실행 가능한 파일이다.
+---
+Q: 소스 파일이 test.c라면 컴파일 과정을 거친 후에 생성되는 오브젝트 파일과 실행 파일의 이름은 무엇인가?
+A: 오브젝트 파일 test.obj, 실행 파일 test.exe
+---
+Q: 컴파일과 링크 과정을 거쳐서 실행 파일을 만든 다음에 소스 파일과 오브젝트 파일을 보관해야 하는가? 아니면 삭제하여도 되는가?
+A: 소스 파일은 반드시 보관해야 한다. 나중에 수정(디버깅, 유지 보수)하려면 소스가 필요하기 때문이다. 오브젝트 파일은 다시 컴파일하면 만들어지므로 지워도 된다.
+---
+Q: 디버깅(debugging)이란 무엇인가?
+A: 프로그램(소스)에 있는 오류(버그)를 찾아서 고치는 작업.
+---
+Q: 왜 소프트웨어도 유지 보수가 필요한가?
+A: 디버깅 후에도 버그가 남아 있을 수 있고, 개발된 뒤에 사용자의 요구가 추가되거나 바뀔 수 있기 때문이다. (유지 보수 비용이 전체 비용의 50% 이상)
+
+@@ ck2b | 2 | 통합 개발 환경
+Q: 에디터, 컴파일러, 링커, 실행, 디버깅 등의 기능이 하나의 프로그램 안에 들어 있는 것을 무엇이라고 하는가?
+A: 통합 개발 환경 (IDE, Integrated Development Environment)
+---
+Q: 비주얼 스튜디오에서 새로운 프로젝트를 생성하는 메뉴는 무엇인가?
+A: [파일] → [새로 만들기] → [프로젝트] (빈 프로젝트 선택)
+---
+Q: 비주얼 스튜디오에서 프로젝트에 속하는 소스 파일을 컴파일하여 실행 파일을 생성하는 메뉴는 무엇인가?
+A: [빌드] → [솔루션 빌드] (실행까지 하려면 [디버그] → [디버그하지 않고 시작], Ctrl+F5)
+---
+Q: C언어에서는 대문자와 소문자를 구별하는가?
+A: 구별한다. main과 Main은 다른 이름이다.
+---
+Q: 비주얼 스튜디오를 이용하여서 sample.c라는 소스 파일을 컴파일하였을 때 생성되는 파일들은 무엇인가?
+A: 오브젝트 파일 sample.obj (링크까지 하면 실행 파일 sample.exe)
+---
+Q: 비주얼 스튜디오를 사용하여 소스 프로그램을 편집하는 경우, 메모장 같은 다른 텍스트 에디터를 사용하여도 되는가?
+A: 된다. 소스 파일은 일반 텍스트 파일이므로 어떤 텍스트 에디터로 작성해도 된다.
+
+@@ ck2c | 2 | 첫 번째 프로그램
+Q: 문장의 끝에 추가하여야 하는 기호는?
+A: 세미콜론 ;
+---
+Q: C 프로그램에 반드시 있어야 하는 함수는?
+A: main() 함수
+---
+Q: printf()가 하는 기능은 무엇인가?
+A: 화면(모니터)에 문자열이나 값을 출력한다.
+---
+Q: 화면에 새로운 줄을 만드는데 사용되는 특수한 기호는?
+A: 줄바꿈 문자 \n
+---
+Q: "사과", "오렌지", "포도"를 한 줄에 하나씩 출력하는 프로그램을 작성하여 보자.
+A: #include <stdio.h>
+  int main(void)
+  {
+      printf("사과\n");
+      printf("오렌지\n");
+      printf("포도\n");
+      return 0;
+  }
+---
+Q: 구구단 3단 전체를 출력하는 프로그램을 작성하여 보자.
+A: #include <stdio.h>
+  int main(void)
+  {
+      printf("3 X 1 = 3\n");
+      printf("3 X 2 = 6\n");
+      ... (3 X 9 = 27 까지 같은 방식으로 9줄)
+      return 0;
+  }
+  (반복문을 배운 뒤에는 for (i = 1; i <= 9; i++) printf("3 X %d = %d\n", i, 3 * i); 한 줄로 가능)
+---
+Q: 프로그램을 편집하여 컴파일, 링크를 한 다음 실행시켰는데 자신이 기대한 대로 결과가 나오지 않았다. 이때는 어떻게 하여야 하는가?
+A: 논리 오류이므로 디버깅을 한다. 디버거로 중단점(F9)을 걸고 한 줄씩 실행(F10, F11)하면서 변수 값을 확인해 원인을 찾아 소스를 고친다.
+---
+Q: 비교적 경미한 오류를 무엇이라고 하는가?
+A: 경고 (warning). 심각한 오류는 에러(error).
+
+@@ ck3a | 3 | 주석과 전처리기
+Q: 주석은 /* /* ...... */ */와 같이 중첩할 수 있을까?
+A: 없다. 첫 번째 */ 에서 주석이 끝나 버려서 뒤의 */ 가 오류가 된다.
+---
+Q: 주석은 한 줄 이상이 될 수 있는가?
+A: 될 수 있다. /* … */ 는 여러 줄에 걸쳐 쓸 수 있다. (// 는 그 줄 끝까지만)
+---
+Q: 주석에는 어떤 내용을 쓰면 좋은가?
+A: 코드를 그대로 반복하는 말보다, 코드를 작성한 의도와 동작(무엇을 왜 하는지)을 쓴다. 작성자, 날짜, 프로그램 설명 등.
+---
+Q: 주석은 프로그램의 동작에 어떤 영향을 끼치는가?
+A: 아무 영향도 없다. 컴파일러가 주석을 무시한다.
+---
+Q: printf()를 사용하기 위하여 포함시켜야 하는 헤더 파일은 무엇인가?
+A: stdio.h  →  #include <stdio.h>
+---
+Q: 전처리기 #include의 의미는 무엇인가?
+A: 컴파일하기 전에 지정한 외부 파일(헤더 파일)의 내용을 소스 파일의 그 위치에 포함시키라는 뜻.
+
+@@ ck3b | 3 | 함수와 변수
+Q: 모든 C 프로그램에 반드시 있어야 되는 함수는 무엇인가?
+A: main()
+---
+Q: 함수의 시작과 끝을 나타내는 기호는 무엇인가?
+A: 중괄호 { 와 }
+---
+Q: 모든 문장은 어떤 기호로 끝나는가?
+A: 세미콜론 ;
+---
+Q: double형 변수 f를 선언하는 문장을 작성하여 보자.
+A: double f;
+---
+Q: 변수 선언은 함수의 어떤 위치에서 하여야 하는가?
+A: 변수를 사용하기 전이면 된다. 보통 함수(블록)의 맨 앞에서 선언한다. (최신 C는 블록 중간에서도 가능)
+---
+Q: 변수 이름을 만들 때 지켜야 하는 규칙은 무엇인가?
+A: 영문자, 숫자, 밑줄(_)만 사용 / 숫자로 시작할 수 없음 / 중간에 공백 불가 / 대소문자를 구별 / 키워드(예약어)는 사용 불가
+---
+Q: 변수 이름의 첫 번째 글자로 허용되는 것은 무엇인가?
+A: 영문자 또는 밑줄(_). 숫자는 안 된다.
+---
+Q: C에서 고유한 의미를 가지고 있는 단어들을 무엇이라고 하는가?
+A: 키워드 (예약어). 예: int, double, if, for, return
+---
+Q: 함수의 중간에서 변수를 선언할 수 있는가?
+A: 있다 (C99 이후). 단, 사용하기 전에 선언해야 한다.
+---
+Q: int형 변수 x와 y를 한 줄에 선언하고 1과 0으로 각각 초기화하라.
+A: int x = 1, y = 0;
+---
+Q: 변수 a와 변수 b의 곱을 변수 product에 저장하는 문장을 작성하여 보자.
+A: product = a * b;
+---
+Q: 변수 a를 변수 b로 나눈 값을 변수 quotient에 저장하는 문장을 작성하여 보자.
+A: quotient = a / b;
+
+@@ ck3c | 3 | printf와 scanf
+Q: printf()에서 변수의 값을 실수 형태로 출력할 때 사용하는 형식 지정자는 무엇인가?
+A: %f  (double도 printf에서는 %f 또는 %lf)
+---
+Q: printf()를 사용하여서 정수형 변수 k의 값을 출력하는 문장을 작성하여 보자.
+A: printf("%d", k);
+---
+Q: scanf()를 사용하여서 사용자로부터 실수값을 받아서 double형의 변수 value에 저장하는 문장을 작성하여 보자.
+A: scanf("%lf", &value);   (double은 반드시 %lf, 변수 앞에 &)
+
+@@ ck4a | 4 | 변수와 자료형
+Q: 변수와 상수는 어떻게 다른가?
+A: 변수는 저장된 값을 바꿀 수 있는 공간, 상수는 값을 바꿀 수 없는 것 (예: 100, 3.14, 'A', "Hello").
+---
+Q: 변수가 실제로 만들어지는 공간은 컴퓨터 부품 중에서 어디인가?
+A: 메인 메모리 (RAM)
+---
+Q: 정수형에 속하는 자료형을 모두 열거하라.
+A: char, short, int, long, long long (그리고 각각의 unsigned 형)
+---
+Q: 숫자값을 직접 사용하는 것보다 기호 상수를 사용하는 것의 이점은 무엇인가?
+A: 이름으로 의미를 알 수 있어 가독성이 높아지고, 값을 바꿀 때 한 곳만 고치면 되어 변경이 쉽다.
+---
+Q: 왜 정수를 하나의 타입으로 하지 않고 int, short, long 등의 여러 가지 타입으로 복잡하게 분류하여 사용하는가?
+A: 저장할 값의 범위에 맞게 메모리를 효율적으로 쓰기 위해서다. 작은 값은 작은 자료형, 큰 값은 큰 자료형을 쓴다.
+---
+Q: 부호가 없는 unsigned int형의 변수에 음수를 넣으면 어떤 일이 벌어지는가?
+A: 음수의 비트가 그대로 양수로 해석되어 아주 큰 양수가 된다. 예: -1 → 4294967295
+---
+Q: 변수가 저장할 수 있는 한계를 넘어서는 값을 저장하면 어떻게 되는가? short형 변수에 32768을 저장하면 어떻게 되는가?
+A: 오버플로우가 생겨 값이 반대쪽 끝으로 돌아간다. short의 최댓값은 32767이므로 32768을 넣으면 -32768이 된다.
+---
+Q: 이진수 01000011의 2의 보수를 구해보자.
+A: 1의 보수(비트 반전) 10111100 에 1을 더해 10111101
+---
+Q: float형과 double형의 크기는?
+A: float 4바이트(32비트), double 8바이트(64비트)
+---
+Q: 부동 소수점 상수인 1.0×10²⁵를 지수 형식으로 표기하여 보자.
+A: 1.0e25 (또는 1.0E25)
+---
+Q: 컴퓨터에서는 문자를 어떻게 나타내는가?
+A: 각 문자에 정해진 숫자(아스키 코드)로 나타낸다. 예: 'A' = 65, 'a' = 97
+---
+Q: C에서 문자를 가장 잘 표현할 수 있는 자료형은 무엇인가?
+A: char
+---
+Q: 경고음이 발생하는 문장을 작성하여 보자.
+A: printf("\a");
+
+@@ ck5a | 5 | 수식과 연산자
+Q: 수식(expression)이란 어떻게 정의되는가?
+A: 상수, 변수, 연산자의 조합. 피연산자와 연산자로 이루어지며 계산 결과값을 가진다.
+---
+Q: 상수 10도 수식이라고 할 수 있는가?
+A: 있다. 값(10)을 가지므로 수식이다.
+---
+Q: y = 10 + 20; 에서 피연산자와 연산자를 구분하여 보라.
+A: 피연산자: y, 10, 20 / 연산자: =, +
+---
+Q: 연산자를 단항 연산자, 이항 연산자, 삼항 연산자로 나누는 기준은 무엇인가?
+A: 연산자가 필요로 하는 피연산자의 개수. 단항 1개(-x, ++x, !x), 이항 2개(x + y), 삼항 3개(조건 연산자 a ? b : c).
+---
+Q: 대입 연산자에서 lvalue가 될 수 있는 것은 무엇인가?
+A: 값을 저장할 수 있는 변수. 상수나 수식은 왼쪽에 올 수 없다 (100 = x + y; 는 오류).
+---
+Q: 등호(=)가 수학에서의 의미와 다른 점은 무엇인가?
+A: 수학에서는 '같다'지만 C에서는 오른쪽 값을 왼쪽 변수에 '저장한다(대입)'는 뜻이다. 그래서 x = x + 1 이 가능하다. 같은지 비교는 == 를 쓴다.
+---
+Q: 복합 대입 연산자 x *= y의 의미를 설명하라.
+A: x = x * y 와 같다. (x *= y + 1 은 x = x * (y + 1))
+---
+Q: 10 % 6이 계산되는 과정을 설명하라.
+A: 10을 6으로 나누면 몫이 1이고 나머지가 4이므로 결과는 4.
+---
+Q: 나눗셈 연산인 10 / 6의 값은 얼마인가?
+A: 1 (정수끼리 나누면 소수점 이하를 버린다)
+---
+Q: x += y와 x =+ y의 차이점은 무엇인가?
+A: x += y 는 x = x + y. x =+ y 는 x = (+y) 로, y 값을 그냥 대입한다.
+---
+Q: 관계 수식의 결과로 생성될 수 있는 값은 무엇인가?
+A: 참이면 1, 거짓이면 0
+---
+Q: (3 >= 2) + 5의 값은?
+A: 6  (3 >= 2 가 참이라 1, 1 + 5 = 6)
+---
+Q: "무주택 기간 3년 이상, 가구주의 연령이 40세 이상, 가족의 수가 3명 이상"의 논리 연산식을 만들어 보시오.
+A: (nohouse >= 3) && (age >= 40) && (family >= 3)
+---
+Q: 상수 10은 참인가 거짓인가?
+A: 참. 0이 아닌 값은 모두 참이다.
+---
+Q: 수식 !3의 값은?
+A: 0  (3은 참이므로 !3은 거짓 = 0)
+
+@@ ck5b | 5 | 형변환과 우선순위
+Q: 내림 변환과 올림 변환을 설명하라.
+A: 올림 변환은 작은 자료형 값을 큰 자료형에 넣는 것(double f = 10; → 10.0), 값 손실이 없다. 내림 변환은 큰 자료형 값을 작은 자료형에 넣는 것(int i = 3.14; → 3), 데이터 일부(소수점 등)가 사라질 수 있다.
+---
+Q: int형 변수 x를 double형으로 형변환하는 문장을 써보라.
+A: (double)x  예: d = (double)x;
+---
+Q: 하나의 수식에 정수와 부동소수점수가 섞여 있으면 어떻게 되는가?
+A: 더 큰 자료형(부동소수점형)으로 자동 변환되어 실수로 계산된다. 예: 5 / 2.0 = 2.5
+---
+Q: 연산자 중에서 가장 우선 순위가 낮은 연산자는 무엇인가?
+A: 콤마 연산자 (,). 그 다음으로 낮은 것이 대입 연산자.
+---
+Q: 논리 연산자인 &&과 || 중에서 우선 순위가 더 높은 연산자는 무엇인가?
+A: &&
+---
+Q: 단항 연산자와 이항 연산자 중에서 어떤 연산자가 더 우선 순위가 높은가?
+A: 단항 연산자
+---
+Q: 관계 연산자와 산술 연산자 중에서 어떤 연산자가 더 우선 순위가 높은가?
+A: 산술 연산자 (그래서 x + 1 > y 는 (x + 1) > y)
+
+@@ ck6a | 6 | if 문
+Q: 중괄호로 묶은 여러 개의 문장을 무엇이라고 하는가?
+A: 복합문 (블록)
+---
+Q: C에서 참과 거짓은 어떤 정수로 표시되는가?
+A: 참은 1(0이 아닌 값), 거짓은 0
+---
+Q: if 문 안의 조건식으로 많이 사용되는 수식의 종류는 무엇인가?
+A: 관계 수식(>, ==, != …)과 논리 수식(&&, ||, !)
+---
+Q: if 문이 끝나면 어떤 문장이 실행되는가?
+A: if 문 바로 다음 문장
+---
+Q: 조건에 따라서 실행되어야 하는 문장이 두 개 이상이면 어떻게 하여야 하는가?
+A: 중괄호 { } 로 묶어서 복합문(블록)으로 만든다.
+---
+Q: 변수 n의 값이 100보다 크거나 같으면 "large", 100보다 작으면 "small"을 출력하는 if-else 문을 작성하라.
+A: if (n >= 100)
+      printf("large\n");
+  else
+      printf("small\n");
+---
+Q: n의 값이 각각 -1, 0, 5인 경우의 출력은?  if (n == 0) printf("A"); else if (n > 3) printf("B"); else printf("C");
+A: n = -1 → C,  n = 0 → A,  n = 5 → B
+---
+Q: 컵의 사이즈를 받아서 100ml 미만은 small, 100ml 이상 200ml 미만은 medium, 200ml 이상은 large라고 출력하는 연속적인 if-else 문을 작성하시오.
+A: if (size < 100)
+      printf("small\n");
+  else if (size < 200)
+      printf("medium\n");
+  else
+      printf("large\n");
+
+@@ ck6b | 6 | switch 문
+Q: case 절에서 break 문을 생략하면 어떻게 되는가?
+A: 그 case의 문장을 실행한 뒤 멈추지 않고 다음 case의 문장들까지 계속 실행된다 (break를 만날 때까지).
+---
+Q: 변수 fruit의 값이 각각 1, 2, 5일 때 출력은?  case 1: 사과 break; / case 2: 배 (break 없음) / case 3: 바나나 break; / default: 과일
+A: fruit = 1 → 사과,  fruit = 2 → 배바나나 (break가 없어 case 3까지 실행),  fruit = 5 → 과일
+
+@@ ck7a | 7 | 반복문
+Q: 프로그램에 반복 구조가 필요한 이유는 무엇인가?
+A: 같은 처리 과정을 여러 번 되풀이해야 할 때가 많기 때문이다 (예: 학생 30명의 평균). 같은 코드를 여러 번 쓰지 않아도 된다.
+---
+Q: 반복문에는 _______, _______ 문이 있다.
+A: while, for  (그리고 do-while)
+---
+Q: if 문과 while 문을 비교하여 보라. 조건식이 같다면 어떻게 동작하는가?
+A: 조건이 참일 때 if는 문장을 한 번만 실행하고, while은 조건이 거짓이 될 때까지 반복해서 실행한다.
+---
+Q: while 루프를 이용하여 무한 루프를 만들어 보라.
+A: while (1) { … }   (조건이 항상 참)
+---
+Q: int n = 10; while (n > 0) { printf("%d\n", n); n = n - 3; } 의 출력은?
+A: 10
+  7
+  4
+  1
+---
+Q: int n = 0; do { printf("%d\n", n); n = n + 1; } while (n < 3); 의 출력은?
+A: 0
+  1
+  2
+---
+Q: for (i = 1; i < 5; i++) printf("%d ", 2 * i); 의 출력은?
+A: 2 4 6 8
+---
+Q: for (i = 10; i > 0; i = i - 2) printf("Student%d\n", i); 의 출력은?
+A: Student10
+  Student8
+  Student6
+  Student4
+  Student2
+---
+Q: for (i = 0; i < 3; i++) for (j = 0; j < 3; j++) printf("%d 곱하기 %d은 %d\n", i, j, i * j); 의 출력은?
+A: 0 곱하기 0은 0
+  0 곱하기 1은 0
+  0 곱하기 2은 0
+  1 곱하기 0은 0
+  1 곱하기 1은 1
+  1 곱하기 2은 2
+  2 곱하기 0은 0
+  2 곱하기 1은 2
+  2 곱하기 2은 4
+---
+Q: _______ 문이 반복문에서 실행되면 현재의 반복을 중단하고 다음번 반복 처리가 시작된다.
+A: continue
+---
+Q: _______ 문이 반복문에서 실행되면 반복문을 빠져 나온다.
+A: break
+---
+Q: for (i = 1; i < 10; i++) { if (i % 3 == 0) break; printf("%d\n", i); } 의 출력은?
+A: 1
+  2
+  (i가 3일 때 break로 반복이 끝난다)
+---
+Q: 위 문제에서 break를 continue로 변경하면 어떻게 되는가?
+A: 3의 배수만 건너뛰고 나머지를 출력한다: 1 2 4 5 7 8 (한 줄에 하나씩)
+
+@@ ck8a | 8 | 함수
+Q: 함수가 필요한 이유는 무엇인가?
+A: 같은 코드를 여러 번 쓰지 않게 해 주고(중복 방지), 한 번 만든 함수를 재사용할 수 있으며, 프로그램을 작은 단위(모듈)로 나눠 개발과 유지 보수가 쉬워진다.
+---
+Q: 함수와 프로그램의 관계는?
+A: 프로그램은 함수들의 집합이다. 함수는 프로그램을 구성하는 기본 단위(부품)이다.
+---
+Q: 컴파일러에서 지원되는 함수를 __________ 함수라고 한다.
+A: 라이브러리 함수
+---
+Q: 함수의 반환형이 없는 경우에는 어떻게 표시하는가?
+A: void
+---
+Q: 수식 (x+y+z)의 값을 반환하는 문장을 작성하여 보자.
+A: return (x + y + z);
+---
+Q: double형 변수 f를 매개 변수로 가지고 double형의 값을 반환하는 fabs() 함수 헤더를 정의하여 보자.
+A: double fabs(double f)
+---
+Q: 인수와 매개 변수는 어떤 관계가 있는가?
+A: 함수를 호출할 때 전달하는 실제 값이 인수(argument)이고, 그 값을 받는 함수 쪽 변수가 매개 변수(parameter)이다. 인수의 값이 매개 변수로 복사된다. 개수가 같아야 한다.
+---
+Q: 반환값이 실수로 정의된 함수에서 실수로 정수를 반환하면 어떤 일이 발생하는가?
+A: 정수가 자동으로 실수(반환형)로 변환되어 반환된다. 예: return 3; → 3.0
+---
+Q: 함수 정의의 첫 번째 줄에는 어떤 정보들이 포함되는가? 이것을 무엇이라고 부르는가?
+A: 반환형, 함수 이름, 매개 변수 목록. 이것을 함수 헤더(header)라고 한다.
+---
+Q: 함수가 반환할 수 있는 값의 개수는?
+A: 하나 (최대 1개)
+---
+Q: 함수가 값을 반환하지 않는다면 반환형은 어떻게 정의되어야 하는가?
+A: void
+---
+Q: 함수 정의와 함수 원형의 차이점은 무엇인가?
+A: 함수 정의는 헤더와 몸체 { } 까지 실제 내용을 모두 쓴 것이고, 함수 원형은 몸체 없이 헤더 끝에 세미콜론만 붙여 컴파일러에게 함수의 이름·매개 변수·반환형을 미리 알리는 것이다.
+---
+Q: 함수 원형에 반드시 필요한 것은 아니지만 대개 매개 변수들의 이름을 추가하는 이유는 무엇인가?
+A: 각 매개 변수가 무엇을 뜻하는지 알기 쉽게 하려고 (가독성, 문서화)
+---
+Q: double pow(double, double); 함수 원형을 보고 알 수 있는 정보는?
+A: 함수 이름은 pow, double형 매개 변수 2개를 받고, double형 값을 반환한다.
+
+@@ ck9a | 9 | 변수의 범위
+Q: 변수의 범위는 대개 무엇으로 결정되는가?
+A: 변수가 선언된 위치 (블록 안이면 지역, 함수 밖이면 전역)
+---
+Q: 변수의 범위에는 몇 가지의 종류가 있는가?
+A: 크게 2가지: 전역 변수(파일 전체), 지역 변수(블록 안). 세부적으로는 파일 범위, 함수 범위, 블록 범위, 함수 원형 범위.
+---
+Q: 지역 변수를 블록의 중간에서 정의할 수 있는가?
+A: 있다 (최신 C). 블록 안 어디서든 사용하기 전에 선언하면 된다.
+---
+Q: 지역 변수가 선언된 블록이 종료되면 지역 변수는 어떻게 되는가?
+A: 소멸한다 (메모리에서 사라진다).
+---
+Q: 지역 변수의 초기값은 얼마인가?
+A: 정해져 있지 않다 (쓰레기값). 반드시 초기화해서 써야 한다.
+---
+Q: 전역 변수는 어디에 선언되는가?
+A: 함수 외부 (보통 소스 파일 맨 위)
+---
+Q: 전역 변수의 생존 기간과 초기값은?
+A: 프로그램이 실행되는 동안 계속 존재한다. 초기화하지 않으면 0으로 자동 초기화된다.
+---
+Q: 똑같은 이름의 전역 변수와 지역 변수가 동시에 존재하면 어떻게 되는가?
+A: 그 블록 안에서는 지역 변수가 우선한다 (전역 변수가 가려진다).
+
+@@ ck9b | 9 | 저장 유형 지정자
+Q: 저장 유형 지정자에는 어떤 것들이 있는가?
+A: auto, register, static, extern
+---
+Q: 지역 변수를 정적 변수로 만들려면 어떤 지정자를 붙여야 하는가?
+A: static
+---
+Q: 변수를 CPU 내부의 레지스터에 저장시키는 지정자는?
+A: register
+---
+Q: 컴파일러에게 변수가 외부에 선언되어 있다고 알리는 지정자는?
+A: extern
+---
+Q: static 지정자를 변수 앞에 붙이면 무엇을 의미하는가?
+A: 정적 변수가 되어 프로그램이 끝날 때까지 값이 유지되고, 처음 한 번만 초기화된다. (전역 변수나 함수 앞에 붙이면 다른 소스 파일에서 쓸 수 없게 된다)
+---
+Q: 정적 변수와 전역 변수의 차이점은?
+A: 둘 다 프로그램 끝까지 값이 유지되고 0으로 초기화된다. 하지만 정적 지역 변수는 선언된 함수(블록) 안에서만 쓸 수 있고, 전역 변수는 파일 전체(extern으로 다른 파일까지)에서 쓸 수 있다.
+</script>
+
 <!-- VS Code 스타일 편집기: CodeMirror 5 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
@@ -9886,7 +10338,7 @@ PIN 번호를 입력하세요: 로그인 실패!
   "use strict";
   const CH = { 1: "1장 C언어 소개", 2: "2장 프로그램 작성 과정", 3: "3장 C프로그램 구성요소", 4: "4장 변수와 자료형", 5: "5장 수식과 연산자", 6: "6장 조건문", 7: "7장 반복문", 8: "8장 함수", 9: "9장 함수와 변수" };
   const MODES = {
-    theory: "이론 정리", codes: "코드 정리", quiz: "함수 퀴즈", concept: "개념 빈칸", code: "코드 빈칸", blank: "직접 코딩", output: "출력 예측"
+    theory: "이론 정리", codes: "코드 정리", quiz: "함수 퀴즈", checks: "중간 점검", concept: "개념 빈칸", code: "코드 빈칸", blank: "직접 코딩", output: "출력 예측"
   };
 
   // ── storage (실패해도 동작) ──
@@ -9929,6 +10381,15 @@ PIN 번호를 입력하세요: 로그인 실패!
   const outputs = parseBlocks(raw("data-outputs"));
   const theory = parseBlocks(raw("data-theory"));
   const patterns = parseBlocks(raw("data-patterns"));
+  const checks = raw("data-checks").split(/^@@ /m).filter(b => b.trim()).map(b => {
+    const nl = b.indexOf("\n");
+    const [id, ch, title] = b.slice(0, nl).split("|").map(x => x.trim());
+    const items = b.slice(nl + 1).split(/^---$/m).map(t => {
+      const qm = t.match(/Q:\s*([\s\S]*?)\nA:\s*([\s\S]*)$/);
+      return qm ? { q: qm[1].trim(), a: qm[2].replace(/\s+$/, "").split("\n").map(l => l.replace(/^  /, "")).join("\n") } : null;
+    }).filter(Boolean);
+    return { id, ch: +ch, title, items };
+  });
   const quizzes = parseBlocks(raw("data-quiz")).map((q, i) => Object.assign(q, { order: i })).sort((a, b) => a.ch - b.ch || (a.kind === "기출" ? 0 : 1) - (b.kind === "기출" ? 0 : 1) || a.order - b.order);
 
   // ── 상태 ──
@@ -11302,13 +11763,49 @@ PIN 번호를 입력하세요: 로그인 실패!
     draw();
   }
 
+  // ── 모드: 중간 점검 (강의안의 중간 점검 문제와 답) ──
+  function renderChecks(main) {
+    let hide = store.get("ckHide", false);
+    const list = checks.filter(g => !chap || g.ch === chap);
+    const total = list.reduce((a, g) => a + g.items.length, 0);
+    const wrap = h("div", { class: "theory" });
+    const toggle = h("button", { class: "btn" });
+    const ansEls = [];
+    const draw = () => {
+      toggle.textContent = hide ? "답 모두 보이기" : "답 가리고 풀어 보기";
+      ansEls.forEach(a => { a.el.hidden = hide && !a.open; a.btn.hidden = !hide; a.btn.textContent = a.open ? "답 숨기기" : "답 보기"; });
+    };
+    toggle.addEventListener("click", () => { hide = !hide; store.set("ckHide", hide); ansEls.forEach(a => { a.open = false; }); draw(); });
+    wrap.append(h("div", { class: "sheet" }, h("div", { class: "qhead" }, h("h2", { text: "강의안 중간 점검 모음" }), h("span", { class: "tag", text: (chap ? CH[chap] : "전체") + " " + total + "문항" })),
+      h("p", { class: "tip", text: "강의안(PPT)에 나온 중간 점검 질문과 답을 장별로 모았어요. 1장에는 중간 점검이 없습니다. '답 가리고 풀어 보기'를 누르면 답을 가리고 하나씩 확인할 수 있어요." }),
+      h("div", { class: "actions" }, toggle)));
+    if (!list.length) wrap.append(h("div", { class: "sheet", text: "이 장에는 중간 점검이 없어요 (1장)." }));
+    list.forEach(g => {
+      const sec = h("section", { class: "tsec" }, h("h2", {}, h("span", { class: "tag", text: g.ch + "장" }), g.title));
+      const ol = h("ol", { class: "cklist" });
+      g.items.forEach(it => {
+        const multi = it.a.includes("\n");
+        const ansEl = multi ? h("pre", { class: "box ckans" , text: it.a }) : h("div", { class: "ckans" }, inline(it.a));
+        const btn = h("button", { class: "btn peek" });
+        const rec = { el: ansEl, btn, open: false };
+        btn.addEventListener("click", () => { rec.open = !rec.open; draw(); });
+        ansEls.push(rec);
+        ol.append(h("li", {}, h("div", { class: "ckq" }, inline(it.q)), btn, ansEl));
+      });
+      sec.append(ol);
+      wrap.append(sec);
+    });
+    main.append(wrap);
+    draw();
+  }
+
   function render() {
     flushAll();
     liveSavers.clear();
     renderControls();
     const main = $("#main");
     main.replaceChildren();
-    ({ theory: renderTheory, codes: renderCodes, quiz: renderQuiz, concept: renderConcept, code: renderCode, blank: renderBlank, output: renderOutput })[mode](main);
+    ({ theory: renderTheory, codes: renderCodes, quiz: renderQuiz, checks: renderChecks, concept: renderConcept, code: renderCode, blank: renderBlank, output: renderOutput })[mode](main);
   }
   renderStats();
   render();
